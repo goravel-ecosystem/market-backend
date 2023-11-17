@@ -24,7 +24,7 @@ import (
 	"github.com/goravel/gateway"
 	"github.com/goravel/gin"
 
-	"goravel/app/providers"
+	"github.com/goravel-ecosystem/market-backend/gateway/app/providers"
 )
 
 // Boot Start all init methods of the current folder to bootstrap all config.

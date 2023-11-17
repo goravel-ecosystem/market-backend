@@ -4,8 +4,7 @@ import (
 	"github.com/goravel/framework/facades"
 	"github.com/goravel/gateway"
 
-	"goravel/proto/business"
-	"goravel/proto/users"
+	"github.com/goravel-ecosystem/market-backend/proto/users"
 )
 
 func init() {
@@ -26,12 +25,12 @@ func init() {
 				"handlers":     []gateway.Handler{users.RegisterUsersServiceHandler},
 				"interceptors": []string{},
 			},
-			"business": map[string]any{
-				"host":         config.Env("GRPC_BUSINESS_HOST", ""),
-				"port":         config.Env("GRPC_BUSINESS_PORT", ""),
-				"handlers":     []gateway.Handler{business.RegisterBusinessServiceHandler},
-				"interceptors": []string{},
-			},
+			//"business": map[string]any{
+			//	"host":         config.Env("GRPC_BUSINESS_HOST", ""),
+			//	"port":         config.Env("GRPC_BUSINESS_PORT", ""),
+			//	"handlers":     []gateway.Handler{business.RegisterBusinessServiceHandler},
+			//	"interceptors": []string{},
+			//},
 		},
 	})
 }

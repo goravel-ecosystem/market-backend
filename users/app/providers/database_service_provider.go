@@ -5,7 +5,7 @@ import (
 	"github.com/goravel/framework/contracts/foundation"
 	"github.com/goravel/framework/facades"
 
-	"users/database/seeders"
+	"github.com/goravel-ecosystem/market-backend/users/database/seeders"
 )
 
 type DatabaseServiceProvider struct {

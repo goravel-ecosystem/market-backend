@@ -4,7 +4,7 @@ import (
 	"github.com/goravel/framework/contracts/foundation"
 	"github.com/goravel/framework/facades"
 
-	"goravel/app/console"
+	"github.com/goravel-ecosystem/market-backend/gateway/app/console"
 )
 
 type ConsoleServiceProvider struct {

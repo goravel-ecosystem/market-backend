@@ -4,8 +4,7 @@ import (
 	"github.com/goravel/framework/contracts/foundation"
 	"github.com/goravel/framework/facades"
 
-	"goravel/app/grpc"
-	"goravel/routes"
+	"github.com/goravel-ecosystem/market-backend/gateway/app/grpc"
 )
 
 type GrpcServiceProvider struct {
@@ -20,5 +19,4 @@ func (receiver *GrpcServiceProvider) Register(app foundation.Application) {
 
 func (receiver *GrpcServiceProvider) Boot(app foundation.Application) {
 	//Add routes
-	routes.Grpc()
 }

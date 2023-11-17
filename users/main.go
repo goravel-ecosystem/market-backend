@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/goravel/framework/facades"
 
-	"users/bootstrap"
+	"github.com/goravel-ecosystem/market-backend/users/bootstrap"
 )
 
 func main() {
@@ -12,8 +12,8 @@ func main() {
 
 	//Start http server by facades.Route().
 	go func() {
-		if err := facades.Route().Run(); err != nil {
-			facades.Log().Errorf("Route run error: %v", err)
+		if err := facades.Grpc().Run(); err != nil {
+			facades.Log().Errorf("Grpc run error: %v", err)
 		}
 	}()
 
