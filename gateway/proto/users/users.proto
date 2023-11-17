@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package users;
+
+option go_package="github.com/goravel-ecosystem/market-backend/proto/users";
+
+import "google/api/annotations.proto";
+import "base/base.proto";
+
+service UsersService {
+  rpc EmailRegister (EmailRegisterRequest) returns (EmailRegisterResponse) {
+    option (google.api.http) = {
+      post: "/users/register/email"
+      body: "*"
+    };
+  }
+}
+
+message User {
+  string id = 1;
+  string name = 2;
+}
+
+message EmailRegisterRequest {
+  string email = 1;
+  string password = 2;
+  string code = 3;
+}
+
+message EmailRegisterResponse {
+  base.Status status = 1;
+  User user = 2;
+  string token = 3;
+}
