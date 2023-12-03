@@ -4,7 +4,7 @@ go 1.21.0
 
 require (
 	github.com/goravel-ecosystem/market-backend/proto v0.0.0
-	github.com/goravel/framework v1.13.4
+	github.com/goravel/framework v1.13.5
 	github.com/goravel/gateway v0.0.0-00010101000000-000000000000
 	github.com/goravel/gin v1.1.4
 	github.com/stretchr/testify v1.8.4
@@ -178,5 +178,5 @@ require (
 
 replace (
 	github.com/goravel-ecosystem/market-backend/proto => ../proto
-	github.com/goravel/gateway => ../../../gateway
+	github.com/goravel/gateway => ../../../goravel/gateway
 )

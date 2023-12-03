@@ -8,17 +8,46 @@ import "google/api/annotations.proto";
 import "base/base.proto";
 
 service UsersService {
-  rpc EmailRegister (EmailRegisterRequest) returns (EmailRegisterResponse) {
+  rpc EmailLogin (EmailLoginRequest) returns (EmailLoginResponse) {
     option (google.api.http) = {
-      post: "/users/register/email"
+      post: "/users/email/login"
       body: "*"
     };
   }
+  rpc EmailRegister (EmailRegisterRequest) returns (EmailRegisterResponse) {
+    option (google.api.http) = {
+      post: "/users/email/register"
+      body: "*"
+    };
+  }
+  rpc GetEmailCode (GetEmailCodeRequest) returns (GetEmailCodeResponse) {
+    option (google.api.http) = {
+      post: "/users/email/code"
+      body: "*"
+    };
+  }
+  rpc GetUser (GetUserRequest) returns (GetUserResponse){
+    option (google.api.http) = {
+      get: "/users/self"
+    };
+  }
+  rpc GetUserByToken (GetUserByTokenRequest) returns (GetUserByTokenResponse){}
 }
 
 message User {
   string id = 1;
   string name = 2;
+}
+
+message EmailLoginRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message EmailLoginResponse {
+  base.Status status = 1;
+  User user = 2;
+  string token = 3;
 }
 
 message EmailRegisterRequest {
@@ -31,4 +60,30 @@ message EmailRegisterResponse {
   base.Status status = 1;
   User user = 2;
   string token = 3;
+}
+
+message GetEmailCodeRequest {
+  string email = 1;
+}
+
+message GetEmailCodeResponse {
+  base.Status status = 1;
+}
+
+message GetUserRequest {
+  string user_id = 1;
+}
+
+message GetUserResponse {
+  base.Status status = 1;
+  User user = 2;
+}
+
+message GetUserByTokenRequest {
+  string token = 1;
+}
+
+message GetUserByTokenResponse {
+  base.Status status = 1;
+  User user = 2;
 }

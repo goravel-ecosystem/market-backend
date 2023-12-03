@@ -1,0 +1,10 @@
+{
+  "register_code.subject": "注册验证码",
+  "register_code.content": "您的注册验证码为：:code，请在5分钟内完成注册。",
+  "required.email": "邮箱不能为空",
+  "required.password": "密码不能为空",
+  "required.code": "验证码不能为空",
+  "required.token": "Token 不能为空",
+  "required.user_id": "UserID 不能为空",
+  "invalid.code": "验证码错误"
+}
