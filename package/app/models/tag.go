@@ -4,9 +4,8 @@ import (
 	"github.com/goravel/framework/database/orm"
 )
 
-type User struct {
+type Tag struct {
 	orm.Model
-	Name   string
-	Avatar string
+	Name string
 	orm.SoftDeletes
 }
