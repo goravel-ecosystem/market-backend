@@ -4,8 +4,8 @@ import (
 	"github.com/goravel/framework/contracts/foundation"
 	"github.com/goravel/framework/facades"
 
-	"github.com/goravel-ecosystem/market-backend/users/app/http"
-	"github.com/goravel-ecosystem/market-backend/users/routes"
+	"github.com/goravel-ecosystem/market-backend/user/app/http"
+	"github.com/goravel-ecosystem/market-backend/user/routes"
 )
 
 type RouteServiceProvider struct {

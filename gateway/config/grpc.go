@@ -4,7 +4,7 @@ import (
 	"github.com/goravel/framework/facades"
 	"github.com/goravel/gateway"
 
-	"github.com/goravel-ecosystem/market-backend/proto/users"
+	protouser "github.com/goravel-ecosystem/market-backend/proto/user"
 )
 
 func init() {
@@ -19,10 +19,10 @@ func init() {
 		// Configure your client host and interceptors.
 		// Interceptors can be the group name of UnaryClientInterceptorGroups in app/grpc/kernel.go.
 		"clients": map[string]any{
-			"users": map[string]any{
+			"user": map[string]any{
 				"host":         config.Env("GRPC_USER_HOST", ""),
 				"port":         config.Env("GRPC_USER_PORT", ""),
-				"handlers":     []gateway.Handler{users.RegisterUsersServiceHandler},
+				"handlers":     []gateway.Handler{protouser.RegisterUserServiceHandler},
 				"interceptors": []string{},
 			},
 			//"business": map[string]any{

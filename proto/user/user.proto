@@ -1,13 +1,13 @@
 syntax = "proto3";
 
-package users;
+package user;
 
-option go_package="github.com/goravel-ecosystem/market-backend/proto/users";
+option go_package="github.com/goravel-ecosystem/market-backend/proto/user";
 
 import "google/api/annotations.proto";
 import "base/base.proto";
 
-service UsersService {
+service UserService {
   rpc EmailLogin (EmailLoginRequest) returns (EmailLoginResponse) {
     option (google.api.http) = {
       post: "/users/email/login"

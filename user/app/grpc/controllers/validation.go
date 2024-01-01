@@ -6,10 +6,10 @@ import (
 
 	"github.com/goravel/framework/facades"
 
-	"github.com/goravel-ecosystem/market-backend/proto/users"
+	protouser "github.com/goravel-ecosystem/market-backend/proto/user"
 )
 
-func validateEmailLoginRequest(ctx context.Context, req *users.EmailLoginRequest) error {
+func validateEmailLoginRequest(ctx context.Context, req *protouser.EmailLoginRequest) error {
 	if req.GetEmail() == "" {
 		err, _ := facades.Lang(ctx).Get("required.email")
 
@@ -25,7 +25,7 @@ func validateEmailLoginRequest(ctx context.Context, req *users.EmailLoginRequest
 	return nil
 }
 
-func validateEmailRegisterRequest(ctx context.Context, req *users.EmailRegisterRequest) error {
+func validateEmailRegisterRequest(ctx context.Context, req *protouser.EmailRegisterRequest) error {
 	if req.GetEmail() == "" {
 		err, _ := facades.Lang(ctx).Get("required.email")
 

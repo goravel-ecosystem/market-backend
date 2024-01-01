@@ -1,24 +1,16 @@
 package config
 
 import (
-	"github.com/goravel/framework/contracts/route"
 	"github.com/goravel/framework/facades"
-	ginfacades "github.com/goravel/gin/facades"
 )
 
 func init() {
 	config := facades.Config()
 	config.Add("http", map[string]any{
 		// HTTP Driver
-		"default": "gin",
+		"default": "",
 		// HTTP Drivers
-		"drivers": map[string]any{
-			"gin": map[string]any{
-				"route": func() (route.Route, error) {
-					return ginfacades.Route("gin"), nil
-				},
-			},
-		},
+		"drivers": map[string]any{},
 		// HTTP URL
 		"url": config.Env("APP_URL", "http://localhost"),
 		// HTTP Host

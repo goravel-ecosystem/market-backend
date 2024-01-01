@@ -3,7 +3,7 @@ package routes
 import (
 	"github.com/goravel/framework/facades"
 
-	"github.com/goravel-ecosystem/market-backend/users/app/http/controllers"
+	"github.com/goravel-ecosystem/market-backend/user/app/http/controllers"
 )
 
 func Api() {

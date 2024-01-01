@@ -22,9 +22,8 @@ import (
 	"github.com/goravel/framework/testing"
 	"github.com/goravel/framework/translation"
 	"github.com/goravel/framework/validation"
-	"github.com/goravel/gin"
 
-	"github.com/goravel-ecosystem/market-backend/users/app/providers"
+	"github.com/goravel-ecosystem/market-backend/user/app/providers"
 )
 
 // Boot Start all init methods of the current folder to bootstrap all config.
@@ -103,14 +102,12 @@ func init() {
 			&translation.ServiceProvider{},
 			&providers.AppServiceProvider{},
 			&providers.AuthServiceProvider{},
-			&providers.RouteServiceProvider{},
 			&providers.GrpcServiceProvider{},
 			&providers.ConsoleServiceProvider{},
 			&providers.QueueServiceProvider{},
 			&providers.EventServiceProvider{},
 			&providers.ValidationServiceProvider{},
 			&providers.DatabaseServiceProvider{},
-			&gin.ServiceProvider{},
 		},
 	})
 }

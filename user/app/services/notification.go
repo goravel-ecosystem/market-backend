@@ -43,7 +43,7 @@ func (r *NotificationImpl) SendRegisterEmailCode(ctx context.Context, email stri
 		if err := facades.Mail().To([]string{email}).Content(mail.Content{
 			Subject: subject,
 			Html:    html,
-		}).Queue(nil); err != nil {
+		}).Queue(); err != nil {
 			return err
 		}
 	}

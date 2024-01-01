@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/goravel/framework/facades"
 
-	"github.com/goravel-ecosystem/market-backend/users/bootstrap"
+	"github.com/goravel-ecosystem/market-backend/user/bootstrap"
 )
 
 func main() {

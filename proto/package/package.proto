@@ -1,13 +1,13 @@
 syntax = "proto3";
 
-package user;
+package package;
 
-option go_package="github.com/goravel-ecosystem/market-backend/proto/business";
+option go_package="github.com/goravel-ecosystem/market-backend/proto/package";
 
 import "google/api/annotations.proto";
 import "base/base.proto";
 
-service BusinessService {
+service PackageService {
   rpc GetPackage (GetPackageRequest) returns (GetPackageResponse) {
     option (google.api.http) = {
       post: "/business/packages/{id}"
