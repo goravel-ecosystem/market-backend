@@ -5,6 +5,7 @@ import (
 	"crypto/md5"
 	"fmt"
 	"math/rand"
+	"time"
 
 	"github.com/goravel/framework/contracts/mail"
 	"github.com/goravel/framework/contracts/translation"
@@ -14,6 +15,7 @@ import (
 	"github.com/goravel-ecosystem/market-backend/user/app/helper"
 )
 
+//go:generate mockery --name=Notification
 type Notification interface {
 	SendEmailRegisterCode(ctx context.Context, email string) (key string, err error)
 	VerifyEmailRegisterCode(key, code string) bool
@@ -28,18 +30,18 @@ func NewNotificationImpl() *NotificationImpl {
 
 func (r *NotificationImpl) SendEmailRegisterCode(ctx context.Context, email string) (key string, err error) {
 	var code int
-	if helper.IsProduction() || helper.IsStaging() {
+	if helper.IsProduction() || helper.IsDevelopment() {
 		code = rand.Intn(899999) + 100000
 	} else {
 		code = 123123
 	}
 
 	key = r.getEmailRegisterCodeKey(email)
-	if err := facades.Cache().Put(key, fmt.Sprintf("%d", code), 60*5); err != nil {
+	if err := facades.Cache().Put(key, fmt.Sprintf("%d", code), 60*5*time.Second); err != nil {
 		return "", err
 	}
 
-	if helper.IsProduction() || helper.IsStaging() {
+	if helper.IsProduction() || helper.IsDevelopment() {
 		subject, _ := facades.Lang(ctx).Get("register_code.subject", translation.Option{
 			Replace: map[string]string{
 				"code": fmt.Sprintf("%d", code),

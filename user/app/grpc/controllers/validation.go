@@ -3,8 +3,7 @@ package controllers
 import (
 	"context"
 	"errors"
-	"net/mail"
-	"strings"
+	"regexp"
 
 	"github.com/goravel/framework/facades"
 
@@ -53,13 +52,11 @@ func validateEmailValid(ctx context.Context, email string) error {
 		return errors.New(requiredEmail)
 	}
 
-	invalidEmail, _ := facades.Lang(ctx).Get("invalid.email")
+	pattern := `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`
 
-	if strings.Contains(strings.Trim(email, " "), " ") {
-		return errors.New(invalidEmail)
-	}
+	if matched, err := regexp.MatchString(pattern, email); !matched || err != nil {
+		invalidEmail, _ := facades.Lang(ctx).Get("invalid.email")
 
-	if _, err := mail.ParseAddress(email); err != nil {
 		return errors.New(invalidEmail)
 	}
 

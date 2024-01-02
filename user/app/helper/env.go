@@ -8,6 +8,6 @@ func IsProduction() bool {
 	return facades.Config().GetString("app.env") == "production"
 }
 
-func IsStaging() bool {
-	return facades.Config().GetString("app.env") == "staging"
+func IsDevelopment() bool {
+	return facades.Config().GetString("app.env") == "development"
 }

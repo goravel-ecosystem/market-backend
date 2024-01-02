@@ -1,7 +1,7 @@
 {
   "register_code.subject": "Register Code",
   "register_code.content": "Your register code is: :code, please finish your registration in 5 minutes.",
-  "required_email": "Email is required",
+  "required.email": "Email is required",
   "required.password": "Password is required",
   "required.code": "Code is required",
   "required.token": "Token is required",
