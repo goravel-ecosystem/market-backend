@@ -32,3 +32,7 @@ Based on the request process, we can get some key points:
    HTTP routing to the corresponding GRPC endpoint;
 4. If you want to get the current login user information in a microservice, you can add `string user_id = 1`, 
    `string user_id = 2` to your GRPC request, the fields will be filled by gateway automatically; 
+
+## Required Tools
+
+- [Mockery](https://vektra.github.io/mockery/latest/installation/#github-release): Generate mock files for testing.
