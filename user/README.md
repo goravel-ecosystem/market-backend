@@ -39,3 +39,9 @@ go run . artisan jwt:secret
 ```
 docker-compose up -d
 ```
+
+## Generate Mock Files
+
+```bash
+mockery
+```

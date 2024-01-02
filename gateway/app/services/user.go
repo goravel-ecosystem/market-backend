@@ -15,9 +15,10 @@ import (
 
 var userInstance *UserImpl
 var userOnce sync.Once
+var _ User = (*UserImpl)(nil)
 
 type User interface {
-	GetUserByToken(ctx context.Context, token string) (user *protouser.User, err error)
+	GetUserByToken(ctx context.Context, token string) (*protouser.User, error)
 }
 
 type UserImpl struct {

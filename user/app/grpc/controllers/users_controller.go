@@ -8,6 +8,7 @@ import (
 	"github.com/goravel/framework/http"
 
 	protouser "github.com/goravel-ecosystem/market-backend/proto/user"
+
 	"github.com/goravel-ecosystem/market-backend/user/app/services"
 )
 
@@ -18,7 +19,7 @@ type UsersController struct {
 
 func NewUsersController() *UsersController {
 	return &UsersController{
-		notificationService: services.NewNotification(),
+		notificationService: services.NewNotificationImpl(),
 	}
 }
 
@@ -53,7 +54,7 @@ func (r *UsersController) EmailRegister(ctx context.Context, req *protouser.Emai
 		}, nil
 	}
 
-	if !r.notificationService.VerifyRegisterEmailCode(req.GetEmail(), req.GetCode()) {
+	if !r.notificationService.VerifyEmailRegisterCode(req.GetEmail(), req.GetCode()) {
 		invalidCode, _ := facades.Lang(ctx).Get("invalid.code")
 
 		return &protouser.EmailRegisterResponse{
@@ -70,23 +71,23 @@ func (r *UsersController) EmailRegister(ctx context.Context, req *protouser.Emai
 	}, nil
 }
 
-func (r *UsersController) GetEmailCode(ctx context.Context, req *protouser.GetEmailCodeRequest) (*protouser.GetEmailCodeResponse, error) {
-	if req.GetEmail() == "" {
-		requiredEmail, _ := facades.Lang(ctx).Get("required_email")
-
-		return &protouser.GetEmailCodeResponse{
-			Status: NewBadRequestStatus(errors.New(requiredEmail)),
-		}, nil
-	}
-
-	if err := r.notificationService.SendRegisterEmailCode(ctx, req.GetEmail()); err != nil {
-		return &protouser.GetEmailCodeResponse{
+func (r *UsersController) GetEmailRegisterCode(ctx context.Context, req *protouser.GetEmailRegisterCodeRequest) (*protouser.GetEmailRegisterCodeResponse, error) {
+	if err := validateGetEmailRegisterCodeRequest(ctx, req); err != nil {
+		return &protouser.GetEmailRegisterCodeResponse{
 			Status: NewBadRequestStatus(err),
 		}, nil
 	}
 
-	return &protouser.GetEmailCodeResponse{
+	key, err := r.notificationService.SendEmailRegisterCode(ctx, req.GetEmail())
+	if err != nil {
+		return &protouser.GetEmailRegisterCodeResponse{
+			Status: NewBadRequestStatus(err),
+		}, nil
+	}
+
+	return &protouser.GetEmailRegisterCodeResponse{
 		Status: NewOkStatus(),
+		Key:    key,
 	}, nil
 }
 

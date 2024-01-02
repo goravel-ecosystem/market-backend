@@ -1,0 +1,57 @@
+# https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+version: 2
+updates:
+  - package-ecosystem: gomod
+    directory: /gateway
+    schedule:
+      interval: daily
+    groups:
+      go-modules:
+        patterns:
+          - "*"
+    open-pull-requests-limit: 100
+  - package-ecosystem: gomod
+    directory: /user
+    schedule:
+      interval: daily
+    groups:
+      go-modules:
+        patterns:
+          - "*"
+    open-pull-requests-limit: 100
+  - package-ecosystem: gomod
+    directory: /package
+    schedule:
+      interval: daily
+    groups:
+      go-modules:
+        patterns:
+          - "*"
+    open-pull-requests-limit: 100
+  - package-ecosystem: github-actions
+    directory: /gateway
+    schedule:
+      interval: daily
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+    open-pull-requests-limit: 100
+  - package-ecosystem: github-actions
+    directory: /user
+    schedule:
+      interval: daily
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+    open-pull-requests-limit: 100
+  - package-ecosystem: github-actions
+    directory: /package
+    schedule:
+      interval: daily
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+    open-pull-requests-limit: 100

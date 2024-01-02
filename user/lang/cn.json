@@ -6,5 +6,6 @@
   "required.code": "验证码不能为空",
   "required.token": "Token 不能为空",
   "required.user_id": "UserID 不能为空",
-  "invalid.code": "验证码错误"
+  "invalid.code": "验证码错误",
+  "invalid.email": "邮箱格式错误"
 }

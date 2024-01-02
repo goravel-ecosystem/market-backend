@@ -20,10 +20,9 @@ service UserService {
       body: "*"
     };
   }
-  rpc GetEmailCode (GetEmailCodeRequest) returns (GetEmailCodeResponse) {
+  rpc GetEmailRegisterCode (GetEmailRegisterCodeRequest) returns (GetEmailRegisterCodeResponse) {
     option (google.api.http) = {
-      post: "/users/email/code"
-      body: "*"
+      get: "/users/email/register/code"
     };
   }
   rpc GetUser (GetUserRequest) returns (GetUserResponse){
@@ -62,12 +61,13 @@ message EmailRegisterResponse {
   string token = 3;
 }
 
-message GetEmailCodeRequest {
+message GetEmailRegisterCodeRequest {
   string email = 1;
 }
 
-message GetEmailCodeResponse {
+message GetEmailRegisterCodeResponse {
   base.Status status = 1;
+  string key = 2;
 }
 
 message GetUserRequest {

@@ -1,4 +1,4 @@
-package services
+package helper
 
 import (
 	"github.com/goravel/framework/facades"
@@ -6,4 +6,8 @@ import (
 
 func IsProduction() bool {
 	return facades.Config().GetString("app.env") == "production"
+}
+
+func IsDevelopment() bool {
+	return facades.Config().GetString("app.env") == "development"
 }

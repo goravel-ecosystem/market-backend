@@ -5,7 +5,7 @@ import (
 )
 
 type User struct {
-	orm.Model
+	UUIDModel
 	Email    string
 	Password string
 	Name     string
