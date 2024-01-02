@@ -9,27 +9,37 @@ import (
 	"github.com/goravel/framework/contracts/mail"
 	"github.com/goravel/framework/contracts/translation"
 	"github.com/goravel/framework/facades"
+	"github.com/goravel/framework/support/carbon"
+
+	"github.com/goravel-ecosystem/market-backend/user/app/helper"
 )
 
 type Notification interface {
-	SendRegisterEmailCode(ctx context.Context, email string) error
-	VerifyRegisterEmailCode(email, code string) bool
+	SendEmailRegisterCode(ctx context.Context, email string) (key string, err error)
+	VerifyEmailRegisterCode(key, code string) bool
 }
 
 type NotificationImpl struct {
 }
 
-func NewNotification() *NotificationImpl {
+func NewNotificationImpl() *NotificationImpl {
 	return &NotificationImpl{}
 }
 
-func (r *NotificationImpl) SendRegisterEmailCode(ctx context.Context, email string) error {
-	code := rand.Intn(899999) + 100000
-	if err := facades.Cache().Put(r.getRegisterEmailCodeKey(email), fmt.Sprintf("%d", code), 60*5); err != nil {
-		return err
+func (r *NotificationImpl) SendEmailRegisterCode(ctx context.Context, email string) (key string, err error) {
+	var code int
+	if helper.IsProduction() || helper.IsStaging() {
+		code = rand.Intn(899999) + 100000
+	} else {
+		code = 123123
 	}
 
-	if IsProduction() {
+	key = r.getEmailRegisterCodeKey(email)
+	if err := facades.Cache().Put(key, fmt.Sprintf("%d", code), 60*5); err != nil {
+		return "", err
+	}
+
+	if helper.IsProduction() || helper.IsStaging() {
 		subject, _ := facades.Lang(ctx).Get("register_code.subject", translation.Option{
 			Replace: map[string]string{
 				"code": fmt.Sprintf("%d", code),
@@ -44,16 +54,16 @@ func (r *NotificationImpl) SendRegisterEmailCode(ctx context.Context, email stri
 			Subject: subject,
 			Html:    html,
 		}).Queue(); err != nil {
-			return err
+			return "", err
 		}
 	}
 
-	return nil
+	return key, nil
 }
 
-func (r *NotificationImpl) VerifyRegisterEmailCode(email, code string) bool {
-	if facades.Cache().GetString(r.getRegisterEmailCodeKey(email)) == code {
-		facades.Cache().Forget(r.getRegisterEmailCodeKey(email))
+func (r *NotificationImpl) VerifyEmailRegisterCode(key, code string) bool {
+	if facades.Cache().GetString(key) == code {
+		facades.Cache().Forget(key)
 
 		return true
 	}
@@ -61,6 +71,6 @@ func (r *NotificationImpl) VerifyRegisterEmailCode(email, code string) bool {
 	return false
 }
 
-func (r *NotificationImpl) getRegisterEmailCodeKey(email string) string {
-	return fmt.Sprintf("%x", md5.Sum([]byte(email)))
+func (r *NotificationImpl) getEmailRegisterCodeKey(email string) string {
+	return fmt.Sprintf("%x", md5.Sum([]byte(fmt.Sprintf("email_register_code_%s_%s", email, carbon.Now().ToDateNanoString()))))
 }

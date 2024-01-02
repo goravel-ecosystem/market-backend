@@ -6,5 +6,6 @@
   "required.code": "Code is required",
   "required.token": "Token is required",
   "required.user_id": "UserID is required",
-  "invalid.code": "Code is invalid"
+  "invalid.code": "Code is invalid",
+  "invalid.email": "Email is invalid"
 }
