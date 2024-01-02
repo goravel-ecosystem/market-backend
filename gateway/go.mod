@@ -4,7 +4,7 @@ go 1.21.0
 
 require (
 	github.com/goravel-ecosystem/market-backend/proto v0.0.0
-	github.com/goravel/framework v1.13.5
+	github.com/goravel/framework v1.13.7
 	github.com/goravel/gateway v0.0.2
 	github.com/goravel/gin v1.1.6
 	github.com/stretchr/testify v1.8.4
