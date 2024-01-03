@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package package;
+
+option go_package="market.goravel.dev/proto/package";
+
+import "google/api/annotations.proto";
+import "base/base.proto";
+
+service PackageService {
+  rpc GetPackage (GetPackageRequest) returns (GetPackageResponse) {
+    option (google.api.http) = {
+      post: "/business/packages/{id}"
+      body: "*"
+    };
+  }
+}
+
+message Package {
+  string id = 1;
+  string user_id = 2;
+  string name = 3;
+  string summary = 4;
+  string description = 5;
+  string link = 6;
+  string version = 7;
+  string last_updated = 8;
+  string created_at = 9;
+  string updated_at = 10;
+  string deleted_at = 11;
+}
+
+message GetPackageRequest {
+  string user_id = 1;
+  string id = 10;
+}
+
+message GetPackageResponse {
+  base.Status status = 1;
+  Package package = 2;
+}

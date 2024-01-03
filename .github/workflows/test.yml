@@ -22,7 +22,7 @@ jobs:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ matrix.go }}-${{ hashFiles('go.mod') }}
       - name: Install dependencies
-        run: go mod tidy
+        run: cd src/go && go mod tidy
       - name: Run tests
         run: go test ./...
   windows:
@@ -42,6 +42,6 @@ jobs:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ matrix.go }}-${{ hashFiles('go.mod') }}
       - name: Install dependencies
-        run: go mod tidy
+        run: cd src/go && go mod tidy
       - name: Run tests
         run: go test ./...

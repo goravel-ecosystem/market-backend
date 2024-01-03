@@ -21,7 +21,7 @@ jobs:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ hashFiles('go.mod') }}
       - name: Install dependencies
-        run: go mod tidy
+        run: cd src/go && go mod tidy
       - name: Lint
         uses: golangci/golangci-lint-action@v3
         with:
