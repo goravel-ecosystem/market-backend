@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  db:
+    image: postgres
+    restart: always
+    ports:
+      - 5434:5432
+    environment:
+      POSTGRES_DB: goravel
+      POSTGRES_USER: goravel
+      POSTGRES_PASSWORD: goravel
