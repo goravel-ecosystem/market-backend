@@ -12,10 +12,8 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version: 'stable'
-      - name: Move to go path
-        run: cd src/go
       - name: Install dependencies
-        run: go mod tidy
+        run: cd src/go && go mod tidy
       - name: Run tests with coverage
         run: go test -v -coverprofile="coverage.out" ./...
       - name: Upload coverage report to Codecov
