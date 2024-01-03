@@ -12,6 +12,8 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version: 'stable'
+      - name: Move to go path
+        run: cd src/go
       - name: Install dependencies
         run: go mod tidy
       - name: Run tests with coverage

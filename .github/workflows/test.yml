@@ -21,6 +21,8 @@ jobs:
         with:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ matrix.go }}-${{ hashFiles('go.mod') }}
+      - name: Move to go path
+        run: cd src/go
       - name: Install dependencies
         run: go mod tidy
       - name: Run tests
@@ -41,6 +43,8 @@ jobs:
         with:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ matrix.go }}-${{ hashFiles('go.mod') }}
+      - name: Move to go path
+        run: cd src/go
       - name: Install dependencies
         run: go mod tidy
       - name: Run tests

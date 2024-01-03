@@ -35,4 +35,12 @@ Based on the request process, we can get some key points:
 
 ## Required Tools
 
-- [Mockery](https://vektra.github.io/mockery/latest/installation/#github-release): Generate mock files for testing.
+- [mockery](https://vektra.github.io/mockery/latest/installation/#github-release): Generate mock files for testing.
+- [protoc](https://grpc.io/docs/protoc-installation/): Generate proto files.
+- [protoc-gen-go](https://grpc.io/docs/languages/go/quickstart/#prerequisites): Generate go files from proto files.
+  - `go install google.golang.org/protobuf/cmd/protoc-gen-go@latest`
+- [protoc-gen-go-grpc](https://grpc.io/docs/languages/go/quickstart/#prerequisites): Generate go grpc files from proto 
+  files.
+  - `go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest`
+- [protoc-gen-grpc-gateway](https://github.com/grpc-ecosystem/grpc-gateway): Generate grpc gateway files from proto files.
+  - `go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@v2`

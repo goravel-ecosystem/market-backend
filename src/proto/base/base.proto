@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package base;
 
-option go_package="github.com/goravel-ecosystem/market-backend/proto/base";
+option go_package="market.goravel.dev/proto/base";
 
 message Status {
   int32 code = 1;

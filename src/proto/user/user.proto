@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package user;
 
-option go_package="github.com/goravel-ecosystem/market-backend/proto/user";
+option go_package="market.goravel.dev/proto/user";
 
 import "google/api/annotations.proto";
 import "base/base.proto";
