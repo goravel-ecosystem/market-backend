@@ -4,7 +4,7 @@ go 1.21.0
 
 require (
 	github.com/bwmarrin/snowflake v0.3.0
-	github.com/gookit/goutil v0.6.12
+	github.com/gookit/goutil v0.6.14
 	github.com/goravel/framework v1.13.7
 	github.com/goravel/gateway v0.0.3-0.20240102031345-e5d47620fb9b
 	github.com/goravel/gin v1.1.6-0.20231228003349-6f44e2c1bc5d
@@ -12,7 +12,7 @@ require (
 	github.com/stretchr/testify v1.8.4
 	google.golang.org/genproto/googleapis/api v0.0.0-20231106174013-bbf56f31fb17
 	google.golang.org/grpc v1.60.1
-	google.golang.org/protobuf v1.31.0
+	google.golang.org/protobuf v1.32.0
 )
 
 require (
