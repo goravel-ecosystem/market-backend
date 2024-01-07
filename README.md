@@ -2,12 +2,12 @@
 
 Providers a backend for Goravel Market. In facilitate deployment and testing, we put all microservices in this project.
 
-## Folder Structure
+## Microservices
 
-- [gateway](gateway/README.md): The gateway microservice provides a unified entry point for all clients.
-- [package](package/README.md): The package microservice is responsible for all kinds of operations on package.
-- [proto](proto/README.md): Define the proto files for all microservices.
-- [user](user/README.md): The user microservice is responsible for user registration, login, and other functions.
+- [gateway](src/go/gateway/README.md): The gateway microservice provides a unified entry point for all clients.
+- [package](src/go/package/README.md): The package microservice is responsible for all kinds of operations on package.
+- [proto](src/proto/README.md): Define the proto files for all microservices.
+- [user](src/go/user/README.md): The user microservice is responsible for user registration, login, and other functions.
 
 ## The Request Process
 

@@ -19,4 +19,7 @@ package:
 		--grpc-gateway_out=../go/proto --grpc-gateway_opt=paths=source_relative,generate_unbound_methods=true \
 		package/package.proto
 
-all: base user package
+doc:
+	protoc -I=./ --doc_out=../doc --doc_opt=html,index.html */*.proto
+
+all: base user package doc
