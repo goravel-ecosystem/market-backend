@@ -1,0 +1,20 @@
+name: Doc
+on:
+  pull_request:
+jobs:
+  mockery:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Install Protoc
+        run: |
+          apt install -y protobuf-compiler
+          go install -u github.com/pseudomuto/protoc-gen-doc/cmd/protoc-gen-doc
+      - name: Generate Doc
+        run: |
+          cd src/proto && make -B doc
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        name: Commit changes
+        with:
+          commit_message: "chore: update doc"
