@@ -3,12 +3,19 @@ on:
   pull_request:
 jobs:
   doc:
+    strategy:
+      matrix:
+        go:
+          - "1.21"
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ matrix.go }}
       - name: Install Protoc
         run: |
           sudo apt update
