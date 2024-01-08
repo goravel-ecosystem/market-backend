@@ -18,7 +18,7 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y protobuf-compiler
-          go install -u github.com/pseudomuto/protoc-gen-doc/cmd/protoc-gen-doc
+          go install github.com/pseudomuto/protoc-gen-doc/cmd/protoc-gen-doc
       - name: Generate Doc
         run: |
           cd src/proto && make -B doc
