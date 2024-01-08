@@ -49,4 +49,4 @@ Based on the request process, we can get some key points:
 - [protoc-gen-grpc-gateway](https://github.com/grpc-ecosystem/grpc-gateway): Generate grpc gateway files from proto files.
   - `go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@v2`
 - [protoc-gen-doc](https://github.com/pseudomuto/protoc-gen-doc): Generate documentation from proto files.
-  - `go install -u github.com/pseudomuto/protoc-gen-doc/cmd/protoc-gen-doc`
+  - `go install github.com/pseudomuto/protoc-gen-doc/cmd/protoc-gen-doc@latest`
