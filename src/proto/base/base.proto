@@ -5,6 +5,12 @@ package base;
 option go_package="market.goravel.dev/proto/base";
 
 message Status {
+  /**
+   * 200: success
+   * 4xx: known error
+   * 5xx: unknown error
+   */
   int32 code = 1;
+  // error message
   string error = 2;
 }
