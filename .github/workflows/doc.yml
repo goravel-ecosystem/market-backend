@@ -2,14 +2,22 @@ name: Doc
 on:
   pull_request:
 jobs:
-  mockery:
+  doc:
+    strategy:
+      matrix:
+        go:
+          - "1.21"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ matrix.go }}
       - name: Install Protoc
         run: |
-          apt-get install -y protobuf-compiler
+          sudo apt update
+          sudo apt install -y protobuf-compiler
           go install -u github.com/pseudomuto/protoc-gen-doc/cmd/protoc-gen-doc
       - name: Generate Doc
         run: |
