@@ -1,0 +1,30 @@
+name: Doc
+on:
+  pull_request:
+jobs:
+  doc:
+    strategy:
+      matrix:
+        go:
+          - "1.21"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ matrix.go }}
+      - name: Install Protoc
+        run: |
+          sudo apt update
+          sudo apt install -y protobuf-compiler
+          go install github.com/pseudomuto/protoc-gen-doc/cmd/protoc-gen-doc@latest
+      - name: Generate Doc
+        run: |
+          cd src/proto && make -B doc
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        name: Commit changes
+        with:
+          commit_message: "chore: update doc"

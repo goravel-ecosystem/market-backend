@@ -9,6 +9,10 @@ Providers a backend for Goravel Market. In facilitate deployment and testing, we
 - [proto](src/proto/README.md): Define the proto files for all microservices.
 - [user](src/go/user/README.md): The user microservice is responsible for user registration, login, and other functions.
 
+## API Documentation
+
+[Link](https://htmlpreview.github.io/?https://github.com/goravel-ecosystem/market-backend/blob/master/src/doc/index.html#string)
+
 ## The Request Process
 
 1. A request from the client;
@@ -44,3 +48,5 @@ Based on the request process, we can get some key points:
   - `go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest`
 - [protoc-gen-grpc-gateway](https://github.com/grpc-ecosystem/grpc-gateway): Generate grpc gateway files from proto files.
   - `go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@v2`
+- [protoc-gen-doc](https://github.com/pseudomuto/protoc-gen-doc): Generate documentation from proto files.
+  - `go install github.com/pseudomuto/protoc-gen-doc/cmd/protoc-gen-doc@latest`

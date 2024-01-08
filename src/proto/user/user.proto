@@ -7,32 +7,6 @@ option go_package="market.goravel.dev/proto/user";
 import "google/api/annotations.proto";
 import "base/base.proto";
 
-service UserService {
-  rpc EmailLogin (EmailLoginRequest) returns (EmailLoginResponse) {
-    option (google.api.http) = {
-      post: "/users/email/login"
-      body: "*"
-    };
-  }
-  rpc EmailRegister (EmailRegisterRequest) returns (EmailRegisterResponse) {
-    option (google.api.http) = {
-      post: "/users/email/register"
-      body: "*"
-    };
-  }
-  rpc GetEmailRegisterCode (GetEmailRegisterCodeRequest) returns (GetEmailRegisterCodeResponse) {
-    option (google.api.http) = {
-      get: "/users/email/register/code"
-    };
-  }
-  rpc GetUser (GetUserRequest) returns (GetUserResponse){
-    option (google.api.http) = {
-      get: "/users/self"
-    };
-  }
-  rpc GetUserByToken (GetUserByTokenRequest) returns (GetUserByTokenResponse){}
-}
-
 message User {
   string id = 1;
   string name = 2;
@@ -62,11 +36,13 @@ message EmailRegisterResponse {
 }
 
 message GetEmailRegisterCodeRequest {
+  // Register email
   string email = 1;
 }
 
 message GetEmailRegisterCodeResponse {
   base.Status status = 1;
+  // Code key, be used in the EmailRegister endpoint
   string key = 2;
 }
 
@@ -86,4 +62,35 @@ message GetUserByTokenRequest {
 message GetUserByTokenResponse {
   base.Status status = 1;
   User user = 2;
+}
+
+service UserService {
+  rpc EmailLogin (EmailLoginRequest) returns (EmailLoginResponse) {
+    option (google.api.http) = {
+      post: "/users/email/login"
+      body: "*"
+    };
+  }
+  rpc EmailRegister (EmailRegisterRequest) returns (EmailRegisterResponse) {
+    option (google.api.http) = {
+      post: "/users/email/register"
+      body: "*"
+    };
+  }
+
+  /*
+   * Get email register code
+   */
+  rpc GetEmailRegisterCode (GetEmailRegisterCodeRequest) returns (GetEmailRegisterCodeResponse) {
+    option (google.api.http) = {
+      get: "/users/email/register/code"
+    };
+  }
+
+  rpc GetUser (GetUserRequest) returns (GetUserResponse){
+    option (google.api.http) = {
+      get: "/users/self"
+    };
+  }
+  rpc GetUserByToken (GetUserByTokenRequest) returns (GetUserByTokenResponse){}
 }
