@@ -8,9 +8,11 @@ import (
 	mockstranslation "github.com/goravel/framework/mocks/translation"
 	testingmock "github.com/goravel/framework/testing/mock"
 	"github.com/stretchr/testify/suite"
-	protouser "market.goravel.dev/proto/user"
 
-	mocksservice "market.goravel.dev/user/mocks/services"
+	protouser "market.goravel.dev/proto/user"
+	utilserrors "market.goravel.dev/utils/errors"
+
+	mocksservice "market.goravel.dev/user/app/mocks/services"
 )
 
 type UsersControllerSuite struct {
@@ -27,7 +29,8 @@ func TestUsersControllerSuite(t *testing.T) {
 
 func (s *UsersControllerSuite) SetupTest() {
 	s.ctx = context.Background()
-	s.mockLang = testingmock.Lang(s.ctx)
+	mockFactory := testingmock.Factory()
+	s.mockLang = mockFactory.Lang(s.ctx)
 	s.mockNotificationService = &mocksservice.Notification{}
 	s.usersController = &UsersController{
 		notificationService: s.mockNotificationService,
@@ -61,28 +64,24 @@ func (s *UsersControllerSuite) TestGetEmailRegisterCode() {
 			},
 		},
 		{
-			name: "Error path - SendEmailRegisterCode returns error",
+			name: "Sad path - SendEmailRegisterCode returns error",
 			request: &protouser.GetEmailRegisterCodeRequest{
 				Email: email,
 			},
 			setup: func() {
 				s.mockNotificationService.On("SendEmailRegisterCode", s.ctx, email).Return("", errors.New("error")).Once()
 			},
-			expectedResponse: &protouser.GetEmailRegisterCodeResponse{
-				Status: NewBadRequestStatus(errors.New("error")),
-			},
+			expectedErr: utilserrors.NewValidate("error"),
 		},
 		{
-			name: "Error path - validateGetEmailRegisterCodeRequest returns error",
+			name: "Sad path - validateGetEmailRegisterCodeRequest returns error",
 			request: &protouser.GetEmailRegisterCodeRequest{
 				Email: "",
 			},
 			setup: func() {
-				s.mockLang.On("Get", "required.email").Return("required.email", nil).Once()
+				s.mockLang.On("Get", "required.email").Return("email is required").Once()
 			},
-			expectedResponse: &protouser.GetEmailRegisterCodeResponse{
-				Status: NewBadRequestStatus(errors.New("required.email")),
-			},
+			expectedErr: utilserrors.NewValidate("email is required"),
 		},
 	}
 

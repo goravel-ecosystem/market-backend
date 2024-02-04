@@ -41,11 +41,11 @@ func (s *AuthTestSuite) TestSendEmailRegisterCode() {
 	)
 
 	beforeEach := func() {
-		testingmock.Init()
-		mockCache, _, _ = testingmock.Cache()
-		mockConfig = testingmock.Config()
-		mockMail = testingmock.Mail()
-		mockLang = testingmock.Lang(ctx)
+		mockFactory := testingmock.Factory()
+		mockCache = mockFactory.Cache()
+		mockConfig = mockFactory.Config()
+		mockMail = mockFactory.Mail()
+		mockLang = mockFactory.Lang(ctx)
 	}
 
 	tests := []struct {
@@ -65,10 +65,10 @@ func (s *AuthTestSuite) TestSendEmailRegisterCode() {
 				}), 300*time.Second).Return(nil).Once()
 				mockLang.On("Get", "register_code.subject", mock.MatchedBy(func(option translation.Option) bool {
 					return len(option.Replace["code"]) == 6
-				})).Return("subject", nil).Once()
+				})).Return("subject").Once()
 				mockLang.On("Get", "register_code.content", mock.MatchedBy(func(option translation.Option) bool {
 					return len(option.Replace["code"]) == 6
-				})).Return("html", nil).Once()
+				})).Return("html").Once()
 				mockMail.On("To", []string{email}).Return(mockMail).Once()
 				mockMail.On("Content", mail.Content{Subject: "subject", Html: "html"}).Return(mockMail).Once()
 				mockMail.On("Queue").Return(nil).Once()
@@ -86,10 +86,10 @@ func (s *AuthTestSuite) TestSendEmailRegisterCode() {
 				}), 300*time.Second).Return(nil).Once()
 				mockLang.On("Get", "register_code.subject", mock.MatchedBy(func(option translation.Option) bool {
 					return len(option.Replace["code"]) == 6
-				})).Return("subject", nil).Once()
+				})).Return("subject").Once()
 				mockLang.On("Get", "register_code.content", mock.MatchedBy(func(option translation.Option) bool {
 					return len(option.Replace["code"]) == 6
-				})).Return("html", nil).Once()
+				})).Return("html").Once()
 				mockMail.On("To", []string{email}).Return(mockMail).Once()
 				mockMail.On("Content", mail.Content{Subject: "subject", Html: "html"}).Return(mockMail).Once()
 				mockMail.On("Queue").Return(nil).Once()
@@ -109,7 +109,7 @@ func (s *AuthTestSuite) TestSendEmailRegisterCode() {
 			expectedKeyLen: 32,
 		},
 		{
-			name: "Error path - send email failed",
+			name: "Sad path - send email failed",
 			setup: func() {
 				mockConfig.On("GetString", "app.env").Return("production").Twice()
 				mockCache.On("Put", mock.MatchedBy(func(key string) bool {
@@ -119,10 +119,10 @@ func (s *AuthTestSuite) TestSendEmailRegisterCode() {
 				}), 300*time.Second).Return(nil).Once()
 				mockLang.On("Get", "register_code.subject", mock.MatchedBy(func(option translation.Option) bool {
 					return len(option.Replace["code"]) == 6
-				})).Return("subject", nil).Once()
+				})).Return("subject").Once()
 				mockLang.On("Get", "register_code.content", mock.MatchedBy(func(option translation.Option) bool {
 					return len(option.Replace["code"]) == 6
-				})).Return("html", nil).Once()
+				})).Return("html").Once()
 				mockMail.On("To", []string{email}).Return(mockMail).Once()
 				mockMail.On("Content", mail.Content{Subject: "subject", Html: "html"}).Return(mockMail).Once()
 				mockMail.On("Queue").Return(errors.New("error")).Once()
@@ -130,7 +130,7 @@ func (s *AuthTestSuite) TestSendEmailRegisterCode() {
 			expectedErr: errors.New("error"),
 		},
 		{
-			name: "Error path - put cache failed",
+			name: "Sad path - put cache failed",
 			setup: func() {
 				mockConfig.On("GetString", "app.env").Return("production").Once()
 				mockCache.On("Put", mock.MatchedBy(func(key string) bool {

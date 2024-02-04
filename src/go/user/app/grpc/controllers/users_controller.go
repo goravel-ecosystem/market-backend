@@ -8,6 +8,7 @@ import (
 	"github.com/goravel/framework/http"
 
 	protouser "market.goravel.dev/proto/user"
+	utilserrors "market.goravel.dev/utils/errors"
 
 	"market.goravel.dev/user/app/services"
 )
@@ -15,12 +16,72 @@ import (
 type UsersController struct {
 	protouser.UnimplementedUserServiceServer
 	notificationService services.Notification
+	userService         services.User
 }
 
 func NewUsersController() *UsersController {
 	return &UsersController{
 		notificationService: services.NewNotificationImpl(),
+		userService:         services.NewUserImpl(),
 	}
+}
+
+func (r *UsersController) EmailRegister(ctx context.Context, req *protouser.EmailRegisterRequest) (*protouser.EmailRegisterResponse, error) {
+	if err := validateEmailRegisterRequest(ctx, req); err != nil {
+		return nil, err
+	}
+
+	exist, err := r.userService.IsEmailExist(req.GetEmail())
+	if err != nil {
+		return nil, err
+	}
+	if exist {
+		return nil, utilserrors.NewValidate(facades.Lang(ctx).Get("exist.email"))
+	}
+
+	if !r.notificationService.VerifyEmailRegisterCode(req.GetCodeKey(), req.GetCode()) {
+		return nil, utilserrors.NewValidate(facades.Lang(ctx).Get("invalid.code"))
+	}
+
+	user, err := r.userService.Register(req.GetName(), req.GetEmail(), req.GetPassword())
+	if err != nil {
+		return nil, err
+	}
+
+	token, err := facades.Auth(http.Background()).LoginUsingID(user.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &protouser.EmailRegisterResponse{
+		Status: NewOkStatus(),
+		User:   user.ToProto(),
+		Token:  "Bearer " + token,
+	}, nil
+}
+
+func (r *UsersController) GetEmailRegisterCode(ctx context.Context, req *protouser.GetEmailRegisterCodeRequest) (*protouser.GetEmailRegisterCodeResponse, error) {
+	if err := validateGetEmailRegisterCodeRequest(ctx, req); err != nil {
+		return nil, err
+	}
+
+	exist, err := r.userService.IsEmailExist(req.GetEmail())
+	if err != nil {
+		return nil, err
+	}
+	if exist {
+		return nil, utilserrors.NewValidate(facades.Lang(ctx).Get("exist.email"))
+	}
+
+	key, err := r.notificationService.SendEmailRegisterCode(ctx, req.GetEmail())
+	if err != nil {
+		return nil, err
+	}
+
+	return &protouser.GetEmailRegisterCodeResponse{
+		Status: NewOkStatus(),
+		Key:    key,
+	}, nil
 }
 
 func (r *UsersController) EmailLogin(ctx context.Context, req *protouser.EmailLoginRequest) (*protouser.EmailLoginResponse, error) {
@@ -47,57 +108,11 @@ func (r *UsersController) EmailLogin(ctx context.Context, req *protouser.EmailLo
 	}, nil
 }
 
-func (r *UsersController) EmailRegister(ctx context.Context, req *protouser.EmailRegisterRequest) (*protouser.EmailRegisterResponse, error) {
-	if err := validateEmailRegisterRequest(ctx, req); err != nil {
-		return &protouser.EmailRegisterResponse{
-			Status: NewBadRequestStatus(err),
-		}, nil
-	}
-
-	if !r.notificationService.VerifyEmailRegisterCode(req.GetEmail(), req.GetCode()) {
-		invalidCode, _ := facades.Lang(ctx).Get("invalid.code")
-
-		return &protouser.EmailRegisterResponse{
-			Status: NewBadRequestStatus(errors.New(invalidCode)),
-		}, nil
-	}
-
-	return &protouser.EmailRegisterResponse{
-		Status: NewOkStatus(),
-		User: &protouser.User{
-			Id:   "uuid",
-			Name: req.GetEmail(),
-		},
-	}, nil
-}
-
-func (r *UsersController) GetEmailRegisterCode(ctx context.Context, req *protouser.GetEmailRegisterCodeRequest) (*protouser.GetEmailRegisterCodeResponse, error) {
-	if err := validateGetEmailRegisterCodeRequest(ctx, req); err != nil {
-		return &protouser.GetEmailRegisterCodeResponse{
-			Status: NewBadRequestStatus(err),
-		}, nil
-	}
-
-	key, err := r.notificationService.SendEmailRegisterCode(ctx, req.GetEmail())
-	if err != nil {
-		return &protouser.GetEmailRegisterCodeResponse{
-			Status: NewBadRequestStatus(err),
-		}, nil
-	}
-
-	return &protouser.GetEmailRegisterCodeResponse{
-		Status: NewOkStatus(),
-		Key:    key,
-	}, nil
-}
-
 func (r *UsersController) GetUser(ctx context.Context, req *protouser.GetUserRequest) (*protouser.GetUserResponse, error) {
 	userID := req.GetUserId()
 	if userID == "" {
-		requiredUserId, _ := facades.Lang(ctx).Get("required.user_id")
-
 		return &protouser.GetUserResponse{
-			Status: NewBadRequestStatus(errors.New(requiredUserId)),
+			Status: NewBadRequestStatus(errors.New(facades.Lang(ctx).Get("required.user_id"))),
 		}, nil
 	}
 
@@ -120,10 +135,8 @@ func (r *UsersController) GetUser(ctx context.Context, req *protouser.GetUserReq
 func (r *UsersController) GetUserByToken(ctx context.Context, req *protouser.GetUserByTokenRequest) (*protouser.GetUserByTokenResponse, error) {
 	token := req.GetToken()
 	if token == "" {
-		requiredToken, _ := facades.Lang(ctx).Get("required.token")
-
 		return &protouser.GetUserByTokenResponse{
-			Status: NewBadRequestStatus(errors.New(requiredToken)),
+			Status: NewBadRequestStatus(errors.New(facades.Lang(ctx).Get("required.token"))),
 		}, nil
 	}
 

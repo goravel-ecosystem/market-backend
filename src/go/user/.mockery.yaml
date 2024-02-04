@@ -2,3 +2,4 @@ with-expecter: True
 dir: "app"
 keeptree: True
 all: True
+output: "app/mocks"

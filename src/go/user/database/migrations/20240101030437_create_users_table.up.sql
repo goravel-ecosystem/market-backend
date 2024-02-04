@@ -9,3 +9,5 @@ CREATE TABLE users (
   updated_at timestamp NOT NULL,
   deleted_at timestamp DEFAULT NULL
 );
+
+CREATE UNIQUE INDEX idx_unique_email ON users(email);

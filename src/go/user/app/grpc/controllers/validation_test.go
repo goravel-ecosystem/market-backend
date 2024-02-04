@@ -17,8 +17,8 @@ func TestValidateEmailValid(t *testing.T) {
 	)
 
 	beforeEach := func() {
-		testingmock.Init()
-		mockLang = testingmock.Lang(ctx)
+		mockFactory := testingmock.Factory()
+		mockLang = mockFactory.Lang(ctx)
 	}
 
 	tests := []struct {
@@ -34,18 +34,18 @@ func TestValidateEmailValid(t *testing.T) {
 			expectErr: nil,
 		},
 		{
-			name:  "Error path - email invalid",
+			name:  "Sad path - email invalid",
 			email: "hello@goravel",
 			setup: func() {
-				mockLang.On("Get", "invalid.email").Return("invalid email", nil).Once()
+				mockLang.On("Get", "invalid.email").Return("invalid email").Once()
 			},
 			expectErr: errors.New("invalid email"),
 		},
 		{
-			name:  "Error path - email is empty",
+			name:  "Sad path - email is empty",
 			email: "",
 			setup: func() {
-				mockLang.On("Get", "required.email").Return("email is required", nil).Once()
+				mockLang.On("Get", "required.email").Return("email is required").Once()
 			},
 			expectErr: errors.New("email is required"),
 		},

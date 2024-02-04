@@ -12,10 +12,9 @@ import (
 	"github.com/goravel/framework/facades"
 	"github.com/goravel/framework/support/carbon"
 
-	"market.goravel.dev/user/app/helper"
+	"market.goravel.dev/utils/env"
 )
 
-//go:generate mockery --name=Notification
 type Notification interface {
 	SendEmailRegisterCode(ctx context.Context, email string) (key string, err error)
 	VerifyEmailRegisterCode(key, code string) bool
@@ -30,7 +29,7 @@ func NewNotificationImpl() *NotificationImpl {
 
 func (r *NotificationImpl) SendEmailRegisterCode(ctx context.Context, email string) (key string, err error) {
 	var code int
-	if helper.IsProduction() || helper.IsDevelopment() {
+	if env.IsProduction() || env.IsDevelopment() {
 		code = rand.Intn(899999) + 100000
 	} else {
 		code = 123123
@@ -41,13 +40,13 @@ func (r *NotificationImpl) SendEmailRegisterCode(ctx context.Context, email stri
 		return "", err
 	}
 
-	if helper.IsProduction() || helper.IsDevelopment() {
-		subject, _ := facades.Lang(ctx).Get("register_code.subject", translation.Option{
+	if env.IsProduction() || env.IsDevelopment() {
+		subject := facades.Lang(ctx).Get("register_code.subject", translation.Option{
 			Replace: map[string]string{
 				"code": fmt.Sprintf("%d", code),
 			},
 		})
-		html, _ := facades.Lang(ctx).Get("register_code.content", translation.Option{
+		html := facades.Lang(ctx).Get("register_code.content", translation.Option{
 			Replace: map[string]string{
 				"code": fmt.Sprintf("%d", code),
 			},
@@ -64,6 +63,7 @@ func (r *NotificationImpl) SendEmailRegisterCode(ctx context.Context, email stri
 }
 
 func (r *NotificationImpl) VerifyEmailRegisterCode(key, code string) bool {
+	fmt.Println("hwb--", facades.Cache().GetString(key), key, code)
 	if facades.Cache().GetString(key) == code {
 		facades.Cache().Forget(key)
 
