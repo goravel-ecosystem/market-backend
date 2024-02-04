@@ -10,6 +10,9 @@ import "base/base.proto";
 message User {
   string id = 1;
   string name = 2;
+  string email = 3;
+  string avatar = 4;
+  string summary = 5;
 }
 
 message EmailLoginRequest {
@@ -24,9 +27,11 @@ message EmailLoginResponse {
 }
 
 message EmailRegisterRequest {
-  string email = 1;
-  string password = 2;
-  string code = 3;
+  string name = 1;
+  string email = 2;
+  string password = 3;
+  string code = 4;
+  string code_key = 5;
 }
 
 message EmailRegisterResponse {
@@ -65,31 +70,35 @@ message GetUserByTokenResponse {
 }
 
 service UserService {
-  rpc EmailLogin (EmailLoginRequest) returns (EmailLoginResponse) {
-    option (google.api.http) = {
-      post: "/users/email/login"
-      body: "*"
-    };
-  }
-  rpc EmailRegister (EmailRegisterRequest) returns (EmailRegisterResponse) {
-    option (google.api.http) = {
-      post: "/users/email/register"
-      body: "*"
-    };
-  }
-
   /*
    * Get email register code
    */
   rpc GetEmailRegisterCode (GetEmailRegisterCodeRequest) returns (GetEmailRegisterCodeResponse) {
     option (google.api.http) = {
-      get: "/users/email/register/code"
+      get: "/user/email/register/code"
+    };
+  }
+
+  /*
+   * Register by email
+   */
+  rpc EmailRegister (EmailRegisterRequest) returns (EmailRegisterResponse) {
+    option (google.api.http) = {
+      post: "/user/email/register"
+      body: "*"
+    };
+  }
+
+  rpc EmailLogin (EmailLoginRequest) returns (EmailLoginResponse) {
+    option (google.api.http) = {
+      post: "/user/email/login"
+      body: "*"
     };
   }
 
   rpc GetUser (GetUserRequest) returns (GetUserResponse){
     option (google.api.http) = {
-      get: "/users/self"
+      get: "/user/self"
     };
   }
   rpc GetUserByToken (GetUserByTokenRequest) returns (GetUserByTokenResponse){}

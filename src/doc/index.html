@@ -179,6 +179,10 @@
             <ul>
               
                 <li>
+                  <a href="#base.Response"><span class="badge">M</span>Response</a>
+                </li>
+              
+                <li>
                   <a href="#base.Status"><span class="badge">M</span>Status</a>
                 </li>
               
@@ -285,6 +289,30 @@
       </div>
       <p></p>
 
+      
+        <h3 id="base.Response">Response</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>status</td>
+                  <td><a href="#base.Status">Status</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
       
         <h3 id="base.Status">Status</h3>
         <p></p>
@@ -630,6 +658,13 @@
             <tbody>
               
                 <tr>
+                  <td>name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
                   <td>email</td>
                   <td><a href="#string">string</a></td>
                   <td></td>
@@ -645,6 +680,13 @@
               
                 <tr>
                   <td>code</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>code_key</td>
                   <td><a href="#string">string</a></td>
                   <td></td>
                   <td><p> </p></td>
@@ -884,6 +926,27 @@
                   <td><p> </p></td>
                 </tr>
               
+                <tr>
+                  <td>email</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>avatar</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>summary</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
             </tbody>
           </table>
 
@@ -906,24 +969,24 @@
           <tbody>
             
               <tr>
-                <td>EmailLogin</td>
-                <td><a href="#user.EmailLoginRequest">EmailLoginRequest</a></td>
-                <td><a href="#user.EmailLoginResponse">EmailLoginResponse</a></td>
-                <td><p></p></td>
+                <td>GetEmailRegisterCode</td>
+                <td><a href="#user.GetEmailRegisterCodeRequest">GetEmailRegisterCodeRequest</a></td>
+                <td><a href="#user.GetEmailRegisterCodeResponse">GetEmailRegisterCodeResponse</a></td>
+                <td><p>Get email register code</p></td>
               </tr>
             
               <tr>
                 <td>EmailRegister</td>
                 <td><a href="#user.EmailRegisterRequest">EmailRegisterRequest</a></td>
                 <td><a href="#user.EmailRegisterResponse">EmailRegisterResponse</a></td>
-                <td><p></p></td>
+                <td><p>Register by email</p></td>
               </tr>
             
               <tr>
-                <td>GetEmailRegisterCode</td>
-                <td><a href="#user.GetEmailRegisterCodeRequest">GetEmailRegisterCodeRequest</a></td>
-                <td><a href="#user.GetEmailRegisterCodeResponse">GetEmailRegisterCodeResponse</a></td>
-                <td><p>Get email register code</p></td>
+                <td>EmailLogin</td>
+                <td><a href="#user.EmailLoginRequest">EmailLoginRequest</a></td>
+                <td><a href="#user.EmailLoginResponse">EmailLoginResponse</a></td>
+                <td><p></p></td>
               </tr>
             
               <tr>
@@ -961,10 +1024,10 @@
               
               
               <tr>
-                <td>EmailLogin</td>
-                <td>POST</td>
-                <td>/users/email/login</td>
-                <td>*</td>
+                <td>GetEmailRegisterCode</td>
+                <td>GET</td>
+                <td>/user/email/register/code</td>
+                <td></td>
               </tr>
               
             
@@ -973,7 +1036,7 @@
               <tr>
                 <td>EmailRegister</td>
                 <td>POST</td>
-                <td>/users/email/register</td>
+                <td>/user/email/register</td>
                 <td>*</td>
               </tr>
               
@@ -981,10 +1044,10 @@
               
               
               <tr>
-                <td>GetEmailRegisterCode</td>
-                <td>GET</td>
-                <td>/users/email/register/code</td>
-                <td></td>
+                <td>EmailLogin</td>
+                <td>POST</td>
+                <td>/user/email/login</td>
+                <td>*</td>
               </tr>
               
             
@@ -993,7 +1056,7 @@
               <tr>
                 <td>GetUser</td>
                 <td>GET</td>
-                <td>/users/self</td>
+                <td>/user/self</td>
                 <td></td>
               </tr>
               
