@@ -79,6 +79,66 @@ func (_c *UserInterface_GetUserByEmail_Call) RunAndReturn(run func(string, []str
 	return _c
 }
 
+// Register provides a mock function with given fields: name, email, password
+func (_m *UserInterface) Register(name string, email string, password string) (*models.User, error) {
+	ret := _m.Called(name, email, password)
+
+	if len(ret) == 0 {
+		panic("no return value specified for Register")
+	}
+
+	var r0 *models.User
+	var r1 error
+	if rf, ok := ret.Get(0).(func(string, string, string) (*models.User, error)); ok {
+		return rf(name, email, password)
+	}
+	if rf, ok := ret.Get(0).(func(string, string, string) *models.User); ok {
+		r0 = rf(name, email, password)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*models.User)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(string, string, string) error); ok {
+		r1 = rf(name, email, password)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// UserInterface_Register_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Register'
+type UserInterface_Register_Call struct {
+	*mock.Call
+}
+
+// Register is a helper method to define mock.On call
+//   - name string
+//   - email string
+//   - password string
+func (_e *UserInterface_Expecter) Register(name interface{}, email interface{}, password interface{}) *UserInterface_Register_Call {
+	return &UserInterface_Register_Call{Call: _e.mock.On("Register", name, email, password)}
+}
+
+func (_c *UserInterface_Register_Call) Run(run func(name string, email string, password string)) *UserInterface_Register_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(string), args[1].(string), args[2].(string))
+	})
+	return _c
+}
+
+func (_c *UserInterface_Register_Call) Return(_a0 *models.User, _a1 error) *UserInterface_Register_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *UserInterface_Register_Call) RunAndReturn(run func(string, string, string) (*models.User, error)) *UserInterface_Register_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // NewUserInterface creates a new instance of UserInterface. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
 // The first argument is typically a *testing.T value.
 func NewUserInterface(t interface {

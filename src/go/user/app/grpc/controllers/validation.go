@@ -10,10 +10,6 @@ import (
 	utilserrors "market.goravel.dev/utils/errors"
 )
 
-func validateGetEmailRegisterCodeRequest(ctx context.Context, req *protouser.GetEmailRegisterCodeRequest) error {
-	return validateEmailValid(ctx, req.GetEmail())
-}
-
 func validateEmailLoginRequest(ctx context.Context, req *protouser.EmailLoginRequest) error {
 	if err := validateEmailValid(ctx, req.GetEmail()); err != nil {
 		return err
@@ -60,4 +56,8 @@ func validateEmailValid(ctx context.Context, email string) error {
 	}
 
 	return nil
+}
+
+func validateGetEmailRegisterCodeRequest(ctx context.Context, req *protouser.GetEmailRegisterCodeRequest) error {
+	return validateEmailValid(ctx, req.GetEmail())
 }
