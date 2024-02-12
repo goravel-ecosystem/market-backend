@@ -26,6 +26,32 @@ func NewUsersController() *UsersController {
 	}
 }
 
+func (r *UsersController) EmailLogin(ctx context.Context, req *protouser.EmailLoginRequest) (*protouser.EmailLoginResponse, error) {
+	if err := validateEmailLoginRequest(ctx, req); err != nil {
+		return nil, err
+	}
+
+	user, err := r.userService.GetUserByEmail(req.GetEmail())
+	if err != nil {
+		return nil, err
+	}
+
+	if !facades.Hash().Check(req.GetPassword(), user.Password) {
+		return nil, utilserrors.NewValidate(facades.Lang(ctx).Get("invalid.password.error"))
+	}
+
+	token, err := facades.Auth(http.Background()).LoginUsingID(user.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &protouser.EmailLoginResponse{
+		Status: NewOkStatus(),
+		User:   user.ToProto(),
+		Token:  "Bearer " + token,
+	}, nil
+}
+
 func (r *UsersController) EmailRegister(ctx context.Context, req *protouser.EmailRegisterRequest) (*protouser.EmailRegisterResponse, error) {
 	if err := validateEmailRegisterRequest(ctx, req); err != nil {
 		return nil, err
@@ -81,28 +107,6 @@ func (r *UsersController) GetEmailRegisterCode(ctx context.Context, req *protous
 	return &protouser.GetEmailRegisterCodeResponse{
 		Status: NewOkStatus(),
 		Key:    key,
-	}, nil
-}
-
-func (r *UsersController) EmailLogin(ctx context.Context, req *protouser.EmailLoginRequest) (*protouser.EmailLoginResponse, error) {
-	if err := validateEmailLoginRequest(ctx, req); err != nil {
-		return nil, err
-	}
-
-	token, err := facades.Auth(http.Background()).LoginUsingID("uuid")
-	if err != nil {
-		return &protouser.EmailLoginResponse{
-			Status: NewBadRequestStatus(err),
-		}, nil
-	}
-
-	return &protouser.EmailLoginResponse{
-		Status: NewOkStatus(),
-		User: &protouser.User{
-			Id:   "uuid",
-			Name: req.GetEmail(),
-		},
-		Token: "Bearer " + token,
 	}, nil
 }
 

@@ -7,6 +7,7 @@ import (
 
 	"github.com/goravel/framework/http"
 	mocksauth "github.com/goravel/framework/mocks/auth"
+	mockshash "github.com/goravel/framework/mocks/hash"
 	mockstranslation "github.com/goravel/framework/mocks/translation"
 	testingmock "github.com/goravel/framework/testing/mock"
 	"github.com/stretchr/testify/suite"
@@ -22,6 +23,7 @@ type UsersControllerSuite struct {
 	ctx                     context.Context
 	usersController         *UsersController
 	mockAuth                *mocksauth.Auth
+	mockHash                *mockshash.Hash
 	mockLang                *mockstranslation.Translator
 	mockNotificationService *mocksservice.Notification
 	mockUserService         *mocksservice.User
@@ -35,12 +37,128 @@ func (s *UsersControllerSuite) SetupTest() {
 	s.ctx = context.Background()
 	mockFactory := testingmock.Factory()
 	s.mockAuth = mockFactory.Auth(http.Background())
+	s.mockHash = mockFactory.Hash()
 	s.mockLang = mockFactory.Lang(s.ctx)
 	s.mockNotificationService = &mocksservice.Notification{}
 	s.mockUserService = &mocksservice.User{}
 	s.usersController = &UsersController{
 		notificationService: s.mockNotificationService,
 		userService:         s.mockUserService,
+	}
+}
+
+func (s *UsersControllerSuite) TestEmailLogin() {
+	var (
+		email          = "hello@goravel.dev"
+		password       = "password"
+		hashedPassword = "hashed_password"
+
+		user = models.User{
+			UUIDModel: models.UUIDModel{
+				ID: 1,
+			},
+			Email:    email,
+			Password: hashedPassword,
+		}
+	)
+
+	tests := []struct {
+		name             string
+		request          *protouser.EmailLoginRequest
+		setup            func()
+		expectedResponse *protouser.EmailLoginResponse
+		expectedErr      error
+	}{
+		{
+			name: "Happy path",
+			request: &protouser.EmailLoginRequest{
+				Email:    email,
+				Password: password,
+			},
+			setup: func() {
+				s.mockUserService.On("GetUserByEmail", email).Return(&user, nil).Once()
+				s.mockHash.On("Check", password, hashedPassword).Return(true).Once()
+				s.mockAuth.On("LoginUsingID", user.ID).Return("token", nil).Once()
+			},
+			expectedResponse: &protouser.EmailLoginResponse{
+				Status: NewOkStatus(),
+				User:   user.ToProto(),
+				Token:  "Bearer token",
+			},
+		},
+		{
+			name: "Sad path - email is invalid",
+			request: &protouser.EmailLoginRequest{
+				Email:    "",
+				Password: password,
+			},
+			setup: func() {
+				s.mockLang.On("Get", "required.email").Return("required email").Once()
+			},
+			expectedErr: utilserrors.NewValidate("required email"),
+		},
+		{
+			name: "Sad path - password is invalid",
+			request: &protouser.EmailLoginRequest{
+				Email:    email,
+				Password: "",
+			},
+			setup: func() {
+				s.mockLang.On("Get", "required.password").Return("required password").Once()
+			},
+			expectedErr: utilserrors.NewValidate("required password"),
+		},
+		{
+			name: "Sad path - GetUserByEmail returns error",
+			request: &protouser.EmailLoginRequest{
+				Email:    email,
+				Password: password,
+			},
+			setup: func() {
+				s.mockUserService.On("GetUserByEmail", email).Return(nil, errors.New("error")).Once()
+			},
+			expectedErr: errors.New("error"),
+		},
+		{
+			name: "Sad path - password is wrong",
+			request: &protouser.EmailLoginRequest{
+				Email:    email,
+				Password: password,
+			},
+			setup: func() {
+				s.mockUserService.On("GetUserByEmail", email).Return(&user, nil).Once()
+				s.mockHash.On("Check", password, hashedPassword).Return(false).Once()
+				s.mockLang.On("Get", "invalid.password.error").Return("invalid password error").Once()
+			},
+			expectedErr: utilserrors.NewValidate("invalid password error"),
+		},
+		{
+			name: "Sad path - LoginUsingID returns error",
+			request: &protouser.EmailLoginRequest{
+				Email:    email,
+				Password: password,
+			},
+			setup: func() {
+				s.mockUserService.On("GetUserByEmail", email).Return(&user, nil).Once()
+				s.mockHash.On("Check", password, hashedPassword).Return(true).Once()
+				s.mockAuth.On("LoginUsingID", user.ID).Return("", errors.New("error")).Once()
+			},
+			expectedErr: errors.New("error"),
+		},
+	}
+
+	for _, test := range tests {
+		s.Run(test.name, func() {
+			test.setup()
+			response, err := s.usersController.EmailLogin(s.ctx, test.request)
+			s.Equal(test.expectedResponse, response)
+			s.Equal(test.expectedErr, err)
+
+			s.mockAuth.AssertExpectations(s.T())
+			s.mockHash.AssertExpectations(s.T())
+			s.mockLang.AssertExpectations(s.T())
+			s.mockUserService.AssertExpectations(s.T())
+		})
 	}
 }
 
@@ -269,6 +387,11 @@ func (s *UsersControllerSuite) TestEmailRegister() {
 			response, err := s.usersController.EmailRegister(s.ctx, test.request)
 			s.Equal(test.expectedResponse, response)
 			s.Equal(test.expectedErr, err)
+
+			s.mockAuth.AssertExpectations(s.T())
+			s.mockLang.AssertExpectations(s.T())
+			s.mockNotificationService.AssertExpectations(s.T())
+			s.mockUserService.AssertExpectations(s.T())
 		})
 	}
 }
@@ -350,6 +473,10 @@ func (s *UsersControllerSuite) TestGetEmailRegisterCode() {
 			response, err := s.usersController.GetEmailRegisterCode(s.ctx, test.request)
 			s.Equal(test.expectedResponse, response)
 			s.Equal(test.expectedErr, err)
+
+			s.mockLang.AssertExpectations(s.T())
+			s.mockNotificationService.AssertExpectations(s.T())
+			s.mockUserService.AssertExpectations(s.T())
 		})
 	}
 }

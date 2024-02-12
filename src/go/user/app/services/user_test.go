@@ -12,8 +12,8 @@ import (
 
 type UserTestSuite struct {
 	suite.Suite
-	mockUserMock *mocksmodels.UserInterface
-	userImpl     *UserImpl
+	mockUser *mocksmodels.UserInterface
+	userImpl *UserImpl
 }
 
 func TestUserTestSuite(t *testing.T) {
@@ -21,9 +21,9 @@ func TestUserTestSuite(t *testing.T) {
 }
 
 func (s *UserTestSuite) SetupTest() {
-	s.mockUserMock = new(mocksmodels.UserInterface)
+	s.mockUser = new(mocksmodels.UserInterface)
 	s.userImpl = &UserImpl{
-		userModel: s.mockUserMock,
+		userModel: s.mockUser,
 	}
 }
 
@@ -41,7 +41,7 @@ func (s *UserTestSuite) TestIsEmailExist() {
 		{
 			name: "Happy path",
 			setup: func() {
-				s.mockUserMock.On("GetUserByEmail", email, []string{"id"}).Return(&models.User{
+				s.mockUser.On("GetUserByEmail", email, []string{"id"}).Return(&models.User{
 					UUIDModel: models.UUIDModel{ID: 1},
 				}, nil).Once()
 			},
@@ -50,7 +50,7 @@ func (s *UserTestSuite) TestIsEmailExist() {
 		{
 			name: "Sad path - GetUserByEmail returns error",
 			setup: func() {
-				s.mockUserMock.On("GetUserByEmail", email, []string{"id"}).Return(nil, errors.New("error")).Once()
+				s.mockUser.On("GetUserByEmail", email, []string{"id"}).Return(nil, errors.New("error")).Once()
 			},
 			expectedErr: errors.New("error"),
 		},
@@ -62,6 +62,8 @@ func (s *UserTestSuite) TestIsEmailExist() {
 			exist, err := s.userImpl.IsEmailExist(email)
 			s.Equal(test.expectedExist, exist)
 			s.Equal(test.expectedErr, err)
+
+			s.mockUser.AssertExpectations(s.T())
 		})
 	}
 }
