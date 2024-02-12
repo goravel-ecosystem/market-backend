@@ -9,6 +9,7 @@ require (
 	github.com/goravel/gateway v0.0.3-0.20240102031345-e5d47620fb9b
 	github.com/goravel/gin v1.1.6-0.20231228003349-6f44e2c1bc5d
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.19.0
+	github.com/spf13/cast v1.6.0
 	github.com/stretchr/testify v1.8.4
 	google.golang.org/genproto/googleapis/api v0.0.0-20240102182953-50ed04b92917
 	google.golang.org/grpc v1.61.0
@@ -109,7 +110,6 @@ require (
 	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/sourcegraph/conc v0.3.0 // indirect
 	github.com/spf13/afero v1.11.0 // indirect
-	github.com/spf13/cast v1.6.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/spf13/viper v1.18.2 // indirect
 	github.com/streadway/amqp v1.0.0 // indirect
