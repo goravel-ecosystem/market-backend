@@ -1,11 +1,25 @@
 {
-  "register_code.subject": "Register Code",
-  "register_code.content": "Your register code is: :code, please finish your registration in 5 minutes.",
-  "required.email": "Email is required",
-  "required.password": "Password is required",
-  "required.code": "Code is required",
-  "required.token": "Token is required",
-  "required.user_id": "UserID is required",
-  "invalid.code": "Code is invalid",
-  "invalid.email": "Email is invalid"
+  "register_code": {
+    "subject": "Register Code",
+    "content": "Your register code is: :code, please finish your registration in 5 minutes."
+  },
+  "required": {
+    "name": "Name is required",
+    "email": "Email is required",
+    "password": "Password is required",
+    "code": "Code is required",
+    "code_key": "Code key is required",
+    "token": "Token is required",
+    "user_id": "UserID is required"
+  },
+  "invalid": {
+    "code": "Code is invalid",
+    "email": "Email is invalid",
+    "password": {
+      "min": "Password must be at least 6 characters"
+    }
+  },
+  "exist": {
+    "email": "Email is already exist"
+  }
 }

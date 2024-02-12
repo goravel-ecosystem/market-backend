@@ -24,6 +24,6 @@ type UUIDModel struct {
 	orm.Timestamps
 }
 
-func (r UUIDModel) GetID() uint {
-	return uint(snowflakeInstance.Generate())
+func (r UUIDModel) GetID() uint64 {
+	return uint64(snowflakeInstance.Generate())
 }

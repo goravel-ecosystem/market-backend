@@ -19,9 +19,9 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	UserService_EmailLogin_FullMethodName           = "/user.UserService/EmailLogin"
-	UserService_EmailRegister_FullMethodName        = "/user.UserService/EmailRegister"
 	UserService_GetEmailRegisterCode_FullMethodName = "/user.UserService/GetEmailRegisterCode"
+	UserService_EmailRegister_FullMethodName        = "/user.UserService/EmailRegister"
+	UserService_EmailLogin_FullMethodName           = "/user.UserService/EmailLogin"
 	UserService_GetUser_FullMethodName              = "/user.UserService/GetUser"
 	UserService_GetUserByToken_FullMethodName       = "/user.UserService/GetUserByToken"
 )
@@ -30,9 +30,11 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UserServiceClient interface {
-	EmailLogin(ctx context.Context, in *EmailLoginRequest, opts ...grpc.CallOption) (*EmailLoginResponse, error)
-	EmailRegister(ctx context.Context, in *EmailRegisterRequest, opts ...grpc.CallOption) (*EmailRegisterResponse, error)
+	// Get email register code
 	GetEmailRegisterCode(ctx context.Context, in *GetEmailRegisterCodeRequest, opts ...grpc.CallOption) (*GetEmailRegisterCodeResponse, error)
+	// Register by email
+	EmailRegister(ctx context.Context, in *EmailRegisterRequest, opts ...grpc.CallOption) (*EmailRegisterResponse, error)
+	EmailLogin(ctx context.Context, in *EmailLoginRequest, opts ...grpc.CallOption) (*EmailLoginResponse, error)
 	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
 	GetUserByToken(ctx context.Context, in *GetUserByTokenRequest, opts ...grpc.CallOption) (*GetUserByTokenResponse, error)
 }
@@ -45,9 +47,9 @@ func NewUserServiceClient(cc grpc.ClientConnInterface) UserServiceClient {
 	return &userServiceClient{cc}
 }
 
-func (c *userServiceClient) EmailLogin(ctx context.Context, in *EmailLoginRequest, opts ...grpc.CallOption) (*EmailLoginResponse, error) {
-	out := new(EmailLoginResponse)
-	err := c.cc.Invoke(ctx, UserService_EmailLogin_FullMethodName, in, out, opts...)
+func (c *userServiceClient) GetEmailRegisterCode(ctx context.Context, in *GetEmailRegisterCodeRequest, opts ...grpc.CallOption) (*GetEmailRegisterCodeResponse, error) {
+	out := new(GetEmailRegisterCodeResponse)
+	err := c.cc.Invoke(ctx, UserService_GetEmailRegisterCode_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -63,9 +65,9 @@ func (c *userServiceClient) EmailRegister(ctx context.Context, in *EmailRegister
 	return out, nil
 }
 
-func (c *userServiceClient) GetEmailRegisterCode(ctx context.Context, in *GetEmailRegisterCodeRequest, opts ...grpc.CallOption) (*GetEmailRegisterCodeResponse, error) {
-	out := new(GetEmailRegisterCodeResponse)
-	err := c.cc.Invoke(ctx, UserService_GetEmailRegisterCode_FullMethodName, in, out, opts...)
+func (c *userServiceClient) EmailLogin(ctx context.Context, in *EmailLoginRequest, opts ...grpc.CallOption) (*EmailLoginResponse, error) {
+	out := new(EmailLoginResponse)
+	err := c.cc.Invoke(ctx, UserService_EmailLogin_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -94,9 +96,11 @@ func (c *userServiceClient) GetUserByToken(ctx context.Context, in *GetUserByTok
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility
 type UserServiceServer interface {
-	EmailLogin(context.Context, *EmailLoginRequest) (*EmailLoginResponse, error)
-	EmailRegister(context.Context, *EmailRegisterRequest) (*EmailRegisterResponse, error)
+	// Get email register code
 	GetEmailRegisterCode(context.Context, *GetEmailRegisterCodeRequest) (*GetEmailRegisterCodeResponse, error)
+	// Register by email
+	EmailRegister(context.Context, *EmailRegisterRequest) (*EmailRegisterResponse, error)
+	EmailLogin(context.Context, *EmailLoginRequest) (*EmailLoginResponse, error)
 	GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error)
 	GetUserByToken(context.Context, *GetUserByTokenRequest) (*GetUserByTokenResponse, error)
 	mustEmbedUnimplementedUserServiceServer()
@@ -106,14 +110,14 @@ type UserServiceServer interface {
 type UnimplementedUserServiceServer struct {
 }
 
-func (UnimplementedUserServiceServer) EmailLogin(context.Context, *EmailLoginRequest) (*EmailLoginResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method EmailLogin not implemented")
+func (UnimplementedUserServiceServer) GetEmailRegisterCode(context.Context, *GetEmailRegisterCodeRequest) (*GetEmailRegisterCodeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetEmailRegisterCode not implemented")
 }
 func (UnimplementedUserServiceServer) EmailRegister(context.Context, *EmailRegisterRequest) (*EmailRegisterResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method EmailRegister not implemented")
 }
-func (UnimplementedUserServiceServer) GetEmailRegisterCode(context.Context, *GetEmailRegisterCodeRequest) (*GetEmailRegisterCodeResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetEmailRegisterCode not implemented")
+func (UnimplementedUserServiceServer) EmailLogin(context.Context, *EmailLoginRequest) (*EmailLoginResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method EmailLogin not implemented")
 }
 func (UnimplementedUserServiceServer) GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUser not implemented")
@@ -134,20 +138,20 @@ func RegisterUserServiceServer(s grpc.ServiceRegistrar, srv UserServiceServer) {
 	s.RegisterService(&UserService_ServiceDesc, srv)
 }
 
-func _UserService_EmailLogin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(EmailLoginRequest)
+func _UserService_GetEmailRegisterCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetEmailRegisterCodeRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServiceServer).EmailLogin(ctx, in)
+		return srv.(UserServiceServer).GetEmailRegisterCode(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserService_EmailLogin_FullMethodName,
+		FullMethod: UserService_GetEmailRegisterCode_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).EmailLogin(ctx, req.(*EmailLoginRequest))
+		return srv.(UserServiceServer).GetEmailRegisterCode(ctx, req.(*GetEmailRegisterCodeRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -170,20 +174,20 @@ func _UserService_EmailRegister_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_GetEmailRegisterCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetEmailRegisterCodeRequest)
+func _UserService_EmailLogin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EmailLoginRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServiceServer).GetEmailRegisterCode(ctx, in)
+		return srv.(UserServiceServer).EmailLogin(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserService_GetEmailRegisterCode_FullMethodName,
+		FullMethod: UserService_EmailLogin_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).GetEmailRegisterCode(ctx, req.(*GetEmailRegisterCodeRequest))
+		return srv.(UserServiceServer).EmailLogin(ctx, req.(*EmailLoginRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -232,16 +236,16 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*UserServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "EmailLogin",
-			Handler:    _UserService_EmailLogin_Handler,
+			MethodName: "GetEmailRegisterCode",
+			Handler:    _UserService_GetEmailRegisterCode_Handler,
 		},
 		{
 			MethodName: "EmailRegister",
 			Handler:    _UserService_EmailRegister_Handler,
 		},
 		{
-			MethodName: "GetEmailRegisterCode",
-			Handler:    _UserService_GetEmailRegisterCode_Handler,
+			MethodName: "EmailLogin",
+			Handler:    _UserService_EmailLogin_Handler,
 		},
 		{
 			MethodName: "GetUser",

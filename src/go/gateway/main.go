@@ -3,7 +3,9 @@ package main
 import (
 	"github.com/goravel/framework/facades"
 	gatewayfacades "github.com/goravel/gateway/facades"
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 
+	"market.goravel.dev/gateway/app/grpc/interceptors"
 	"market.goravel.dev/gateway/bootstrap"
 )
 
@@ -19,7 +21,8 @@ func main() {
 	}()
 
 	go func() {
-		if err := gatewayfacades.Gateway().Run(); err != nil {
+		mux := runtime.NewServeMux(runtime.WithForwardResponseOption(interceptors.Token))
+		if err := gatewayfacades.Gateway().Run(mux); err != nil {
 			facades.Log().Errorf("Gateway run error: %v", err)
 		}
 	}()

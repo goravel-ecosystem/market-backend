@@ -14,3 +14,7 @@ message Status {
   // error message
   string error = 2;
 }
+
+message Response {
+  base.Status status = 1;
+}

@@ -1,11 +1,25 @@
 {
-  "register_code.subject": "注册验证码",
-  "register_code.content": "您的注册验证码为：:code，请在5分钟内完成注册。",
-  "required.email": "邮箱不能为空",
-  "required.password": "密码不能为空",
-  "required.code": "验证码不能为空",
-  "required.token": "Token 不能为空",
-  "required.user_id": "UserID 不能为空",
-  "invalid.code": "验证码错误",
-  "invalid.email": "邮箱格式错误"
+  "register_code": {
+    "subject": "注册验证码",
+    "content": "您的注册验证码为：:code，请在5分钟内完成注册。"
+  },
+  "required": {
+    "name": "用户名不能为空",
+    "email": "邮箱不能为空",
+    "password": "密码不能为空",
+    "code": "验证码不能为空",
+    "code_key": "验证码 key 不能为空",
+    "token": "Token 不能为空",
+    "user_id": "UserID 不能为空"
+  },
+  "invalid": {
+    "code": "验证码错误",
+    "email": "邮箱格式错误",
+    "password": {
+      "min": "密码长度不能小于6位"
+    }
+  },
+  "exist": {
+    "email": "邮箱已存在"
+  }
 }
