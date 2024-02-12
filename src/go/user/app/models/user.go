@@ -37,7 +37,7 @@ func (r *User) GetUserByEmail(email string, fields []string) (*User, error) {
 }
 
 func (r *User) Register(name, email, password string) (*User, error) {
-	hash, err := facades.Hash().Make(password)
+	hashedPassword, err := facades.Hash().Make(password)
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +45,7 @@ func (r *User) Register(name, email, password string) (*User, error) {
 	user := User{
 		Name:     name,
 		Email:    email,
-		Password: hash,
+		Password: hashedPassword,
 	}
 	user.ID = r.GetID()
 	if err := facades.Orm().Query().Create(&user); err != nil {

@@ -151,7 +151,7 @@ func (s *UsersControllerSuite) TestEmailRegister() {
 				s.mockUserService.On("IsEmailExist", email).Return(false, errors.New("error")).Once()
 				s.mockLang.On("Get", "exist.email").Return("exist email").Once()
 			},
-			expectedErr: utilserrors.NewValidate("exist email"),
+			expectedErr: errors.New("error"),
 		},
 		{
 			name: "Sad path - email already exist",

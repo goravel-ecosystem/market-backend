@@ -86,9 +86,7 @@ func (r *UsersController) GetEmailRegisterCode(ctx context.Context, req *protous
 
 func (r *UsersController) EmailLogin(ctx context.Context, req *protouser.EmailLoginRequest) (*protouser.EmailLoginResponse, error) {
 	if err := validateEmailLoginRequest(ctx, req); err != nil {
-		return &protouser.EmailLoginResponse{
-			Status: NewBadRequestStatus(err),
-		}, nil
+		return nil, err
 	}
 
 	token, err := facades.Auth(http.Background()).LoginUsingID("uuid")

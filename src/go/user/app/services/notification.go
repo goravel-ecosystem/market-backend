@@ -63,7 +63,6 @@ func (r *NotificationImpl) SendEmailRegisterCode(ctx context.Context, email stri
 }
 
 func (r *NotificationImpl) VerifyEmailRegisterCode(key, code string) bool {
-	fmt.Println("hwb--", facades.Cache().GetString(key), key, code)
 	if facades.Cache().GetString(key) == code {
 		facades.Cache().Forget(key)
 
