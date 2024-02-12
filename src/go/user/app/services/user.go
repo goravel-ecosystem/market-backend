@@ -5,6 +5,7 @@ import (
 )
 
 type User interface {
+	GetUserByEmail(email string) (*models.User, error)
 	IsEmailExist(email string) (bool, error)
 	Register(name, email, password string) (*models.User, error)
 }
@@ -17,6 +18,10 @@ func NewUserImpl() *UserImpl {
 	return &UserImpl{
 		userModel: models.NewUser(),
 	}
+}
+
+func (r *UserImpl) GetUserByEmail(email string) (*models.User, error) {
+	return r.userModel.GetUserByEmail(email, []string{"id", "name", "email", "password", "avatar", "summary"})
 }
 
 func (r *UserImpl) IsEmailExist(email string) (bool, error) {

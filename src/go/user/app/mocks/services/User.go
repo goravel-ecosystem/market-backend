@@ -20,6 +20,64 @@ func (_m *User) EXPECT() *User_Expecter {
 	return &User_Expecter{mock: &_m.Mock}
 }
 
+// GetUserByEmail provides a mock function with given fields: email
+func (_m *User) GetUserByEmail(email string) (*models.User, error) {
+	ret := _m.Called(email)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetUserByEmail")
+	}
+
+	var r0 *models.User
+	var r1 error
+	if rf, ok := ret.Get(0).(func(string) (*models.User, error)); ok {
+		return rf(email)
+	}
+	if rf, ok := ret.Get(0).(func(string) *models.User); ok {
+		r0 = rf(email)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*models.User)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(email)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// User_GetUserByEmail_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetUserByEmail'
+type User_GetUserByEmail_Call struct {
+	*mock.Call
+}
+
+// GetUserByEmail is a helper method to define mock.On call
+//   - email string
+func (_e *User_Expecter) GetUserByEmail(email interface{}) *User_GetUserByEmail_Call {
+	return &User_GetUserByEmail_Call{Call: _e.mock.On("GetUserByEmail", email)}
+}
+
+func (_c *User_GetUserByEmail_Call) Run(run func(email string)) *User_GetUserByEmail_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(string))
+	})
+	return _c
+}
+
+func (_c *User_GetUserByEmail_Call) Return(_a0 *models.User, _a1 error) *User_GetUserByEmail_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *User_GetUserByEmail_Call) RunAndReturn(run func(string) (*models.User, error)) *User_GetUserByEmail_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // IsEmailExist provides a mock function with given fields: email
 func (_m *User) IsEmailExist(email string) (bool, error) {
 	ret := _m.Called(email)

@@ -16,6 +16,7 @@
     "code": "Code is invalid",
     "email": "Email is invalid",
     "password": {
+      "error": "Password is wrong",
       "min": "Password must be at least 6 characters"
     }
   },
