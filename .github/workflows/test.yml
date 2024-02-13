@@ -19,12 +19,14 @@ jobs:
       - name: go mod pakcage cache
         uses: actions/cache@v3
         with:
-          path: ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ matrix.go }}-${{ hashFiles('go.mod') }}
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ matrix.go }}-${{ hashFiles('**/go.mod') }}
       - name: Install dependencies
         run: cd src/go && go mod tidy
       - name: Run tests
-        run: go test ./...
+        run: cd src/go && go test ./...
   windows:
     strategy:
       matrix:
@@ -39,9 +41,11 @@ jobs:
       - name: go mod pakcage cache
         uses: actions/cache@v3
         with:
-          path: ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ matrix.go }}-${{ hashFiles('go.mod') }}
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ matrix.go }}-${{ hashFiles('**/go.mod') }}
       - name: Install dependencies
         run: cd src/go && go mod tidy
       - name: Run tests
-        run: go test ./...
+        run: cd src/go && go test ./...
