@@ -267,7 +267,6 @@ func (s *UsersControllerSuite) TestEmailRegister() {
 			},
 			setup: func() {
 				s.mockUserService.On("IsEmailExist", email).Return(false, errors.New("error")).Once()
-				s.mockLang.On("Get", "exist.email").Return("exist email").Once()
 			},
 			expectedErr: errors.New("error"),
 		},
