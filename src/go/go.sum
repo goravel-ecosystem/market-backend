@@ -346,6 +346,8 @@ github.com/goravel/file-rotatelogs/v2 v2.4.2 h1:g68AzbePXcm0V2CpUMc9j4qVzcDn7+7a
 github.com/goravel/file-rotatelogs/v2 v2.4.2/go.mod h1:23VuSW8cBS4ax5cmbV+5AaiLpq25b8UJ96IhbAkdo8I=
 github.com/goravel/framework v1.13.1-0.20240213021803-b375b9bb55f9 h1:GNxEyzaeHeLwv7QJMwnLYuwXDJydjbaGk7llKi/13i8=
 github.com/goravel/framework v1.13.1-0.20240213021803-b375b9bb55f9/go.mod h1:1B50o0a4DlxeXzJeMoYAneI8q7beJj8sMXg6fztmKQs=
+github.com/goravel/framework v1.13.1-0.20240215091018-1a9f352e523c h1:PahMfqzP8tJqagVsiWt0D41zo0vhdNRZW7VvgCdJUio=
+github.com/goravel/framework v1.13.1-0.20240215091018-1a9f352e523c/go.mod h1:5yDV4oFTZCJibqKY4C+fxMq1/rtPoLg8evYVC2uGf+M=
 github.com/goravel/gateway v0.0.3-0.20240213024303-4d874cef4753 h1:8OrleL33pPK9jdErxSHhqCo2tBtFxR4rYUAxjlLoSKw=
 github.com/goravel/gateway v0.0.3-0.20240213024303-4d874cef4753/go.mod h1:2wjWgJjR/anhAMt7lGLs+Nmz6kvSvH/zampRO/saIsk=
 github.com/goravel/gin v1.1.6-0.20231228003349-6f44e2c1bc5d h1:DFj82/neHQ4Xtp0wSnxlzu6HlHnJvpc4IwKKrv34SHM=
@@ -991,6 +993,8 @@ google.golang.org/grpc v1.34.0/go.mod h1:WotjhfgOW/POjDeRt8vscBtXq+2VjORFy659qA5
 google.golang.org/grpc v1.35.0/go.mod h1:qjiiYl8FncCW8feJPdyg3v6XW24KsRHe+dy9BAGRRjU=
 google.golang.org/grpc v1.61.0 h1:TOvOcuXn30kRao+gfcvsebNEa5iZIiLkisYEkf7R7o0=
 google.golang.org/grpc v1.61.0/go.mod h1:VUbo7IFqmF1QtCAstipjG0GIoq49KvMe9+h1jFLBNJs=
+google.golang.org/grpc v1.61.1 h1:kLAiWrZs7YeDM6MumDe7m3y4aM6wacLzM1Y/wiLP9XY=
+google.golang.org/grpc v1.61.1/go.mod h1:VUbo7IFqmF1QtCAstipjG0GIoq49KvMe9+h1jFLBNJs=
 google.golang.org/protobuf v0.0.0-20200109180630-ec00e32a8dfd/go.mod h1:DFci5gLYBciE7Vtevhsrf46CRTquxDuWsQurQQe4oz8=
 google.golang.org/protobuf v0.0.0-20200221191635-4d8936d0db64/go.mod h1:kwYJMbMJ01Woi6D6+Kah6886xMZcty6N08ah7+eCXa0=
 google.golang.org/protobuf v0.0.0-20200228230310-ab0ca4ff8a60/go.mod h1:cfTl7dwQJ+fmap5saPgwCLgHXTUD7jkjRqWcaiX5VyM=

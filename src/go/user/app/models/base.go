@@ -1,7 +1,6 @@
 package models
 
 import (
-	"fmt"
 	"log"
 	"math/rand"
 
@@ -15,7 +14,7 @@ func init() {
 	var err error
 	snowflakeInstance, err = snowflake.NewNode(int64(rand.Intn(1023)))
 	if err != nil {
-		log.Panic(fmt.Sprintf("snowflake.NewNode err: %v", err))
+		log.Panicf("snowflake.NewNode err: %v", err)
 	}
 }
 

@@ -29,4 +29,5 @@ jobs:
           skip-pkg-cache: true
           skip-build-cache: true
           version: latest
+          working-directory: src/go
           args: --timeout=30m ./...
