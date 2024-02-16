@@ -1,6 +1,6 @@
 module market.goravel.dev
 
-go 1.21.0
+go 1.21
 
 require (
 	github.com/bwmarrin/snowflake v0.3.0
