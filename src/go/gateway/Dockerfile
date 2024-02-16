@@ -7,8 +7,6 @@ ENV GO111MODULE=on \
 
 WORKDIR /build
 COPY . .
-RUN go mod tidy
-RUN go build --ldflags "-extldflags -static" -o main .
 
 FROM alpine:latest
 
