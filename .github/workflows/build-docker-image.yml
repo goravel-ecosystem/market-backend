@@ -31,15 +31,15 @@ jobs:
       run: go mod tidy
     - name: go build
       run: cd gateway && GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build --ldflags '-extldflags -static"' -o main .
-    - name: Alibaba Cloud Container Registry (ACR) Login
+    - name: Login to ACR
       uses: aliyun/acr-login@v1
       with:
         username: ${{ secrets.ALIYUN_ACR_USERNAME }}
         password: ${{ secrets.ALIYUN_ACR_PASSWORD }}
         region-id: ${{ secrets.ALIYUN_ACR_REGION_ID }}
-        instance-id: ${{ secrets.ALIYUN_ACR_INSTANCE_ID }}
+#        instance-id: ${{ secrets.ALIYUN_ACR_INSTANCE_ID }}
         login-server: ${{ secrets.ALIYUN_ACR_LOGIN_SERVER }}
     - name: Build the Docker image
-      run: cd gateway && docker build -t ${GITHUB_REF##*/} .
+      run: cd gateway && docker build -t ${{ secrets.ALIYUN_ACR_REGISTRY }}:${GITHUB_REF##*/} .
     - name: Push the Docker image
       run: docker push ${GITHUB_REF##*/}
