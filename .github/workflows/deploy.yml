@@ -1,0 +1,15 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      env:
+        description: 'The environment you want to deploy: development or production'
+        required: true
+        default: 'development'
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Print
+      run: echo "env - ${{ github.event.inputs.env }}"
