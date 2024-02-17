@@ -42,4 +42,4 @@ jobs:
     - name: Build the Docker image
       run: cd gateway && docker build -t ${{ secrets.ALIYUN_ACR_REGISTRY }}:${GITHUB_REF##*/} .
     - name: Push the Docker image
-      run: docker push ${GITHUB_REF##*/}
+      run: docker push ${{ secrets.ALIYUN_ACR_REGISTRY }}:${GITHUB_REF##*/}
