@@ -12,9 +12,6 @@ jobs:
         go:
           - "1.21"
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./src/go
     steps:
     - uses: actions/checkout@v4
     - name: Set up environment
@@ -23,17 +20,27 @@ jobs:
         echo "REPO_TAG=${GITHUB_REF##*/}" >> $GITHUB_ENV
 
     # This step can be moved to the deploy.yml file in the future
+    - name: Load deploy configuration
+      uses: pietrobolcato/action-read-yaml@1.0.0
+      id: load_config
+      with:
+        config: ./config/deploy.yml
+
     - name: Update remote server
       uses: appleboy/ssh-action@v1.0.0
+      env:
+        HTTP_PORT: ${{ steps.load_config.outputs['development.gateway.http_port'] }}
+        GATEWAY_PORT: ${{ steps.load_config.outputs['development.gateway.gateway_port'] }}
+        USER_GRPC_PORT: ${{ steps.load_config.outputs['development.user.grpc_port'] }}
       with:
         host: ${{ secrets.DEVELOPMENT_SERVER_HOST }}
         username: ${{ secrets.DEVELOPMENT_SERVER_USERNAME }}
         password: ${{ secrets.DEVELOPMENT_SERVER_PASSWORD }}
         port: ${{ secrets.DEVELOPMENT_SERVER_PORT }}
-        envs: REPO_TAG
+        envs: REPO_TAG,HTTP_PORT,GATEWAY_PORT,USER_GRPC_PORT
         script: |
           docker pull ${{ secrets.ALIYUN_ACR_REGISTRY }}:$REPO_TAG
           if docker ps --format '{{.Names}}' | grep goravel-market-gateway; then 
             docker stop goravel-market-gateway && docker rm goravel-market-gateway 
           fi
-          docker run -dit -p 4000:4000 -e APP_PORT=4000 -e GRPC_USER_PORT=4010 -e GATEWAY_PORT=4001 -e APP_ENV=development -e APP_KEY=${{ secrets.GATEWAY_APP_KEY }} -e APP_DEBUG=true --network goravel-market --network-alias gateway --name goravel-market-gateway ${{ secrets.ALIYUN_ACR_REGISTRY }}:$REPO_TAG
+          docker run -dit -p $HTTP_PORT:$HTTP_PORT -e APP_PORT=$HTTP_PORT -e GRPC_USER_PORT=$USER_GRPC_PORT -e GATEWAY_PORT=$GATEWAY_PORT -e APP_ENV=development -e APP_KEY=${{ secrets.GATEWAY_APP_KEY }} -e APP_DEBUG=true --network goravel-market --network-alias gateway --name goravel-market-gateway ${{ secrets.ALIYUN_ACR_REGISTRY }}:$REPO_TAG

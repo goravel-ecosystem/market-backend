@@ -1,0 +1,10 @@
+development:
+  gateway:
+    http_port: 4000
+    gateway_port: 4001
+  user:
+    http_port: 4010
+    grpc_port: 4011
+  package:
+    http_port: 4020
+    grpc_port: 4021
