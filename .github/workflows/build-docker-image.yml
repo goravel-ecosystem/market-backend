@@ -55,4 +55,6 @@ jobs:
         password: ${{ secrets.DEVELOPMENT_SERVER_PASSWORD }}
         port: ${{ secrets.DEVELOPMENT_SERVER_PORT }}
         script: |
+          echo ${{ secrets.ALIYUN_ACR_REGISTRY }}
+          echo $REPO_TAG
           docker pull ${{ secrets.ALIYUN_ACR_REGISTRY }}:$REPO_TAG
