@@ -56,4 +56,4 @@ jobs:
             docker stop gateway
             docker rm gateway
           fi
-          docker run -it -p 4000:4000 -e APP_PORT=4000 -e GRPC_USER_PORT=4010 -e GATEWAY_PORT=4001 -e APP_ENV=development -e APP_KEY=${{ secrets.GATEWAY_APP_KEY }} -e APP_DEBUG=true --network goravel-market --network-alias gateway --name goravel-market-gateway ${{ secrets.ALIYUN_ACR_REGISTRY }}:${GITHUB_REF##*/}
+          docker run -dit -p 4000:4000 -e APP_PORT=4000 -e GRPC_USER_PORT=4010 -e GATEWAY_PORT=4001 -e APP_ENV=development -e APP_KEY=${{ secrets.GATEWAY_APP_KEY }} -e APP_DEBUG=true --network goravel-market --network-alias gateway --name goravel-market-gateway ${{ secrets.ALIYUN_ACR_REGISTRY }}:${GITHUB_REF##*/}
