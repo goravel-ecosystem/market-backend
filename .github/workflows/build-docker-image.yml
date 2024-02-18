@@ -21,36 +21,12 @@ jobs:
       id: env_setup
       run: |
         echo "REPO_TAG=${GITHUB_REF##*/}" >> $GITHUB_ENV
-    - uses: actions/setup-go@v5
-      with:
-        go-version: ${{ matrix.go }}
-    - name: go mod pakcage cache
-      uses: actions/cache@v3
-      with:
-        path: |
-          ~/.cache/go-build
-          ~/go/pkg/mod
-        key: ${{ runner.os }}-go-${{ matrix.go }}-${{ hashFiles('**/go.mod') }}
-    - name: Install dependencies
-      run: go mod tidy
-    - name: go build
-      run: cd gateway && GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build --ldflags '-extldflags -static"' -o main .
-    - name: Login to ACR
-      uses: aliyun/acr-login@v1
-      with:
-        username: ${{ secrets.ALIYUN_ACR_USERNAME }}
-        password: ${{ secrets.ALIYUN_ACR_PASSWORD }}
-        region-id: ${{ secrets.ALIYUN_ACR_REGION_ID }}
-        login-server: ${{ secrets.ALIYUN_ACR_LOGIN_SERVER }}
-    - name: Build the Docker image
-      run: cd gateway && docker build -t ${{ secrets.ALIYUN_ACR_REGISTRY }}:$REPO_TAG .
-    - name: Push the Docker image
-      run: docker push ${{ secrets.ALIYUN_ACR_REGISTRY }}:$REPO_TAG
+
     # This step can be moved to the deploy.yml file in the future
     - name: Update remote server
       uses: appleboy/ssh-action@v1.0.0
       env:
-        IMAGE: "${{ secrets.ALIYUN_ACR_REGISTRY }}:$REPO_TAG"
+        IMAGE: $REPO_TAG
       with:
         host: ${{ secrets.DEVELOPMENT_SERVER_HOST }}
         username: ${{ secrets.DEVELOPMENT_SERVER_USERNAME }}
@@ -59,4 +35,4 @@ jobs:
         envs: IMAGE
         script: |
           echo "$IMAGE"
-          docker pull $IMAGE
+          docker pull ${{ secrets.ALIYUN_ACR_REGISTRY }}:$IMAGE
