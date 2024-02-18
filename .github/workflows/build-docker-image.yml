@@ -31,7 +31,7 @@ jobs:
       env:
         HTTP_PORT: ${{ steps.load_config.outputs.development__gateway__http_port }}
         GATEWAY_PORT: ${{ steps.load_config.outputs.development__gateway__gateway_port }}
-        USER_GRPC_PORT: ${{ steps.load_config.outputs.development__user__grpc_port'] }}
+        USER_GRPC_PORT: ${{ steps.load_config.outputs.development__user__grpc_port }}
       with:
         host: ${{ secrets.DEVELOPMENT_SERVER_HOST }}
         username: ${{ secrets.DEVELOPMENT_SERVER_USERNAME }}
