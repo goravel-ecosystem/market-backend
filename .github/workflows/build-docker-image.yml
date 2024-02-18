@@ -25,14 +25,12 @@ jobs:
     # This step can be moved to the deploy.yml file in the future
     - name: Update remote server
       uses: appleboy/ssh-action@v1.0.0
-      env:
-        IMAGE: $REPO_TAG
       with:
         host: ${{ secrets.DEVELOPMENT_SERVER_HOST }}
         username: ${{ secrets.DEVELOPMENT_SERVER_USERNAME }}
         password: ${{ secrets.DEVELOPMENT_SERVER_PASSWORD }}
         port: ${{ secrets.DEVELOPMENT_SERVER_PORT }}
-        envs: IMAGE
+        envs: REPO_TAG
         script: |
           echo "$IMAGE"
-          docker pull ${{ secrets.ALIYUN_ACR_REGISTRY }}:$IMAGE
+          docker pull ${{ secrets.ALIYUN_ACR_REGISTRY }}:$REPO_TAG
