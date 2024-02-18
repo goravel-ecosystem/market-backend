@@ -50,7 +50,7 @@ jobs:
     - name: Update remote server
       uses: appleboy/ssh-action@v1.0.0
       env:
-        IMAGE: ${{ secrets.ALIYUN_ACR_REGISTRY }}:$REPO_TAG
+        IMAGE: "${{ secrets.ALIYUN_ACR_REGISTRY }}:$REPO_TAG"
       with:
         host: ${{ secrets.DEVELOPMENT_SERVER_HOST }}
         username: ${{ secrets.DEVELOPMENT_SERVER_USERNAME }}
@@ -58,5 +58,5 @@ jobs:
         port: ${{ secrets.DEVELOPMENT_SERVER_PORT }}
         envs: IMAGE
         script: |
-          echo $IMAGE
+          echo "$IMAGE"
           docker pull $IMAGE
