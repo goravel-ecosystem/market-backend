@@ -21,17 +21,17 @@ jobs:
 
     # This step can be moved to the deploy.yml file in the future
     - name: Load deploy configuration
-      uses: pietrobolcato/action-read-yaml@1.0.0
+      uses: actions-tools/yaml-outputs@v2
       id: load_config
       with:
-        config: ./config/deploy.yml
+        file-path: ./config/deploy.yml
 
     - name: Update remote server
       uses: appleboy/ssh-action@v1.0.0
       env:
-        HTTP_PORT: ${{ steps.load_config.outputs['development.gateway.http_port'] }}
-        GATEWAY_PORT: ${{ steps.load_config.outputs['development.gateway.gateway_port'] }}
-        USER_GRPC_PORT: ${{ steps.load_config.outputs['development.user.grpc_port'] }}
+        HTTP_PORT: ${{ steps.load_config.outputs.development__gateway__http_port }}
+        GATEWAY_PORT: ${{ steps.load_config.outputs.development__gateway__gateway_port }}
+        USER_GRPC_PORT: ${{ steps.load_config.outputs.development__user__grpc_port'] }}
       with:
         host: ${{ secrets.DEVELOPMENT_SERVER_HOST }}
         username: ${{ secrets.DEVELOPMENT_SERVER_USERNAME }}
@@ -39,6 +39,10 @@ jobs:
         port: ${{ secrets.DEVELOPMENT_SERVER_PORT }}
         envs: REPO_TAG,HTTP_PORT,GATEWAY_PORT,USER_GRPC_PORT
         script: |
+          echo "HTTP_PORT=$HTTP_PORT"
+          echo "GATEWAY_PORT=$GATEWAY_PORT"
+          echo "USER_GRPC_PORT=$USER_GRPC_PORT"
+          
           docker pull ${{ secrets.ALIYUN_ACR_REGISTRY }}:$REPO_TAG
           if docker ps --format '{{.Names}}' | grep goravel-market-gateway; then 
             docker stop goravel-market-gateway && docker rm goravel-market-gateway 
