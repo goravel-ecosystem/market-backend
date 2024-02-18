@@ -21,13 +21,13 @@ jobs:
 
     # This step can be moved to the deploy.yml file in the future
     - name: Load deploy configuration
-      uses: pietrobolcato/action-read-yaml@1.0.0
+      uses: pietrobolcato/action-read-yaml@1.1.0
       id: load_config
       with:
         config: ./config/deploy.yml
 
     - name: Update remote server
-      uses: appleboy/ssh-action@v1.0.0
+      uses: appleboy/ssh-action@v1.0.3
       env:
         HTTP_PORT: ${{ steps.load_config.outputs['development.gateway.http_port'] }}
         GATEWAY_PORT: ${{ steps.load_config.outputs['development.gateway.gateway_port'] }}
