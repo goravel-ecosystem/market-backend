@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       env:
-        description: 'The environment you want to deploy: development or production'
+        description: 'The environment: development or production'
         required: true
         default: 'development'
 jobs:
