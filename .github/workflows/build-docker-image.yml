@@ -24,7 +24,7 @@ jobs:
 
     # This step can be moved to the deploy.yml file in the future
     - name: Update remote server
-      uses: appleboy/ssh-action@v1.0.0
+      uses: appleboy/ssh-action@v1.0.3
       with:
         host: ${{ secrets.DEVELOPMENT_SERVER_HOST }}
         username: ${{ secrets.DEVELOPMENT_SERVER_USERNAME }}
