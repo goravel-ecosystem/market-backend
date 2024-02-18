@@ -15,15 +15,10 @@ jobs:
     defaults:
       run:
         working-directory: ./src/go
+    env:
+      REPO_TAG: ${GITHUB_REF##*/}
     steps:
     - uses: actions/checkout@v4
-    - name: Set up environment
-      id: env_setup
-      env:
-        REPO_TAG: ${GITHUB_REF##*/}
-      run: |
-        REPO_TAG="$REPO_TAG"
-        export REPO_TAG
     - uses: actions/setup-go@v5
       with:
         go-version: ${{ matrix.go }}
