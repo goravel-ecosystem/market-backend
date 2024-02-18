@@ -16,6 +16,7 @@ jobs:
       run:
         working-directory: ./src/go
     steps:
+    - uses: actions/checkout@v4
     - name: Set up environment
       id: env_setup
       env:
@@ -23,7 +24,6 @@ jobs:
       run: |
         TAG="$TAG"
         echo "::set-output name=tag::TAG"
-    - uses: actions/checkout@v4
     - uses: actions/setup-go@v5
       with:
         go-version: ${{ matrix.go }}
