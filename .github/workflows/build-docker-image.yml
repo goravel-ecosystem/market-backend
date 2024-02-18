@@ -16,6 +16,13 @@ jobs:
       run:
         working-directory: ./src/go
     steps:
+    - name: Set up environment
+      id: env_setup
+      env:
+        TAG: ${GITHUB_REF##*/}
+      run: |
+        TAG="$TAG"
+        echo "::set-output name=tag::TAG"
     - uses: actions/checkout@v4
     - uses: actions/setup-go@v5
       with:
@@ -39,9 +46,9 @@ jobs:
         region-id: ${{ secrets.ALIYUN_ACR_REGION_ID }}
         login-server: ${{ secrets.ALIYUN_ACR_LOGIN_SERVER }}
     - name: Build the Docker image
-      run: cd gateway && docker build -t ${{ secrets.ALIYUN_ACR_REGISTRY }}:${GITHUB_REF##*/} .
+      run: cd gateway && docker build -t ${{ secrets.ALIYUN_ACR_REGISTRY }}:${{ steps.env_setup.outputs.tag }} .
     - name: Push the Docker image
-      run: docker push ${{ secrets.ALIYUN_ACR_REGISTRY }}:${GITHUB_REF##*/}
+      run: docker push ${{ secrets.ALIYUN_ACR_REGISTRY }}:${{ steps.env_setup.outputs.tag }}
     # This step can be moved to the deploy.yml file in the future
     - name: Update remote server
       uses: appleboy/ssh-action@v1.0.0
@@ -51,4 +58,9 @@ jobs:
         password: ${{ secrets.DEVELOPMENT_SERVER_PASSWORD }}
         port: ${{ secrets.DEVELOPMENT_SERVER_PORT }}
         script: |
-          docker pull ${{ secrets.ALIYUN_ACR_REGISTRY }}:${GITHUB_REF##*/}
+          docker pull ${{ secrets.ALIYUN_ACR_REGISTRY }}:${{ steps.env_setup.outputs.tag }}
+          if docker ps --format '{{.Image}}' | grep gateway; then
+            docker stop gateway
+            docker rm gateway
+          fi
+          docker run -dit -p 4000:4000 -e APP_PORT=4000 -e GRPC_USER_PORT=4010 -e GATEWAY_PORT=4001 -e APP_ENV=development -e APP_KEY=${{ secrets.GATEWAY_APP_KEY }} -e APP_DEBUG=true --network goravel-market --network-alias gateway --name goravel-market-gateway ${{ secrets.ALIYUN_ACR_REGISTRY }}:${{ steps.env_setup.outputs.tag }}
