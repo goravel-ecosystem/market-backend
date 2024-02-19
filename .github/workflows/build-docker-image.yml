@@ -27,7 +27,7 @@ jobs:
         file-path: ./config/deploy.yml
 
     - name: Update remote server
-      uses: appleboy/ssh-action@v1.0.0
+      uses: appleboy/ssh-action@v1.0.3
       env:
         HTTP_PORT: ${{ steps.load_config.outputs.development__gateway__http_port }}
         GATEWAY_PORT: ${{ steps.load_config.outputs.development__gateway__gateway_port }}
