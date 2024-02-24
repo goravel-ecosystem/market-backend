@@ -1,4 +1,4 @@
-development:
+staging:
   gateway:
     http:
       port: 4000
