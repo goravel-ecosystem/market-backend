@@ -1,10 +1,21 @@
 development:
   gateway:
-    http_port: 4000
-    gateway_port: 4001
+    http:
+      port: 4000
+    gateway:
+      port: 4001
   user:
-    http_port: 4010
-    grpc_port: 4011
+    grpc:
+      host: user
+      port: 4011
+    db:
+      host: postgres
+      port: 5432
+      database: user
+    redis:
+      host: redis
+      port: 6379
   package:
-    http_port: 4020
-    grpc_port: 4021
+    grpc:
+      host: package
+      port: 4021
