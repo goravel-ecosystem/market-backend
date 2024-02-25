@@ -52,11 +52,13 @@ jobs:
     - name: Push the Docker image
       run: docker push ${{ secrets.ALIYUN_ACR_REGISTRY }}:$REPO_TAG
 
-    - name: Deploy staging
-      uses: ./.github/workflows/deploy.yml
-      with:
-        env: staging
-        tag: $REPO_TAG
+  deploy:
+    needs: gateway
+    uses: ./.github/workflows/deploy.yml
+    with:
+      env: staging
+      tag: $REPO_TAG
+    secrets: inherit
 
   user:
     if: startsWith(github.ref, 'refs/tags/user-')
