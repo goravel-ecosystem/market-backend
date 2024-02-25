@@ -24,6 +24,7 @@ on:
         description: 'The repository tag'
         required: true
         type: string
+
 jobs:
   deploy:
     environment: ${{ inputs.env }}
@@ -68,7 +69,7 @@ jobs:
           fi
           docker run -dit \
             -p $HTTP_PORT:$HTTP_PORT \
-            -e APP_ENV=staging \
+            -e APP_ENV=${{ inputs.env }} \
             -e APP_KEY=${{ secrets.GATEWAY_APP_KEY }} \
             -e APP_DEBUG=true \
             -e APP_HOST=0.0.0.0 \
@@ -80,4 +81,4 @@ jobs:
             --network goravel-market \
             --network-alias gateway \
             --name goravel-market-gateway \
-            ${{ secrets.ALIYUN_ACR_REGISTRY }}:$REPO_TAG
+            ${{ secrets.ALIYUN_ACR_REGISTRY }}:${{ inputs.tag }}
