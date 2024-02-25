@@ -60,7 +60,7 @@ jobs:
         port: ${{ secrets.SERVER_PORT }}
         envs: REPO_TAG,HTTP_PORT,GATEWAY_PORT,GRPC_USER_HOST,GRPC_USER_PORT
         script: |
-          docker pull ${{ secrets.ALIYUN_ACR_REGISTRY }}:$REPO_TAG
+          docker pull ${{ secrets.ALIYUN_ACR_REGISTRY }}:${{ inputs.tag }}
           if docker ps --format '{{.Names}}' | grep goravel-market-gateway; then 
             docker stop goravel-market-gateway && docker rm goravel-market-gateway 
           fi
