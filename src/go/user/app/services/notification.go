@@ -29,7 +29,7 @@ func NewNotificationImpl() *NotificationImpl {
 
 func (r *NotificationImpl) SendEmailRegisterCode(ctx context.Context, email string) (key string, err error) {
 	var code int
-	if env.IsProduction() || env.IsDevelopment() {
+	if env.IsProduction() || env.IsStaging() {
 		code = rand.Intn(899999) + 100000
 	} else {
 		code = 123123
@@ -40,7 +40,7 @@ func (r *NotificationImpl) SendEmailRegisterCode(ctx context.Context, email stri
 		return "", err
 	}
 
-	if env.IsProduction() || env.IsDevelopment() {
+	if env.IsProduction() || env.IsStaging() {
 		subject := facades.Lang(ctx).Get("register_code.subject", translation.Option{
 			Replace: map[string]string{
 				"code": fmt.Sprintf("%d", code),

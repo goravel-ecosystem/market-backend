@@ -2,16 +2,25 @@
 
 Providers a backend for Goravel Market. In facilitate deployment and testing, we put all microservices in this project.
 
-## Microservices
+## Code Documentation
 
-- [gateway](src/go/gateway/README.md): The gateway microservice provides a unified entry point for all clients.
-- [package](src/go/package/README.md): The package microservice is responsible for all kinds of operations on package.
-- [proto](src/proto/README.md): Define the proto files for all microservices.
-- [user](src/go/user/README.md): The user microservice is responsible for user registration, login, and other functions.
+[Link](src/README.md)
 
 ## API Documentation
 
 [Link](https://htmlpreview.github.io/?https://github.com/goravel-ecosystem/market-backend/blob/master/src/doc/index.html#string)
+
+## Deploy
+
+We are using [the Github action](.github/workflows/build-docker-image.yml) to deploy the Staging environment. The 
+action will build a docker image and deploy it to the Staging server automatically when you [create a new tag](https://github.com/goravel-ecosystem/market-backend/releases/new) 
+in the repository. 
+
+There is a rule when you create a new tag, the name should consist of the server name and version, for example: 
+`gateway-0.0.1`, the `gateway` is the folder name of `src/go/gateway`.
+
+Once you create a new tag, please check the deployment process [here](https://github.com/goravel-ecosystem/market-backend/actions), 
+to ensure the deployment is successful.
 
 ## The Request Process
 
@@ -35,7 +44,7 @@ Based on the request process, we can get some key points:
 3. All microservices only need to define the GRPC endpoints, and the gateway will automatically generate the 
    HTTP routing to the corresponding GRPC endpoint;
 4. If you want to get the current login user information in a microservice, you can add `string user_id = 1`, 
-   `string user_id = 2` to your GRPC request, the fields will be filled by gateway automatically; 
+   `string user_name = 2` to your GRPC request, the fields will be filled by gateway automatically; 
 
 ## Required Tools
 
