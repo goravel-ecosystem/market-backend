@@ -57,7 +57,7 @@ jobs:
     uses: ./.github/workflows/deploy.yml
     with:
       env: staging
-      tag: $REPO_TAG
+      tag: ${GITHUB_REF##*/}
     secrets: inherit
 
   user:
