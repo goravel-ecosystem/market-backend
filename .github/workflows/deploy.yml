@@ -31,8 +31,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-      with:
-        ref: ${{ inputs.tag }}
 
     - name: Login to ACR
       uses: aliyun/acr-login@v1
