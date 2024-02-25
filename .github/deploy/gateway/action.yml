@@ -1,0 +1,54 @@
+name: 'Deploy gateway'
+description: 'Deploy the gateway service'
+
+inputs:
+  env:
+    description: ''
+    required: true
+  tag:
+    description: ''
+    required: true
+  http_port:
+    description: ''
+    required: true
+  gateway_port:
+    description: ''
+    required: true
+  grpc_user_host:
+    description: ''
+    required: true
+  grpc_user_port:
+    description: ''
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Deploy gateway
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USERNAME }}
+        password: ${{ secrets.SERVER_PASSWORD }}
+        port: ${{ secrets.SERVER_PORT }}
+        script: |
+          docker pull ${{ secrets.ALIYUN_ACR_REGISTRY }}:${{ inputs.tag }}
+          if docker ps --format '{{.Names}}' | grep goravel-market-gateway; then 
+            docker stop goravel-market-gateway && docker rm goravel-market-gateway 
+          fi
+          docker run -dit \
+            -p ${{ inputs.http_port }}:${{ inputs.http_port }} \
+            -e APP_ENV=${{ inputs.env }} \
+            -e APP_KEY=${{ secrets.GATEWAY_APP_KEY }} \
+            -e APP_DEBUG=true \
+            -e APP_HOST=0.0.0.0 \
+            -e APP_PORT=${{ inputs.http_port }} \
+            -e GRPC_USER_HOST=${{ inputs.grpc_user_host }} \
+            -e GRPC_USER_PORT=${{ inputs.grpc_user_port }} \
+            -e GATEWAY_HOST=0.0.0.0 \
+            -e GATEWAY_PORT=${{ inputs.gateway_port }} \
+            --network goravel-market \
+            --network-alias gateway \
+            --name goravel-market-gateway \
+            ${{ secrets.ALIYUN_ACR_REGISTRY }}:${{ inputs.tag }}
+
