@@ -12,6 +12,8 @@ jobs:
         go:
           - "1.21"
     runs-on: ubuntu-latest
+    outputs:
+      tag: ${GITHUB_REF##*/}
     steps:
     - uses: actions/checkout@v4
 
@@ -52,12 +54,12 @@ jobs:
     - name: Push the Docker image
       run: docker push ${{ secrets.ALIYUN_ACR_REGISTRY }}:$REPO_TAG
 
-  deploy:
+  deploy-staging:
     needs: gateway
     uses: ./.github/workflows/deploy.yml
     with:
       env: staging
-      tag: ${GITHUB_REF##*/}
+      tag: ${{ needs.gateway.outputs.tag }}
     secrets: inherit
 
   user:
