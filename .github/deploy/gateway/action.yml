@@ -5,7 +5,22 @@ inputs:
   env:
     description: ''
     required: true
-  tag:
+  image:
+    description: ''
+    required: true
+  server_host:
+    description: ''
+    required: true
+  server_username:
+    description: ''
+    required: true
+  server_password:
+    description: ''
+    required: true
+  server_port:
+    description: ''
+    required: true
+  app_key:
     description: ''
     required: true
   http_port:
@@ -26,20 +41,23 @@ runs:
   steps:
     - name: Deploy gateway
       uses: appleboy/ssh-action@v1.0.0
+      env:
+        NAME: gateway
       with:
-        host: ${{ secrets.SERVER_HOST }}
-        username: ${{ secrets.SERVER_USERNAME }}
-        password: ${{ secrets.SERVER_PASSWORD }}
-        port: ${{ secrets.SERVER_PORT }}
+        host: ${{ inputs.server_host }}
+        username: ${{ inputs.server_username }}
+        password: ${{ inputs.server_password }}
+        port: ${{ inputs.server_port }}
+        envs: NAME
         script: |
-          docker pull ${{ secrets.ALIYUN_ACR_REGISTRY }}:${{ inputs.tag }}
-          if docker ps --format '{{.Names}}' | grep goravel-market-gateway; then 
-            docker stop goravel-market-gateway && docker rm goravel-market-gateway 
+          docker pull ${{ inputs.image }}
+          if docker ps --format '{{.Names}}' | grep goravel-market-$NAME; then 
+            docker stop goravel-market-$NAME && docker rm goravel-market-$NAME 
           fi
           docker run -dit \
             -p ${{ inputs.http_port }}:${{ inputs.http_port }} \
             -e APP_ENV=${{ inputs.env }} \
-            -e APP_KEY=${{ secrets.GATEWAY_APP_KEY }} \
+            -e APP_KEY=${{ inputs.app_key }} \
             -e APP_DEBUG=true \
             -e APP_HOST=0.0.0.0 \
             -e APP_PORT=${{ inputs.http_port }} \
@@ -48,7 +66,6 @@ runs:
             -e GATEWAY_HOST=0.0.0.0 \
             -e GATEWAY_PORT=${{ inputs.gateway_port }} \
             --network goravel-market \
-            --network-alias gateway \
-            --name goravel-market-gateway \
-            ${{ secrets.ALIYUN_ACR_REGISTRY }}:${{ inputs.tag }}
-
+            --network-alias $NAME \
+            --name goravel-market-$NAME \
+            ${{ inputs.image }}

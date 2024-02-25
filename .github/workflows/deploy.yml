@@ -51,7 +51,12 @@ jobs:
       uses: ./.github/deploy/gateway
       with:
         env: ${{ inputs.env }}
-        tag: ${{ inputs.tag }}
+        image: ${{ secrets.ALIYUN_ACR_REGISTRY }}:${{ inputs.tag }}
+        server_host: ${{ secrets.SERVER_HOST }}
+        server_username: ${{ secrets.SERVER_USERNAME }}
+        server_password: ${{ secrets.SERVER_PASSWORD }}
+        server_port: ${{ secrets.SERVER_PORT }}
+        app_key: ${{ secrets.GATEWAY_APP_KEY }}
         http_port: ${{ steps.load_config.outputs.staging__gateway__http__port }}
         gateway_port: ${{ steps.load_config.outputs.staging__gateway__gateway__port }}
         grpc_user_host: ${{ steps.load_config.outputs.staging__user__grpc__HOST }}
