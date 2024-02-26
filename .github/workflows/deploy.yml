@@ -19,10 +19,11 @@ jobs:
     # You only need to modify this step when you add a new microservice.
     - name: Set deploy environment variables
       run: |
+        APP_NAME=${inputs.tag%-*}
         echo "INPUT_APP_ENV=${{ inputs.env }}" >> $GITHUB_ENV
-        echo "INPUT_APP_NAME=${inputs.tag%-*}" >> $GITHUB_ENV
+        echo "INPUT_APP_NAME=$APP_NAME" >> $GITHUB_ENV
         echo "INPUT_IMAGE=${{ secrets.ALIYUN_ACR_REGISTRY }}:${{ inputs.tag }}" >> $GITHUB_ENV
-        echo "INPUT_DEPLOY=$(cat ./src/go/$INPUT_APP_NAME/deploy.sh | base64 | tr -d '\n')" >> $GITHUB_ENV
+        echo "INPUT_DEPLOY=$(cat ./src/go/$APP_NAME/deploy.sh | base64 | tr -d '\n')" >> $GITHUB_ENV
         
         echo "INPUT_GATEWAY_APP_KEY=${{ secrets.GATEWAY_APP_KEY }}" >> $GITHUB_ENV
 
