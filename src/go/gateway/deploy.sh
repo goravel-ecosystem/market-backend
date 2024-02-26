@@ -1,6 +1,6 @@
 docker run -dit \
   -p $HTTP_PORT:$HTTP_PORT \
-  -e APP_ENV=$ENV \
+  -e APP_ENV=$APP_ENV \
   -e APP_KEY=$APP_KEY \
   -e APP_DEBUG=true \
   -e APP_HOST=0.0.0.0 \

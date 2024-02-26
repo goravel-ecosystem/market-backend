@@ -32,6 +32,25 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Load deploy configuration
+      uses: actions-tools/yaml-outputs@v2
+      id: load_config
+      with:
+        export-env-variables: false
+        file-path: ./config/deploy.yml
+
+    - name: Set deploy environment variables
+      run: |
+        echo "APP_ENV=${{ inputs.env }}" >> $GITHUB_ENV
+        echo "NAME=gateway" >> $GITHUB_ENV
+        echo "APP_KEY=${{ secrets.GATEWAY_APP_KEY }}" >> $GITHUB_ENV
+        echo "IMAGE=${{ secrets.ALIYUN_ACR_REGISTRY }}:${{ inputs.tag }}" >> $GITHUB_ENV
+        echo "HTTP_PORT=${{ steps.load_config.outputs.staging__gateway__http__port }}" >> $GITHUB_ENV
+        echo "GATEWAY_PORT=${{ steps.load_config.outputs.staging__gateway__gateway__port }}" >> $GITHUB_ENV
+        echo "GRPC_USER_HOST=${{ steps.load_config.outputs.staging__user__grpc__HOST }}" >> $GITHUB_ENV
+        echo "GRPC_USER_PORT=${{ steps.load_config.outputs.staging__user__grpc__port }}" >> $GITHUB_ENV
+        echo "DEPLOY=$(cat ./src/go/gateway/deploy.sh | base64 | tr -d '\n')" >> $GITHUB_ENV
+
     - name: Login to ACR
       uses: aliyun/acr-login@v1
       with:
@@ -40,34 +59,14 @@ jobs:
         region-id: ${{ secrets.ALIYUN_ACR_REGION_ID }}
         login-server: ${{ secrets.ALIYUN_ACR_LOGIN_SERVER }}
 
-    - name: Load deploy configuration
-      uses: actions-tools/yaml-outputs@v2
-      id: load_config
-      with:
-        file-path: ./config/deploy.yml
-
-    - name: Read deploy.sh
-      id: read_deploy
-      run: |
-        echo "DEPLOY=$(cat ./src/go/gateway/deploy.sh | base64 | tr -d '\n')" >> $GITHUB_ENV
-
     - name: Deploy gateway
       uses: appleboy/ssh-action@v1.0.0
-      env:
-        ENV: ${{ inputs.env }}
-        NAME: gateway
-        APP_KEY: ${{ secrets.GATEWAY_APP_KEY }}
-        IMAGE: ${{ secrets.ALIYUN_ACR_REGISTRY }}:${{ inputs.tag }}
-        HTTP_PORT: ${{ steps.load_config.outputs.staging__gateway__http__port }}
-        GATEWAY_PORT: ${{ steps.load_config.outputs.staging__gateway__gateway__port }}
-        GRPC_USER_HOST: ${{ steps.load_config.outputs.staging__user__grpc__HOST }}
-        GRPC_USER_PORT: ${{ steps.load_config.outputs.staging__user__grpc__port }}
       with:
         host: ${{ secrets.SERVER_HOST }}
         username: ${{ secrets.SERVER_USERNAME }}
         password: ${{ secrets.SERVER_PASSWORD }}
         port: ${{ secrets.SERVER_PORT }}
-        envs: ENV,IMAGE,DEPLOY,NAME,APP_KEY,HTTP_PORT,GATEWAY_PORT,GRPC_USER_HOST,GRPC_USER_PORT
+        allenvs: true
         script: |
           echo $DEPLOY | base64 -d
           docker pull ${{ secrets.ALIYUN_ACR_REGISTRY }}:${{ inputs.tag }}
