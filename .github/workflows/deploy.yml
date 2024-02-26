@@ -53,7 +53,7 @@ jobs:
         delimiter=$(openssl rand -hex 8)
         {
           echo "DEPLOY<<$delimiter"
-          cat ./src/go/gateway/deploy.sh
+          echo "abc"
           echo "$delimiter"
         } >> $GITHUB_ENV
 
