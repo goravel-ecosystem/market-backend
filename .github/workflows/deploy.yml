@@ -19,7 +19,8 @@ jobs:
     # You only need to modify this step when you add a new microservice.
     - name: Set deploy environment variables
       run: |
-        APP_NAME=${inputs.tag%-*}
+        TAG=${{ inputs.tag }}
+        APP_NAME=${TAG%-*}
         echo "INPUT_APP_ENV=${{ inputs.env }}" >> $GITHUB_ENV
         echo "INPUT_APP_NAME=$APP_NAME" >> $GITHUB_ENV
         echo "INPUT_IMAGE=${{ secrets.ALIYUN_ACR_REGISTRY }}:${{ inputs.tag }}" >> $GITHUB_ENV
