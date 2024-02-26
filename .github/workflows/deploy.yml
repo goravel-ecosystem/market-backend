@@ -33,7 +33,7 @@ jobs:
         echo "INPUT_REDIS_HOST=${{ steps.load_config.outputs.staging__redis__host }}" >> $GITHUB_ENV
         echo "INPUT_REDIS_PORT=${{ steps.load_config.outputs.staging__redis__port }}" >> $GITHUB_ENV
         echo "INPUT_MAIL_HOST=${{ secrets.MAIL_HOST }}" >> $GITHUB_ENV
-        echo "INPUT_MAIL_PORT=${{ secrets.MAIL_POST }}" >> $GITHUB_ENV
+        echo "INPUT_MAIL_PORT=${{ secrets.MAIL_PORT }}" >> $GITHUB_ENV
         echo "INPUT_MAIL_USERNAME=${{ secrets.MAIL_USERNAME }}" >> $GITHUB_ENV
         echo "INPUT_MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}" >> $GITHUB_ENV
 
