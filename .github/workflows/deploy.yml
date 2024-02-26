@@ -49,10 +49,11 @@ jobs:
     - name: Read deploy.sh
       id: read_deploy
       run: |
+        delimiter=$(openssl rand -hex 8)
         {
-          echo "DEPLOY<<EOF"
+          echo "DEPLOY<<$delimiter"
           cat ./src/go/gateway/deploy.sh
-          echo "EOF"
+          echo "$delimiter"
         } >> $GITHUB_ENV
 
     - name: Deploy gateway
