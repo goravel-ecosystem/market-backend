@@ -49,9 +49,11 @@ jobs:
     - name: Read deploy.sh
       id: read_deploy
       run: |
-        echo "DEPLOY<<EOF" >> $GITHUB_ENV
-        cat ./src/go/gateway/deploy.sh >> $GITHUB_ENV
-        echo "EOF" >> $GITHUB_ENV
+        {
+          echo 'DEPLOY<<EOF'
+          cat ./src/go/gateway/deploy.sh
+          echo EOF
+        } >> "$GITHUB_ENV"
 
     - name: Deploy gateway
       uses: appleboy/ssh-action@v1.0.0
