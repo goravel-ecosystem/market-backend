@@ -9,7 +9,7 @@ docker run -dit \
   -e GRPC_USER_PORT=$INPUT_USER_GRPC_PORT \
   -e GATEWAY_HOST=0.0.0.0 \
   -e GATEWAY_PORT=$INPUT_GATEWAY_GATEWAY_PORT \
-  --network goravel-market \
+  --network goravel-market-$INPUT_APP_ENV \
   --network-alias $INPUT_APP_NAME \
-  --name goravel-market-$INPUT_APP_NAME \
+  --name goravel-market-$INPUT_APP_ENV-$INPUT_APP_NAME \
   $INPUT_IMAGE

@@ -17,7 +17,7 @@ docker run -dit \
   -e MAIL_PORT=$INPUT_MAIL_PORT \
   -e MAIL_USERNAME=$INPUT_MAIL_USERNAME \
   -e MAIL_PASSWORD=$INPUT_MAIL_PASSWORD \
-  --network goravel-market \
+  --network goravel-market-$INPUT_APP_ENV \
   --network-alias $INPUT_APP_NAME \
-  --name goravel-market-$INPUT_APP_NAME \
+  --name goravel-market-$INPUT_APP_ENV-$INPUT_APP_NAME \
   $INPUT_IMAGE

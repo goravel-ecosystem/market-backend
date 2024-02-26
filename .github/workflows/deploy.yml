@@ -66,8 +66,9 @@ jobs:
         allenvs: true
         script: |
           docker pull $INPUT_IMAGE
-          if docker ps --format '{{.Names}}' | grep goravel-market-$INPUT_APP_NAME; then 
-            docker stop goravel-market-$INPUT_APP_NAME && docker rm goravel-market-$INPUT_APP_NAME 
+          APP_DOCKER_NAME=goravel-market-$INPUT_APP_ENV-$INPUT_APP_NAME
+          if docker ps --format '{{.Names}}' | grep $APP_DOCKER_NAME; then 
+            docker stop $APP_DOCKER_NAME && docker rm $APP_DOCKER_NAME
           fi
           echo $INPUT_DEPLOY | base64 -d | bash
 
