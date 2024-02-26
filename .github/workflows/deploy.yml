@@ -42,7 +42,7 @@ jobs:
     - name: Set deploy environment variables
       run: |
         echo "APP_ENV=${{ inputs.env }}" >> $GITHUB_ENV
-        echo "NAME=gateway" >> $GITHUB_ENV
+        echo "APP_NAME=gateway" >> $GITHUB_ENV
         echo "APP_KEY=${{ secrets.GATEWAY_APP_KEY }}" >> $GITHUB_ENV
         echo "IMAGE=${{ secrets.ALIYUN_ACR_REGISTRY }}:${{ inputs.tag }}" >> $GITHUB_ENV
         echo "HTTP_PORT=${{ steps.load_config.outputs.staging__gateway__http__port }}" >> $GITHUB_ENV
@@ -68,9 +68,8 @@ jobs:
         port: ${{ secrets.SERVER_PORT }}
         allenvs: true
         script: |
-          echo $DEPLOY | base64 -d
           docker pull ${{ secrets.ALIYUN_ACR_REGISTRY }}:${{ inputs.tag }}
-          if docker ps --format '{{.Names}}' | grep goravel-market-$NAME; then 
-            docker stop goravel-market-$NAME && docker rm goravel-market-$NAME 
+          if docker ps --format '{{.Names}}' | grep goravel-market-$APP_NAME; then 
+            docker stop goravel-market-$APP_NAME && docker rm goravel-market-$APP_NAME 
           fi      
           echo $DEPLOY | base64 -d | bash
