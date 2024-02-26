@@ -1,30 +1,5 @@
 name: Deploy
 
-on:
-  workflow_dispatch:
-    inputs:
-      env:
-        description: 'The environment'
-        required: true
-        type: choice
-        options:
-          - staging
-          - production
-      tag:
-        description: 'The repository tag'
-        required: true
-        type: string
-  workflow_call:
-    inputs:
-      env:
-        description: 'The environment: staging or production'
-        required: true
-        type: string
-      tag:
-        description: 'The repository tag'
-        required: true
-        type: string
-
 jobs:
   deploy:
     environment: ${{ inputs.env }}
@@ -36,19 +11,23 @@ jobs:
       uses: actions-tools/yaml-outputs@v2
       id: load_config
       with:
+        separator: '.'
         export-env-variables: false
         file-path: ./config/deploy.yml
 
+    # ************************** IMPORTANT **************************
+    # Add the variables that needed by microservices here, the prefix must be INPUT_, it's a rule of the action.
+    # You only need to modify this step when you add a new microservice.
     - name: Set deploy environment variables
       run: |
         echo "INPUT_APP_ENV=${{ inputs.env }}" >> $GITHUB_ENV
         echo "INPUT_APP_NAME=gateway" >> $GITHUB_ENV
         echo "INPUT_APP_KEY=${{ secrets.GATEWAY_APP_KEY }}" >> $GITHUB_ENV
         echo "INPUT_IMAGE=${{ secrets.ALIYUN_ACR_REGISTRY }}:${{ inputs.tag }}" >> $GITHUB_ENV
-        echo "INPUT_HTTP_PORT=${{ steps.load_config.outputs.staging__gateway__http__port }}" >> $GITHUB_ENV
-        echo "INPUT_GATEWAY_PORT=${{ steps.load_config.outputs.staging__gateway__gateway__port }}" >> $GITHUB_ENV
-        echo "INPUT_GRPC_USER_HOST=${{ steps.load_config.outputs.staging__user__grpc__HOST }}" >> $GITHUB_ENV
-        echo "INPUT_GRPC_USER_PORT=${{ steps.load_config.outputs.staging__user__grpc__port }}" >> $GITHUB_ENV
+        echo "INPUT_HTTP_PORT=${{ steps.load_config.outputs.staging.gateway.http.port }}" >> $GITHUB_ENV
+        echo "INPUT_GATEWAY_PORT=${{ steps.load_config.outputs.staging.gateway.gateway.port }}" >> $GITHUB_ENV
+        echo "INPUT_GRPC_USER_HOST=${{ steps.load_config.outputs.staging.user.grpc.HOST }}" >> $GITHUB_ENV
+        echo "INPUT_GRPC_USER_PORT=${{ steps.load_config.outputs.staging.user.grpc.port }}" >> $GITHUB_ENV
         echo "INPUT_DEPLOY=$(cat ./src/go/gateway/deploy.sh | base64 | tr -d '\n')" >> $GITHUB_ENV
 
     - name: Login to ACR
@@ -73,3 +52,28 @@ jobs:
             docker stop goravel-market-$INPUT_APP_NAME && docker rm goravel-market-$INPUT_APP_NAME 
           fi
           echo $INPUT_DEPLOY | base64 -d | bash
+
+on:
+  workflow_dispatch:
+    inputs:
+      env:
+        description: 'The environment'
+        required: true
+        type: choice
+        options:
+          - staging
+          - production
+      tag:
+        description: 'The repository tag'
+        required: true
+        type: string
+  workflow_call:
+    inputs:
+      env:
+        description: 'The environment: staging or production'
+        required: true
+        type: string
+      tag:
+        description: 'The repository tag'
+        required: true
+        type: string
