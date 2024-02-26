@@ -49,6 +49,7 @@ jobs:
     - name: Read deploy.sh
       id: read_deploy
       run: |
+        cat ./src/go/gateway/deploy.sh
         delimiter=$(openssl rand -hex 8)
         {
           echo "DEPLOY<<$delimiter"
