@@ -12,7 +12,7 @@ Providers a backend for Goravel Market. In facilitate deployment and testing, we
 
 ## Deploy
 
-We are using [the Github action](.github/workflows/build-docker-image.yml) to deploy the Staging environment. The 
+We are using [the Github action](.github/workflows/build.yml) to deploy the Staging environment. The 
 action will build a docker image and deploy it to the Staging server automatically when you [create a new tag](https://github.com/goravel-ecosystem/market-backend/releases/new) 
 in the repository. 
 
@@ -21,6 +21,9 @@ There is a rule when you create a new tag, the name should consist of the server
 
 Once you create a new tag, please check the deployment process [here](https://github.com/goravel-ecosystem/market-backend/actions), 
 to ensure the deployment is successful.
+
+You can also deploy the staging environment manually, open [this page](https://github.com/goravel-ecosystem/market-backend/actions/workflows/deploy.yml) 
+and click the `Run workflow` button, then select the branch, environment and tag.
 
 ## The Request Process
 

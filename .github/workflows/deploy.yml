@@ -39,12 +39,11 @@ jobs:
 
         # CUSTOM VARIABLES, MODIFY WHEN YOU ADD A NEW MICROSERVICE
         echo "INPUT_GATEWAY_APP_KEY=${{ secrets.GATEWAY_APP_KEY }}" >> $GITHUB_ENV
-        echo "INPUT_USER_APP_KEY=${{ secrets.USER_APP_KEY }}" >> $GITHUB_ENV
-        echo "INPUT_USER_JWT_SECRET=${{ secrets.USER_JWT_SECRET }}" >> $GITHUB_ENV
-        
         echo "INPUT_GATEWAY_HTTP_PORT=${{ steps.load_config.outputs.staging__gateway__http__port }}" >> $GITHUB_ENV
         echo "INPUT_GATEWAY_GATEWAY_PORT=${{ steps.load_config.outputs.staging__gateway__gateway__port }}" >> $GITHUB_ENV
         
+        echo "INPUT_USER_APP_KEY=${{ secrets.USER_APP_KEY }}" >> $GITHUB_ENV
+        echo "INPUT_USER_JWT_SECRET=${{ secrets.USER_JWT_SECRET }}" >> $GITHUB_ENV
         echo "INPUT_USER_GRPC_HOST=${{ steps.load_config.outputs.staging__user__grpc__host }}" >> $GITHUB_ENV
         echo "INPUT_USER_GRPC_PORT=${{ steps.load_config.outputs.staging__user__grpc__port }}" >> $GITHUB_ENV
         echo "INPUT_USER_DB_DATABASE=${{ steps.load_config.outputs.staging__user__db__database }}" >> $GITHUB_ENV
