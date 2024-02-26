@@ -20,7 +20,7 @@ jobs:
       id: env_setup
       run: |
         REPO_TAG=${GITHUB_REF##*/}
-        SERVER_NAME=${VERSION_STRING%-*}
+        SERVER_NAME=${REPO_TAG%-*}
         echo "REPO_TAG=$REPO_TAG" >> $GITHUB_ENV
         echo "SERVER_NAME=$SERVER_NAME" >> $GITHUB_ENV
         echo "::set-output name=tag::${GITHUB_REF##*/}"
