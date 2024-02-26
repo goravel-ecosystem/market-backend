@@ -48,7 +48,7 @@ runs:
         username: ${{ inputs.server_username }}
         password: ${{ inputs.server_password }}
         port: ${{ inputs.server_port }}
-        envs: NAME
+        allenvs: true
         script: |
           docker pull ${{ inputs.image }}
           if docker ps --format '{{.Names}}' | grep goravel-market-$NAME; then 

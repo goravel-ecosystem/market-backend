@@ -41,9 +41,7 @@ jobs:
       run: cd ./src/go && go mod tidy
 
     - name: go build
-      run: |
-        echo $SERVER_NAME
-        cd ./src/go/$SERVER_NAME && GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build --ldflags '-extldflags -static"' -o main .
+      run: cd ./src/go/$SERVER_NAME && GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build --ldflags '-extldflags -static"' -o main .
 
     - name: Login to ACR
       uses: aliyun/acr-login@v1
@@ -136,7 +134,7 @@ jobs:
           username: ${{ secrets.SERVER_USERNAME }}
           password: ${{ secrets.SERVER_PASSWORD }}
           port: ${{ secrets.SERVER_PORT }}
-          envs: REPO_TAG,GRPC_PORT,DB_HOST,DB_PORT,DB_DATABASE,REDIS_HOST,REDIS_PORT
+          allenvs: true
           script: |
             docker pull ${{ secrets.ALIYUN_ACR_REGISTRY }}:$REPO_TAG
             if docker ps --format '{{.Names}}' | grep goravel-market-user; then 
