@@ -49,7 +49,7 @@ jobs:
     - name: Read deploy.sh
       id: read_deploy
       run: |
-        echo "DEPLOY=$(cat ./src/go/gateway/deploy.sh | base64)" >> $GITHUB_ENV
+        echo "DEPLOY=$(cat ./src/go/gateway/deploy.sh | base64 | tr -d '\n')" >> $GITHUB_ENV
 
     - name: Deploy gateway
       uses: appleboy/ssh-action@v1.0.0
