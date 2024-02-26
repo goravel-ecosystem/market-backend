@@ -49,13 +49,7 @@ jobs:
     - name: Read deploy.sh
       id: read_deploy
       run: |
-        cat ./src/go/gateway/deploy.sh
-        delimiter=$(openssl rand -hex 8)
-        {
-          echo "DEPLOY<<$delimiter"
-          cat ./src/go/gateway/deploy.sh
-          echo "$delimiter"
-        } >> $GITHUB_ENV
+        echo "DEPLOY=$(cat ./src/go/gateway/deploy.sh | base64)" >> $GITHUB_ENV
 
     - name: Deploy gateway
       uses: appleboy/ssh-action@v1.0.0
@@ -78,4 +72,4 @@ jobs:
           if docker ps --format '{{.Names}}' | grep goravel-market-$NAME; then 
             docker stop goravel-market-$NAME && docker rm goravel-market-$NAME 
           fi
-          $DEPLOY
+          echo $DEPLOY | base64 -d | bash
