@@ -67,7 +67,7 @@ jobs:
         port: ${{ secrets.SERVER_PORT }}
         allenvs: true
         script: |
-          echo $DEPLOY
+          echo $DEPLOY | base64 -d
           docker pull ${{ secrets.ALIYUN_ACR_REGISTRY }}:${{ inputs.tag }}
           if docker ps --format '{{.Names}}' | grep goravel-market-$NAME; then 
             docker stop goravel-market-$NAME && docker rm goravel-market-$NAME 
