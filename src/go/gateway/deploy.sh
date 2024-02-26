@@ -1,7 +1,7 @@
 docker run -dit \
   -p $INPUT_HTTP_PORT:$INPUT_HTTP_PORT \
   -e APP_ENV=$INPUT_APP_ENV \
-  -e APP_KEY=$INPUT_APP_KEY \
+  -e APP_KEY=$INPUT_GATEWAY_APP_KEY \
   -e APP_DEBUG=true \
   -e APP_HOST=0.0.0.0 \
   -e APP_PORT=$INPUT_HTTP_PORT \
