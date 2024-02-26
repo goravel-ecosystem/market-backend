@@ -7,7 +7,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Load deploy configuration
+    - name: Load configuration
       uses: actions-tools/yaml-outputs@v2
       id: load_config
       with:
@@ -17,7 +17,7 @@ jobs:
     # ************************** IMPORTANT **************************
     # Add the variables that needed by microservices here, the prefix must be INPUT_, it's a rule of the action.
     # You only need to modify this step when you add a new microservice.
-    - name: Set deploy environment variables
+    - name: Set environment variables
       run: |
         # DEFAULT VARIABLES, DONT MODIFY
         TAG=${{ inputs.tag }}
