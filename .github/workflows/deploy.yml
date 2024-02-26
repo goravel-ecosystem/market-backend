@@ -12,7 +12,7 @@ jobs:
       id: load_config
       with:
         export-env-variables: false
-        file-path: ./config/deploy.yml
+        file-path: ./deploy/config.yml
 
     # ************************** IMPORTANT **************************
     # Add the variables that needed by microservices here, the prefix must be INPUT_, it's a rule of the action.
@@ -25,14 +25,29 @@ jobs:
         echo "INPUT_APP_ENV=${{ inputs.env }}" >> $GITHUB_ENV
         echo "INPUT_APP_NAME=$APP_NAME" >> $GITHUB_ENV
         echo "INPUT_IMAGE=${{ secrets.ALIYUN_ACR_REGISTRY }}:${{ inputs.tag }}" >> $GITHUB_ENV
-        echo "INPUT_DEPLOY=$(cat ./src/go/$APP_NAME/deploy.sh | base64 | tr -d '\n')" >> $GITHUB_ENV
-        
+        echo "INPUT_DEPLOY=$(cat ./deploy/$APP_NAME/deploy.sh | base64 | tr -d '\n')" >> $GITHUB_ENV
+        echo "INPUT_DB_HOST=${{ steps.load_config.outputs.staging__db__host }}" >> $GITHUB_ENV
+        echo "INPUT_DB_PORT=${{ steps.load_config.outputs.staging__db__port }}" >> $GITHUB_ENV
+        echo "INPUT_DB_USERNAME=${{ secrets.POSTGRES_USERNAME }}" >> $GITHUB_ENV
+        echo "INPUT_DB_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> $GITHUB_ENV
+        echo "INPUT_REDIS_HOST=${{ steps.load_config.outputs.staging__redis__host }}" >> $GITHUB_ENV
+        echo "INPUT_REDIS_PORT=${{ steps.load_config.outputs.staging__redis__port }}" >> $GITHUB_ENV
+        echo "INPUT_MAIL_HOST=${{ secrets.MAIL_HOST }}" >> $GITHUB_ENV
+        echo "INPUT_MAIL_PORT=${{ secrets.MAIL_POST }}" >> $GITHUB_ENV
+        echo "INPUT_MAIL_USERNAME=${{ secrets.MAIL_USERNAME }}" >> $GITHUB_ENV
+        echo "INPUT_MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}" >> $GITHUB_ENV
+
         # CUSTOM VARIABLES, MODIFY WHEN YOU ADD A NEW MICROSERVICE
         echo "INPUT_GATEWAY_APP_KEY=${{ secrets.GATEWAY_APP_KEY }}" >> $GITHUB_ENV
-        echo "INPUT_HTTP_PORT=${{ steps.load_config.outputs.staging__gateway__http__port }}" >> $GITHUB_ENV
-        echo "INPUT_GATEWAY_PORT=${{ steps.load_config.outputs.staging__gateway__gateway__port }}" >> $GITHUB_ENV
-        echo "INPUT_GRPC_USER_HOST=${{ steps.load_config.outputs.staging__user__grpc__HOST }}" >> $GITHUB_ENV
-        echo "INPUT_GRPC_USER_PORT=${{ steps.load_config.outputs.staging__user__grpc__port }}" >> $GITHUB_ENV
+        echo "INPUT_USER_APP_KEY=${{ secrets.USER_APP_KEY }}" >> $GITHUB_ENV
+        echo "INPUT_USER_JWT_SECRET=${{ secrets.USER_JWT_SECRET }}" >> $GITHUB_ENV
+        
+        echo "INPUT_GATEWAY_HTTP_PORT=${{ steps.load_config.outputs.staging__gateway__http__port }}" >> $GITHUB_ENV
+        echo "INPUT_GATEWAY_GATEWAY_PORT=${{ steps.load_config.outputs.staging__gateway__gateway__port }}" >> $GITHUB_ENV
+        
+        echo "INPUT_USER_GRPC_HOST=${{ steps.load_config.outputs.staging__user__grpc__host }}" >> $GITHUB_ENV
+        echo "INPUT_USER_GRPC_PORT=${{ steps.load_config.outputs.staging__user__grpc__port }}" >> $GITHUB_ENV
+        echo "INPUT_USER_DB_DATABASE=${{ steps.load_config.outputs.staging__user__db__database }}" >> $GITHUB_ENV
 
     - name: Login to ACR
       uses: aliyun/acr-login@v1
