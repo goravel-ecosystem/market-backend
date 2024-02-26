@@ -65,7 +65,7 @@ jobs:
         username: ${{ secrets.SERVER_USERNAME }}
         password: ${{ secrets.SERVER_PASSWORD }}
         port: ${{ secrets.SERVER_PORT }}
-        allenvs: true
+        envs: NAME,APP_KEY,HTTP_PORT,GATEWAY_PORT,GRPC_USER_HOST,GRPC_USER_PORT
         script: |
           echo $DEPLOY | base64 -d
           docker pull ${{ secrets.ALIYUN_ACR_REGISTRY }}:${{ inputs.tag }}
