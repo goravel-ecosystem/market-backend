@@ -23,7 +23,7 @@ jobs:
         APP_NAME=${TAG%-*}
         echo "TAG=$TAG" >> $GITHUB_ENV
         echo "APP_NAME=$APP_NAME" >> $GITHUB_ENV
-        echo "::set-output name=tag::${GITHUB_REF##*/}"
+        echo "TAG=${GITHUB_REF##*/}" >> $GITHUB_OUTPUT
 
     - uses: actions/setup-go@v5
       with:
@@ -35,7 +35,7 @@ jobs:
         path: |
           ~/.cache/go-build
           ~/go/pkg/mod
-        key: ${{ runner.os }}-go-${{ matrix.go }}-${{ hashFiles('**/go.mod') }}
+        key: ${{ runner.os }}-go-${{ matrix.go }}-${{ hashFiles('./src/go/go.mod') }}
 
     - name: Install dependencies
       run: cd ./src/go && go mod tidy
@@ -62,5 +62,5 @@ jobs:
     uses: ./.github/workflows/deploy.yml
     with:
       env: staging
-      tag: ${{ needs.build.outputs.tag }}
+      tag: ${{ needs.build.outputs.TAG }}
     secrets: inherit
