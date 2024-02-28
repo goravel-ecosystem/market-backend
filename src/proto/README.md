@@ -12,12 +12,15 @@ You need to build proto files after you modify them, you can use the following c
 # Build all microservices proto files.
 make all
 
+# Build base proto
+make base
+
 # Build UserService
 make user
 
-# Build GatewayService
-make gateway
+# Build PackageService
+make package
 
-# Build BusinessService
-make business
+# Build document
+make doc
 ```
