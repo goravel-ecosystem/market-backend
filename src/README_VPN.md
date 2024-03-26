@@ -88,8 +88,6 @@ Configure the WireGuard service to start automatically:
 sudo systemctl enable wg-quick@wg0
 ```
 
-
-
 ### Errors
 
 1. `/usr/bin/wg-quick: line 32: resolvconf: command not found`
@@ -121,7 +119,7 @@ sudo vim /usr/local/etc/wireguard/wg0.conf
 ```
 
 The content of `wg0.conf`, send your public key to the server administrator ,and he will give you the server public 
-key. Please remove the comments if you want to copy the content to your configuration file:
+key, server IP, server port, and client IP. Please remove the comments if you want to copy the content to your configuration file:
 
 ```text
 [Interface]
@@ -130,7 +128,7 @@ PrivateKey = CLIENT_PRIVATE_KEY
 # The port of client
 ListenPort = 51820
 # The IP address of client, will be used by the server to connect to the client
-Address = 10.0.0.2/24
+Address = CLIENT_IP/32
 DNS = 8.8.8.8
 MTU = 1420
 
@@ -138,9 +136,9 @@ MTU = 1420
 # The public key of server
 PublicKey = SERVER_PUBLIC_KEY
 # The IP address and port of server
-Endpoint = 10.0.0.1:51820
+Endpoint = SERVER_IP:SERVER_PORT
 # The allowed IP address of server
-AllowedIPs = 10.0.0.0/24
+AllowedIPs = 10.0.0.1/24
 PersistentKeepalive = 25
 ```
 
@@ -212,4 +210,18 @@ sudo wg-quick save wg0
 sudo wg set wg0 peer $(cat /etc/wireguard/clients/CLIENT_NAME) remove
 
 sudo wg-quick save wg0
+```
+
+### How to check the wireguard logo
+
+```shell
+# Check support debug, should print: debugfs on /sys/kernel/debug type debugfs (rw,relatime)
+mount | grep debug
+
+# Enable the debug
+modprobe wireguard
+echo module wireguard +p > /sys/kernel/debug/dynamic_debug/control
+
+# Get log
+dmesg -wH
 ```
