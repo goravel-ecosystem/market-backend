@@ -33,7 +33,7 @@ value of the key `staging.user.grpc.port` of the `deploy.yml`.
 You can make a GRPC request locally by following the steps:
 
 1. Install the [grpcurl tool](https://github.com/fullstorydev/grpcurl);
-2. Add `reflection.Register(facades.Grpc().Server())` before `facades.Grpc().Run()` of the microservice `main.go`;
+2. Add `reflection.Register(facades.Grpc().Server())` before `facades.Grpc().Run()` of the microservice `main.go`, eg: [Link](https://github.com/goravel-ecosystem/market-backend/blob/3394494d845cce810e6498781d049ae51c3b52b3/src/go/user/main.go#L16);
 
 Some useful commands:
 
