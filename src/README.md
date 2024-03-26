@@ -27,3 +27,26 @@ microservices to the Staging environment IP address, and set the port of depende
 For example, if your microservice depends on the `user` microservice, you can set `GRPC_USER_HOST=10.0.0.1` and 
 `GRPC_USER_PORT=4011` in your `.env` file. The `10.0.0.1` is the IP address of the VPN server, and the `4011` is the 
 value of the key `staging.user.grpc.port` of the `deploy.yml`. 
+
+### Make GRPC Request Locally
+
+You can make a GRPC request locally by following the steps:
+
+1. Install the [grpcurl tool](https://github.com/fullstorydev/grpcurl);
+2. Add `reflection.Register(facades.Grpc().Server())` before `facades.Grpc().Run()` of the microservice `main.go`;
+
+Some useful commands:
+
+```shell
+# List all services, 127.0.0.1:3010 is the IP address of the microservice
+grpcurl -plaintext 127.0.0.1:3010 list
+
+# List all methods of a service
+grpcurl -plaintext 127.0.0.1:3010 list user.UserService
+
+# Describe a method
+grpcurl -plaintext 127.0.0.1:3010 describe user.UserService.EmailLogin
+
+# Call a method
+grpcurl -d '{"email": "market@goravel.dev"}' -plaintext 127.0.0.1:3010 user.UserService.EmailLogin
+```

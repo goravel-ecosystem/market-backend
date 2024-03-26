@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/goravel/framework/facades"
+	"google.golang.org/grpc/reflection"
 
 	"market.goravel.dev/user/bootstrap"
 )
@@ -12,6 +13,7 @@ func main() {
 
 	//Start http server by facades.Route().
 	go func() {
+		reflection.Register(facades.Grpc().Server())
 		if err := facades.Grpc().Run(); err != nil {
 			facades.Log().Errorf("Grpc run error: %v", err)
 		}
