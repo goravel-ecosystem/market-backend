@@ -483,7 +483,7 @@ func (s *UsersControllerSuite) TestGetEmailRegisterCode() {
 func (s *UsersControllerSuite) TestGetUser() {
 	var (
 		userID = "1"
-		email  = "hello@goravel.dev"
+		name   = "Goravel"
 	)
 
 	tests := []struct {
@@ -503,14 +503,14 @@ func (s *UsersControllerSuite) TestGetUser() {
 					UUIDModel: models.UUIDModel{
 						ID: 1,
 					},
-					Email: email,
+					Name: name,
 				}, nil).Once()
 			},
 			expectedResponse: &protouser.GetUserResponse{
 				Status: NewOkStatus(),
 				User: &protouser.User{
-					Id:    "1",
-					Email: email,
+					Id:   "1",
+					Name: name,
 				},
 			},
 		},

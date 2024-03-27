@@ -26,7 +26,7 @@ func (r *UserImpl) GetUserByEmail(email string) (*models.User, error) {
 }
 
 func (r *UserImpl) GetUserByID(id string) (*models.User, error) {
-	return r.userModel.GetUserByID(id, []string{"id", "name", "email", "avatar", "summary"})
+	return r.userModel.GetUserByID(id, []string{"id", "name", "avatar", "summary"})
 }
 
 func (r *UserImpl) IsEmailExist(email string) (bool, error) {

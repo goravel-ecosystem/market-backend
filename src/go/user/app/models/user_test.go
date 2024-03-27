@@ -93,7 +93,7 @@ func (s *UserSuite) TestGetUserByEmail() {
 func (s *UserSuite) TestGetUserByID() {
 	var (
 		id     = "1"
-		fields = []string{"email"}
+		fields = []string{"name"}
 
 		mockOrm      *mocksorm.Orm
 		mockOrmQuery *mocksorm.Query
@@ -106,7 +106,7 @@ func (s *UserSuite) TestGetUserByID() {
 		mockOrmQuery = mockFactory.OrmQuery()
 		mockOrm.On("Query").Return(mockOrmQuery).Once()
 		mockOrmQuery.On("Where", "id", id).Return(mockOrmQuery).Once()
-		mockOrmQuery.On("Select", []string{"email"}).Return(mockOrmQuery).Once()
+		mockOrmQuery.On("Select", []string{"name"}).Return(mockOrmQuery).Once()
 	}
 
 	tests := []struct {
@@ -121,7 +121,7 @@ func (s *UserSuite) TestGetUserByID() {
 				mockOrmQuery.On("First", &user).Run(func(args mock.Arguments) {
 					user := args.Get(0).(*User)
 					user.ID = 1
-					user.Email = "hello@goravel.dev"
+					user.Name = "Goravel"
 				}).Return(nil).Once()
 			},
 		},
