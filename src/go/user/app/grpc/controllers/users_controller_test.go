@@ -479,3 +479,77 @@ func (s *UsersControllerSuite) TestGetEmailRegisterCode() {
 		})
 	}
 }
+
+func (s *UsersControllerSuite) TestGetUser() {
+	var (
+		userID = "1"
+		email  = "hello@goravel.dev"
+	)
+
+	tests := []struct {
+		name             string
+		request          *protouser.GetUserRequest
+		setup            func()
+		expectedResponse *protouser.GetUserResponse
+		expectedErr      error
+	}{
+		{
+			name: "Happy path",
+			request: &protouser.GetUserRequest{
+				UserId: userID,
+			},
+			setup: func() {
+				s.mockUserService.On("GetUserByID", userID).Return(&models.User{
+					UUIDModel: models.UUIDModel{
+						ID: 1,
+					},
+					Email: email,
+				}, nil).Once()
+			},
+			expectedResponse: &protouser.GetUserResponse{
+				Status: NewOkStatus(),
+				User: &protouser.User{
+					Id:    "1",
+					Email: email,
+				},
+			},
+		},
+		{
+			name: "Sad path - user id is empty",
+			request: &protouser.GetUserRequest{
+				UserId: "",
+			},
+			setup: func() {
+				s.mockLang.On("Get", "required.user_id").Return("required user id").Once()
+			},
+			expectedResponse: &protouser.GetUserResponse{
+				Status: NewBadRequestStatus(errors.New("required user id")),
+			},
+		},
+		{
+			name: "Sad path - GetUserByID returns error",
+			request: &protouser.GetUserRequest{
+				UserId: userID,
+			},
+			setup: func() {
+				s.mockUserService.On("GetUserByID", userID).Return(nil, errors.New("error")).Once()
+			},
+			expectedErr: errors.New("error"),
+		},
+	}
+
+	for _, test := range tests {
+		s.Run(test.name, func() {
+			test.setup()
+			response, err := s.usersController.GetUser(s.ctx, test.request)
+			s.Equal(test.expectedResponse, response)
+			s.Equal(test.expectedErr, err)
+
+			s.mockAuth.AssertExpectations(s.T())
+			s.mockHash.AssertExpectations(s.T())
+			s.mockLang.AssertExpectations(s.T())
+			s.mockUserService.AssertExpectations(s.T())
+		})
+	}
+
+}

@@ -90,6 +90,71 @@ func (s *UserSuite) TestGetUserByEmail() {
 	}
 }
 
+func (s *UserSuite) TestGetUserByID() {
+	var (
+		id     = "1"
+		fields = []string{"email"}
+
+		mockOrm      *mocksorm.Orm
+		mockOrmQuery *mocksorm.Query
+		user         User
+	)
+
+	beforeSetup := func() {
+		mockFactory := testingmock.Factory()
+		mockOrm = mockFactory.Orm()
+		mockOrmQuery = mockFactory.OrmQuery()
+		mockOrm.On("Query").Return(mockOrmQuery).Once()
+		mockOrmQuery.On("Where", "id", id).Return(mockOrmQuery).Once()
+		mockOrmQuery.On("Select", []string{"email"}).Return(mockOrmQuery).Once()
+	}
+
+	tests := []struct {
+		name        string
+		setup       func()
+		expectUser  *User
+		expectedErr error
+	}{
+		{
+			name: "Happy path",
+			setup: func() {
+				mockOrmQuery.On("First", &user).Run(func(args mock.Arguments) {
+					user := args.Get(0).(*User)
+					user.ID = 1
+					user.Email = "hello@goravel.dev"
+				}).Return(nil).Once()
+			},
+		},
+		{
+			name: "Sad path - get user error",
+			setup: func() {
+				var user User
+				mockOrmQuery.On("First", &user).Return(errors.New("error")).Once()
+			},
+			expectedErr: errors.New("error"),
+		},
+	}
+
+	for _, test := range tests {
+		s.Run(test.name, func() {
+			beforeSetup()
+			test.setup()
+			returnedUser, err := s.user.GetUserByID(id, fields)
+
+			if test.expectedErr != nil {
+				s.Nil(returnedUser)
+				s.Equal(test.expectedErr, err)
+			} else {
+				s.NotNil(returnedUser)
+				s.Nil(err)
+			}
+
+			mockOrm.AssertExpectations(s.T())
+			mockOrmQuery.AssertExpectations(s.T())
+		})
+	}
+}
+
 func (s *UserSuite) TestRegister() {
 	var (
 		email          = "hello@goravel.dev"

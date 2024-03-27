@@ -118,19 +118,14 @@ func (r *UsersController) GetUser(ctx context.Context, req *protouser.GetUserReq
 		}, nil
 	}
 
-	//var user models.User
-	//if err := facades.Auth(httpCtx).User(&user); err != nil {
-	//	return &protouser.GetUserByTokenResponse{
-	//		Status: NewBadRequestStatus(err),
-	//	}, nil
-	//}
+	user, err := r.userService.GetUserByID(userID)
+	if err != nil {
+		return nil, err
+	}
 
 	return &protouser.GetUserResponse{
 		Status: NewOkStatus(),
-		User: &protouser.User{
-			Id:   userID,
-			Name: "test",
-		},
+		User:   user.ToProto(),
 	}, nil
 }
 

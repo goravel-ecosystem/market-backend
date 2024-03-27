@@ -10,6 +10,7 @@ import (
 
 type UserInterface interface {
 	GetUserByEmail(email string, fields []string) (*User, error)
+	GetUserByID(id string, fields []string) (*User, error)
 	Register(name, email, password string) (*User, error)
 }
 
@@ -30,6 +31,15 @@ func NewUser() *User {
 func (r *User) GetUserByEmail(email string, fields []string) (*User, error) {
 	var user User
 	if err := facades.Orm().Query().Where("email", email).Select(fields).First(&user); err != nil {
+		return nil, err
+	}
+
+	return &user, nil
+}
+
+func (r *User) GetUserByID(id string, fields []string) (*User, error) {
+	var user User
+	if err := facades.Orm().Query().Where("id", id).Select(fields).First(&user); err != nil {
 		return nil, err
 	}
 
