@@ -118,7 +118,7 @@ func (s *UserSuite) TestGetUserByID() {
 		{
 			name: "Happy path",
 			setup: func() {
-				mockOrmQuery.On("First", &user).Run(func(args mock.Arguments) {
+				mockOrmQuery.On("FirstOrFail", &user).Run(func(args mock.Arguments) {
 					user := args.Get(0).(*User)
 					user.ID = 1
 					user.Name = "Goravel"
@@ -129,7 +129,7 @@ func (s *UserSuite) TestGetUserByID() {
 			name: "Sad path - get user error",
 			setup: func() {
 				var user User
-				mockOrmQuery.On("First", &user).Return(errors.New("error")).Once()
+				mockOrmQuery.On("FirstOrFail", &user).Return(errors.New("error")).Once()
 			},
 			expectedErr: errors.New("error"),
 		},

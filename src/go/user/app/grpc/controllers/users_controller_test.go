@@ -5,6 +5,7 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/goravel/framework/database/orm"
 	"github.com/goravel/framework/http"
 	mocksauth "github.com/goravel/framework/mocks/auth"
 	mockshash "github.com/goravel/framework/mocks/hash"
@@ -535,6 +536,19 @@ func (s *UsersControllerSuite) TestGetUser() {
 				s.mockUserService.On("GetUserByID", userID).Return(nil, errors.New("error")).Once()
 			},
 			expectedErr: errors.New("error"),
+		},
+		{
+			name: "Sad path - user not found",
+			request: &protouser.GetUserRequest{
+				UserId: userID,
+			},
+			setup: func() {
+				s.mockUserService.On("GetUserByID", userID).Return(nil, orm.ErrRecordNotFound).Once()
+				s.mockLang.On("Get", "not_exist.user").Return("user not found").Once()
+			},
+			expectedResponse: &protouser.GetUserResponse{
+				Status: NewNotFoundStatus(errors.New("user not found")),
+			},
 		},
 	}
 
