@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/goravel/framework/database/orm"
 	"github.com/goravel/framework/facades"
 	"github.com/goravel/framework/http"
 
@@ -118,19 +119,19 @@ func (r *UsersController) GetUser(ctx context.Context, req *protouser.GetUserReq
 		}, nil
 	}
 
-	//var user models.User
-	//if err := facades.Auth(httpCtx).User(&user); err != nil {
-	//	return &protouser.GetUserByTokenResponse{
-	//		Status: NewBadRequestStatus(err),
-	//	}, nil
-	//}
+	user, err := r.userService.GetUserByID(userID)
+	if err != nil {
+		if errors.Is(err, orm.ErrRecordNotFound) {
+			return &protouser.GetUserResponse{
+				Status: NewNotFoundStatus(errors.New(facades.Lang(ctx).Get("not_exist.user"))),
+			}, nil
+		}
+		return nil, err
+	}
 
 	return &protouser.GetUserResponse{
 		Status: NewOkStatus(),
-		User: &protouser.User{
-			Id:   userID,
-			Name: "test",
-		},
+		User:   user.ToProto(),
 	}, nil
 }
 

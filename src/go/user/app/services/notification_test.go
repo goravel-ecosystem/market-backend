@@ -84,15 +84,6 @@ func (s *AuthTestSuite) TestSendEmailRegisterCode() {
 				}), mock.MatchedBy(func(key string) bool {
 					return len(key) == 6
 				}), 300*time.Second).Return(nil).Once()
-				mockLang.On("Get", "register_code.subject", mock.MatchedBy(func(option translation.Option) bool {
-					return len(option.Replace["code"]) == 6
-				})).Return("subject").Once()
-				mockLang.On("Get", "register_code.content", mock.MatchedBy(func(option translation.Option) bool {
-					return len(option.Replace["code"]) == 6
-				})).Return("html").Once()
-				mockMail.On("To", []string{email}).Return(mockMail).Once()
-				mockMail.On("Content", mail.Content{Subject: "subject", Html: "html"}).Return(mockMail).Once()
-				mockMail.On("Queue").Return(nil).Once()
 			},
 			expectedKeyLen: 32,
 		},

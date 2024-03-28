@@ -22,5 +22,8 @@
   },
   "exist": {
     "email": "Email is already exist"
+  },
+  "not_exist": {
+      "user": "User not found"
   }
 }

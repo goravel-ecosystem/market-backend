@@ -5,6 +5,7 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/goravel/framework/database/orm"
 	"github.com/goravel/framework/http"
 	mocksauth "github.com/goravel/framework/mocks/auth"
 	mockshash "github.com/goravel/framework/mocks/hash"
@@ -478,4 +479,91 @@ func (s *UsersControllerSuite) TestGetEmailRegisterCode() {
 			s.mockUserService.AssertExpectations(s.T())
 		})
 	}
+}
+
+func (s *UsersControllerSuite) TestGetUser() {
+	var (
+		userID = "1"
+		name   = "Goravel"
+	)
+
+	tests := []struct {
+		name             string
+		request          *protouser.GetUserRequest
+		setup            func()
+		expectedResponse *protouser.GetUserResponse
+		expectedErr      error
+	}{
+		{
+			name: "Happy path",
+			request: &protouser.GetUserRequest{
+				UserId: userID,
+			},
+			setup: func() {
+				s.mockUserService.On("GetUserByID", userID).Return(&models.User{
+					UUIDModel: models.UUIDModel{
+						ID: 1,
+					},
+					Name: name,
+				}, nil).Once()
+			},
+			expectedResponse: &protouser.GetUserResponse{
+				Status: NewOkStatus(),
+				User: &protouser.User{
+					Id:   "1",
+					Name: name,
+				},
+			},
+		},
+		{
+			name: "Sad path - user id is empty",
+			request: &protouser.GetUserRequest{
+				UserId: "",
+			},
+			setup: func() {
+				s.mockLang.On("Get", "required.user_id").Return("required user id").Once()
+			},
+			expectedResponse: &protouser.GetUserResponse{
+				Status: NewBadRequestStatus(errors.New("required user id")),
+			},
+		},
+		{
+			name: "Sad path - GetUserByID returns error",
+			request: &protouser.GetUserRequest{
+				UserId: userID,
+			},
+			setup: func() {
+				s.mockUserService.On("GetUserByID", userID).Return(nil, errors.New("error")).Once()
+			},
+			expectedErr: errors.New("error"),
+		},
+		{
+			name: "Sad path - user not found",
+			request: &protouser.GetUserRequest{
+				UserId: userID,
+			},
+			setup: func() {
+				s.mockUserService.On("GetUserByID", userID).Return(nil, orm.ErrRecordNotFound).Once()
+				s.mockLang.On("Get", "not_exist.user").Return("user not found").Once()
+			},
+			expectedResponse: &protouser.GetUserResponse{
+				Status: NewNotFoundStatus(errors.New("user not found")),
+			},
+		},
+	}
+
+	for _, test := range tests {
+		s.Run(test.name, func() {
+			test.setup()
+			response, err := s.usersController.GetUser(s.ctx, test.request)
+			s.Equal(test.expectedResponse, response)
+			s.Equal(test.expectedErr, err)
+
+			s.mockAuth.AssertExpectations(s.T())
+			s.mockHash.AssertExpectations(s.T())
+			s.mockLang.AssertExpectations(s.T())
+			s.mockUserService.AssertExpectations(s.T())
+		})
+	}
+
 }
