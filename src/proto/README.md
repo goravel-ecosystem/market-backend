@@ -10,17 +10,17 @@ You need to build proto files after you modify them, you can use the following c
 
 ```bash
 # Build all microservices proto files.
-make all
+make -B all
 
 # Build base proto
-make base
+make -B base
 
 # Build UserService
-make user
+make -B user
 
 # Build PackageService
-make package
+make -B package
 
 # Build document
-make doc
+make -B doc
 ```
