@@ -9,5 +9,5 @@ import (
 )
 
 func Grpc() {
-	packageproto.RegisterPackageServiceServer(facades.Grpc().Server(), controllers.NewPackagesController())
+	packageproto.RegisterPackageServiceServer(facades.Grpc().Server(), controllers.NewPackageController())
 }

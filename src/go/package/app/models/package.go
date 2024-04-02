@@ -14,7 +14,7 @@ type PackageInterface interface {
 }
 
 type Package struct {
-	orm.Model
+	UUIDModel
 	UserID        uint
 	Name          string
 	Summary       string
@@ -31,7 +31,7 @@ func NewPackage() *Package {
 
 func (r *Package) GetPackageByID(id string, fields []string) (*Package, error) {
 	var packageModel Package
-	if err := facades.Orm().Query().Where("id", id).With("tags").Select(fields).First(&packageModel); err != nil {
+	if err := facades.Orm().Query().Where("id", id).Select(fields).FirstOrFail(&packageModel); err != nil {
 		return nil, err
 	}
 

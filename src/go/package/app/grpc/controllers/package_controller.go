@@ -4,24 +4,26 @@ import (
 	"context"
 	"errors"
 
+	"github.com/goravel/framework/database/orm"
 	"github.com/goravel/framework/facades"
 
-	"market.goravel.dev/package/app/services"
 	protopackage "market.goravel.dev/proto/package"
+
+	"market.goravel.dev/package/app/services"
 )
 
-type PackagesController struct {
+type PackageController struct {
 	protopackage.UnimplementedPackageServiceServer
 	packageService services.Package
 }
 
-func NewPackagesController() *PackagesController {
-	return &PackagesController{
+func NewPackageController() *PackageController {
+	return &PackageController{
 		packageService: services.NewPackageImpl(),
 	}
 }
 
-func (r *PackagesController) GetPackage(ctx context.Context, req *protopackage.GetPackageRequest) (*protopackage.GetPackageResponse, error) {
+func (r *PackageController) GetPackage(ctx context.Context, req *protopackage.GetPackageRequest) (*protopackage.GetPackageResponse, error) {
 	userID := req.GetUserId()
 	if userID == "" {
 		return &protopackage.GetPackageResponse{
@@ -37,6 +39,11 @@ func (r *PackagesController) GetPackage(ctx context.Context, req *protopackage.G
 
 	packageData, err := r.packageService.GetPackageByID(packageId)
 	if err != nil {
+		if errors.Is(err, orm.ErrRecordNotFound) {
+			return &protopackage.GetPackageResponse{
+				Status: NewNotFoundStatus(errors.New(facades.Lang(ctx).Get("not_exist.package"))),
+			}, nil
+		}
 		return nil, err
 	}
 

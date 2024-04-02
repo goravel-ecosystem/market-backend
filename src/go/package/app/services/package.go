@@ -17,5 +17,5 @@ func NewPackageImpl() *PackageImpl {
 }
 
 func (r *PackageImpl) GetPackageByID(id string) (*models.Package, error) {
-	return r.packageModel.GetPackageByID(id, []string{"id", "name", "avatar", "summary"})
+	return r.packageModel.GetPackageByID(id, []string{"id", "name", "user_id", "summary"})
 }

@@ -2,5 +2,8 @@
   "required": {
     "user_id": "UserID is required",
     "package_id": "PackageID is required"
+  },
+  "not_exist": {
+    "package": "Package not found"
   }
 }

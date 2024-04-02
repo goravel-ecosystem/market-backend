@@ -3,15 +3,7 @@
     "package_id": "PackageID 不能为空",
     "user_id": "UserID 不能为空"
   },
-  "invalid": {
-    "code": "验证码错误",
-    "email": "邮箱格式错误",
-    "password": {
-      "error": "密码错误",
-      "min": "密码长度不能小于6位"
-    }
-  },
-  "exist": {
-    "email": "邮箱已存在"
+  "not_exist": {
+    "package": "找不到包"
   }
 }
