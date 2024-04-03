@@ -118,7 +118,9 @@ wg genkey | tee /usr/local/etc/wireguard/privatekey | wg pubkey | tee /usr/local
 sudo vim /usr/local/etc/wireguard/wg0.conf
 ```
 
-The content of `wg0.conf`, send your public key to the server administrator ,and he will give you the server public 
+For ubuntu, you can use `/etc/wireguard` as the configuration folder.
+
+The content of `wg0.conf`, send your public key to the server administrator, and he will give you the server public 
 key, server IP, server port, and client IP. Please remove the comments if you want to copy the content to your configuration file:
 
 ```text
