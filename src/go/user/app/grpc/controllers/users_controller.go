@@ -10,6 +10,7 @@ import (
 
 	protouser "market.goravel.dev/proto/user"
 	utilserrors "market.goravel.dev/utils/errors"
+	utilsresponse "market.goravel.dev/utils/response"
 
 	"market.goravel.dev/user/app/services"
 )
@@ -47,7 +48,7 @@ func (r *UsersController) EmailLogin(ctx context.Context, req *protouser.EmailLo
 	}
 
 	return &protouser.EmailLoginResponse{
-		Status: NewOkStatus(),
+		Status: utilsresponse.NewOkStatus(),
 		User:   user.ToProto(),
 		Token:  "Bearer " + token,
 	}, nil
@@ -81,7 +82,7 @@ func (r *UsersController) EmailRegister(ctx context.Context, req *protouser.Emai
 	}
 
 	return &protouser.EmailRegisterResponse{
-		Status: NewOkStatus(),
+		Status: utilsresponse.NewOkStatus(),
 		User:   user.ToProto(),
 		Token:  "Bearer " + token,
 	}, nil
@@ -106,7 +107,7 @@ func (r *UsersController) GetEmailRegisterCode(ctx context.Context, req *protous
 	}
 
 	return &protouser.GetEmailRegisterCodeResponse{
-		Status: NewOkStatus(),
+		Status: utilsresponse.NewOkStatus(),
 		Key:    key,
 	}, nil
 }
@@ -115,7 +116,7 @@ func (r *UsersController) GetUser(ctx context.Context, req *protouser.GetUserReq
 	userID := req.GetUserId()
 	if userID == "" {
 		return &protouser.GetUserResponse{
-			Status: NewBadRequestStatus(errors.New(facades.Lang(ctx).Get("required.user_id"))),
+			Status: utilsresponse.NewBadRequestStatus(errors.New(facades.Lang(ctx).Get("required.user_id"))),
 		}, nil
 	}
 
@@ -123,14 +124,14 @@ func (r *UsersController) GetUser(ctx context.Context, req *protouser.GetUserReq
 	if err != nil {
 		if errors.Is(err, orm.ErrRecordNotFound) {
 			return &protouser.GetUserResponse{
-				Status: NewNotFoundStatus(errors.New(facades.Lang(ctx).Get("not_exist.user"))),
+				Status: utilsresponse.NewNotFoundStatus(errors.New(facades.Lang(ctx).Get("not_exist.user"))),
 			}, nil
 		}
 		return nil, err
 	}
 
 	return &protouser.GetUserResponse{
-		Status: NewOkStatus(),
+		Status: utilsresponse.NewOkStatus(),
 		User:   user.ToProto(),
 	}, nil
 }
@@ -139,14 +140,14 @@ func (r *UsersController) GetUserByToken(ctx context.Context, req *protouser.Get
 	token := req.GetToken()
 	if token == "" {
 		return &protouser.GetUserByTokenResponse{
-			Status: NewBadRequestStatus(errors.New(facades.Lang(ctx).Get("required.token"))),
+			Status: utilsresponse.NewBadRequestStatus(errors.New(facades.Lang(ctx).Get("required.token"))),
 		}, nil
 	}
 
 	httpCtx := http.Background()
 	if _, err := facades.Auth(httpCtx).Parse(token); err != nil {
 		return &protouser.GetUserByTokenResponse{
-			Status: NewBadRequestStatus(err),
+			Status: utilsresponse.NewBadRequestStatus(err),
 		}, nil
 	}
 
@@ -158,7 +159,7 @@ func (r *UsersController) GetUserByToken(ctx context.Context, req *protouser.Get
 	//}
 
 	return &protouser.GetUserByTokenResponse{
-		Status: NewOkStatus(),
+		Status: utilsresponse.NewOkStatus(),
 		User: &protouser.User{
 			Id:   "uuid",
 			Name: "test",

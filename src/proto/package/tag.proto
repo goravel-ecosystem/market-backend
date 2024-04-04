@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package package;
+
+option go_package="market.goravel.dev/proto/package";
+
+import "google/api/annotations.proto";
+import "base/base.proto";
+
+message Tag {
+  string id = 1;
+  string user_id = 2;
+  string name = 3;
+  string description = 4;
+  string created_at = 5;
+  string updated_at = 6;
+  string deleted_at = 7;
+}
+
+message GetTagRequest {
+  string user_id = 1;
+  string package_id = 2;
+  string name = 3;
+}
+
+message GetTagResponse {
+  base.Status status = 1;
+  repeated Tag tags = 2;
+}
+
+service TagService {
+  rpc GetTags(GetTagRequest) returns (GetTagResponse) {
+    option (google.api.http) = {
+      get: "/tags"
+    };
+  }
+}

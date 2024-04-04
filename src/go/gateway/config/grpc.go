@@ -4,6 +4,7 @@ import (
 	"github.com/goravel/framework/facades"
 	"github.com/goravel/gateway"
 
+	protopackage "market.goravel.dev/proto/package"
 	protouser "market.goravel.dev/proto/user"
 )
 
@@ -23,6 +24,15 @@ func init() {
 				"host":         config.Env("GRPC_USER_HOST", ""),
 				"port":         config.Env("GRPC_USER_PORT", ""),
 				"handlers":     []gateway.Handler{protouser.RegisterUserServiceHandler},
+				"interceptors": []string{},
+			},
+			"package": map[string]any{
+				"host": config.Env("GRPC_PACKAGE_HOST", ""),
+				"port": config.Env("GRPC_PACKAGE_PORT", ""),
+				"handlers": []gateway.Handler{
+					protopackage.RegisterPackageServiceHandler,
+					protopackage.RegisterTagServiceHandler,
+				},
 				"interceptors": []string{},
 			},
 			//"business": map[string]any{

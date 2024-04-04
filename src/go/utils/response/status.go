@@ -1,4 +1,4 @@
-package controllers
+package response
 
 import (
 	httpcontract "github.com/goravel/framework/contracts/http"
