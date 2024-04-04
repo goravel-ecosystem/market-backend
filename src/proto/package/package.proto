@@ -35,7 +35,7 @@ message GetPackageResponse {
 service PackageService {
   rpc GetPackage (GetPackageRequest) returns (GetPackageResponse) {
     option (google.api.http) = {
-      get: "/business/packages/{id}"
+      get: "/packages/{id}"
     };
   }
 }

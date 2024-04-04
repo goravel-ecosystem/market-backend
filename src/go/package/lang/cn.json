@@ -4,6 +4,6 @@
     "user_id": "UserID 不能为空"
   },
   "not_exist": {
-    "package": "找不到包"
+    "package": "包不存在"
   }
 }

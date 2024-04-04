@@ -69,7 +69,7 @@ func (s *PackageSuite) TestGetPackageByID() {
 			},
 		},
 		{
-			name: "Sad path - get user error",
+			name: "Sad path - get package error",
 			setup: func() {
 				var pack Package
 				mockOrmQuery.On("FirstOrFail", &pack).Return(errors.New("error")).Once()
@@ -121,7 +121,7 @@ func (s *PackageSuite) TestToProto() {
 				UpdatedAt: updatedAt,
 			},
 		},
-		UserID:        uint(userID),
+		UserID:        uint64(userID),
 		Name:          name,
 		Summary:       summary,
 		Description:   description,

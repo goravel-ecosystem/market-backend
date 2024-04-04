@@ -15,7 +15,7 @@ type PackageInterface interface {
 
 type Package struct {
 	UUIDModel
-	UserID        uint
+	UserID        uint64
 	Name          string
 	Summary       string
 	Description   string
