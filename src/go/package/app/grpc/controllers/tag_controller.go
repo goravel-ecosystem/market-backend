@@ -33,7 +33,7 @@ func (r *TagController) GetTags(ctx context.Context, req *protopackage.GetTagReq
 
 	if len(tags) == 0 {
 		return &protopackage.GetTagResponse{
-			Status: utilsresponse.NewNotFoundStatus(errors.New(facades.Lang(ctx).Get("not_exist.user"))),
+			Status: utilsresponse.NewNotFoundStatus(errors.New(facades.Lang(ctx).Get("not_exist.tags"))),
 		}, nil
 	}
 
