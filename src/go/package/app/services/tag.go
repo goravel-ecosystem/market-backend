@@ -4,10 +4,11 @@ import (
 	"github.com/goravel/framework/facades"
 
 	"market.goravel.dev/package/app/models"
+	protobase "market.goravel.dev/proto/base"
 )
 
 type Tag interface {
-	GetTags(packageID, userID, name string) ([]*models.Tag, error)
+	GetTags(packageID, name string, pagination *protobase.Pagination, total *int64) ([]*models.Tag, error)
 }
 
 type TagImpl struct {
@@ -20,18 +21,13 @@ func NewTagImpl() *TagImpl {
 	}
 }
 
-func (r *TagImpl) GetTags(packageID, userID, name string) ([]*models.Tag, error) {
+func (r *TagImpl) GetTags(packageID, name string, pagination *protobase.Pagination, total *int64) ([]*models.Tag, error) {
 	var tags []*models.Tag
 	query := facades.Orm().Query()
-	var total int64
 
 	if packageID != "" {
 		query = query.Join("JOIN package_tags ON package_tags.tag_id = tags.id").
 			Where("package_tags.package_id = ?", packageID)
-	}
-
-	if userID != "" {
-		query = query.Where("user_id", userID)
 	}
 
 	if name != "" {
@@ -39,7 +35,16 @@ func (r *TagImpl) GetTags(packageID, userID, name string) ([]*models.Tag, error)
 		query = query.Where("name LIKE ?", "%"+name+"%")
 	}
 
-	if err := query.Select([]string{"tags.id", "tags.name", "tags.user_id"}).Paginate(1, 10, &tags, &total); err != nil {
+	page := pagination.GetPage()
+	limit := pagination.GetLimit()
+	if limit <= 0 {
+		limit = 20
+	}
+
+	if page <= 0 {
+		page = 1
+	}
+	if err := query.Select([]string{"tags.id", "tags.name", "tags.user_id"}).Paginate(int(page), int(limit), &tags, total); err != nil {
 		return nil, err
 	}
 

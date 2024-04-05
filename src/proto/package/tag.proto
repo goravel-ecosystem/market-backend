@@ -30,7 +30,7 @@ message GetTagsRequest {
 message GetTagsResponse {
   base.Status status = 1;
   repeated Tag tags = 2;
-  int32 total = 3;
+  int64 total = 3;
 }
 
 service TagService {

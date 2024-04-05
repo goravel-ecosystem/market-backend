@@ -4,6 +4,8 @@ package mocks
 
 import (
 	mock "github.com/stretchr/testify/mock"
+	base "market.goravel.dev/proto/base"
+
 	models "market.goravel.dev/package/app/models"
 )
 
@@ -12,25 +14,25 @@ type Tag struct {
 	mock.Mock
 }
 
-// GetTags provides a mock function with given fields: packageID, userID, name
-func (_m *Tag) GetTags(packageID string, userID string, name string) ([]*models.Tag, error) {
-	ret := _m.Called(packageID, userID, name)
+// GetTags provides a mock function with given fields: packageID, name, pagination, total
+func (_m *Tag) GetTags(packageID string, name string, pagination *base.Pagination, total *int64) ([]*models.Tag, error) {
+	ret := _m.Called(packageID, name, pagination, total)
 
 	var r0 []*models.Tag
 	var r1 error
-	if rf, ok := ret.Get(0).(func(string, string, string) ([]*models.Tag, error)); ok {
-		return rf(packageID, userID, name)
+	if rf, ok := ret.Get(0).(func(string, string, *base.Pagination, *int64) ([]*models.Tag, error)); ok {
+		return rf(packageID, name, pagination, total)
 	}
-	if rf, ok := ret.Get(0).(func(string, string, string) []*models.Tag); ok {
-		r0 = rf(packageID, userID, name)
+	if rf, ok := ret.Get(0).(func(string, string, *base.Pagination, *int64) []*models.Tag); ok {
+		r0 = rf(packageID, name, pagination, total)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]*models.Tag)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(string, string, string) error); ok {
-		r1 = rf(packageID, userID, name)
+	if rf, ok := ret.Get(1).(func(string, string, *base.Pagination, *int64) error); ok {
+		r1 = rf(packageID, name, pagination, total)
 	} else {
 		r1 = ret.Error(1)
 	}

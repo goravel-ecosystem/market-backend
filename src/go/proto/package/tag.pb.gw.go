@@ -36,7 +36,7 @@ var (
 )
 
 func request_TagService_GetTags_0(ctx context.Context, marshaler runtime.Marshaler, client TagServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq GetTagRequest
+	var protoReq GetTagsRequest
 	var metadata runtime.ServerMetadata
 
 	if err := req.ParseForm(); err != nil {
@@ -52,7 +52,7 @@ func request_TagService_GetTags_0(ctx context.Context, marshaler runtime.Marshal
 }
 
 func local_request_TagService_GetTags_0(ctx context.Context, marshaler runtime.Marshaler, server TagServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq GetTagRequest
+	var protoReq GetTagsRequest
 	var metadata runtime.ServerMetadata
 
 	if err := req.ParseForm(); err != nil {

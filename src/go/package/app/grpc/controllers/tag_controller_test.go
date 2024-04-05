@@ -10,6 +10,7 @@ import (
 	"github.com/stretchr/testify/suite"
 
 	"market.goravel.dev/package/app/models"
+	protobase "market.goravel.dev/proto/base"
 	protopackage "market.goravel.dev/proto/package"
 	utilsresponse "market.goravel.dev/utils/response"
 
@@ -40,26 +41,34 @@ func (s *TagControllerSuite) SetupTest() {
 
 func (s *TagControllerSuite) TestGetTags() {
 	var (
-		packageID = "1"
-		userID    = "1"
-		name      = "go"
+		packageID  = "1"
+		userID     = "1"
+		name       = "go"
+		pagination = &protobase.Pagination{
+			Page:  1,
+			Limit: 10,
+		}
+		total int64
 	)
 
 	tests := []struct {
 		name             string
-		request          *protopackage.GetTagRequest
+		request          *protopackage.GetTagsRequest
 		setup            func()
-		expectedResponse *protopackage.GetTagResponse
+		expectedResponse *protopackage.GetTagsResponse
 		expectedErr      error
 	}{
 		{
 			name: "Happy path",
-			request: &protopackage.GetTagRequest{
-				PackageId: packageID,
-				Name:      name,
+			request: &protopackage.GetTagsRequest{
+				Pagination: pagination,
+				Query: &protopackage.TagsQuery{
+					PackageId: packageID,
+					Name:      name,
+				},
 			},
 			setup: func() {
-				s.mockTagService.On("GetTags", packageID, "", name).Return([]*models.Tag{
+				s.mockTagService.On("GetTags", packageID, name, pagination, &total).Return([]*models.Tag{
 					{
 						UUIDModel: models.UUIDModel{
 							ID: 1,
@@ -69,7 +78,7 @@ func (s *TagControllerSuite) TestGetTags() {
 					},
 				}, nil).Once()
 			},
-			expectedResponse: &protopackage.GetTagResponse{
+			expectedResponse: &protopackage.GetTagsResponse{
 				Status: utilsresponse.NewOkStatus(),
 				Tags: []*protopackage.Tag{
 					{
@@ -78,28 +87,35 @@ func (s *TagControllerSuite) TestGetTags() {
 						Name:   "goravel",
 					},
 				},
+				Total: total,
 			},
 		},
 		{
 			name: "Sad path - GetTags returns error",
-			request: &protopackage.GetTagRequest{
-				Name: name,
+			request: &protopackage.GetTagsRequest{
+				Pagination: pagination,
+				Query: &protopackage.TagsQuery{
+					Name: name,
+				},
 			},
 			setup: func() {
-				s.mockTagService.On("GetTags", "", "", name).Return(nil, errors.New("error")).Once()
+				s.mockTagService.On("GetTags", "", name, pagination, &total).Return(nil, errors.New("error")).Once()
 			},
 			expectedErr: errors.New("error"),
 		},
 		{
 			name: "Sad path - tags is empty",
-			request: &protopackage.GetTagRequest{
-				Name: name,
+			request: &protopackage.GetTagsRequest{
+				Pagination: pagination,
+				Query: &protopackage.TagsQuery{
+					Name: name,
+				},
 			},
 			setup: func() {
-				s.mockTagService.On("GetTags", "", "", name).Return([]*models.Tag{}, nil).Once()
+				s.mockTagService.On("GetTags", "", name, pagination, &total).Return([]*models.Tag{}, nil).Once()
 				s.mockLang.On("Get", "not_exist.tags").Return("tags not found").Once()
 			},
-			expectedResponse: &protopackage.GetTagResponse{
+			expectedResponse: &protopackage.GetTagsResponse{
 				Status: utilsresponse.NewNotFoundStatus(errors.New("tags not found")),
 			},
 		},

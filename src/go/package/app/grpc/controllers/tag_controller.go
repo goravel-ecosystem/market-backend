@@ -21,18 +21,20 @@ func NewTagController() *TagController {
 	}
 }
 
-func (r *TagController) GetTags(ctx context.Context, req *protopackage.GetTagRequest) (*protopackage.GetTagResponse, error) {
-	packageID := req.GetPackageId()
-	userID := req.GetUserId()
-	name := req.GetName()
+func (r *TagController) GetTags(ctx context.Context, req *protopackage.GetTagsRequest) (*protopackage.GetTagsResponse, error) {
+	query := req.GetQuery()
+	packageID := query.GetPackageId()
+	name := query.GetName()
+	pagination := req.GetPagination()
+	var total int64
 
-	tags, err := r.tagService.GetTags(packageID, userID, name)
+	tags, err := r.tagService.GetTags(packageID, name, pagination, &total)
 	if err != nil {
 		return nil, err
 	}
 
 	if len(tags) == 0 {
-		return &protopackage.GetTagResponse{
+		return &protopackage.GetTagsResponse{
 			Status: utilsresponse.NewNotFoundStatus(errors.New(facades.Lang(ctx).Get("not_exist.tags"))),
 		}, nil
 	}
@@ -42,8 +44,9 @@ func (r *TagController) GetTags(ctx context.Context, req *protopackage.GetTagReq
 		tagsProto = append(tagsProto, tag.ToProto())
 	}
 
-	return &protopackage.GetTagResponse{
+	return &protopackage.GetTagsResponse{
 		Status: utilsresponse.NewOkStatus(),
 		Tags:   tagsProto,
+		Total:  total,
 	}, nil
 }
