@@ -17,19 +17,23 @@ message Tag {
   string deleted_at = 7;
 }
 
-message GetTagRequest {
-  string user_id = 1;
-  string package_id = 2;
-  string name = 3;
+message TagsQuery {
+  string package_id = 1;
+  string name = 2;
 }
 
-message GetTagResponse {
+message GetTagsRequest {
+  base.Pagination pagination = 1;
+  TagsQuery query = 2;
+}
+
+message GetTagsResponse {
   base.Status status = 1;
   repeated Tag tags = 2;
 }
 
 service TagService {
-  rpc GetTags(GetTagRequest) returns (GetTagResponse) {
+  rpc GetTags(GetTagsRequest) returns (GetTagsResponse) {
     option (google.api.http) = {
       get: "/tags"
     };

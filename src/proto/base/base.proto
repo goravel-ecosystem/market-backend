@@ -18,3 +18,8 @@ message Status {
 message Response {
   base.Status status = 1;
 }
+
+message Pagination {
+  int32 page = 1;
+  int32 limit = 2;
+}
