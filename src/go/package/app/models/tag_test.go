@@ -25,12 +25,11 @@ func (s *TagSuite) SetupTest() {
 
 func (s *TagSuite) TestToProto() {
 	var (
-		id          = 1
-		userID      = 1
-		name        = "Go"
-		description = "description"
-		createAt    = carbon.DateTime{}
-		updatedAt   = carbon.DateTime{}
+		id        = 1
+		userID    = 1
+		name      = "Go"
+		createAt  = carbon.DateTime{}
+		updatedAt = carbon.DateTime{}
 	)
 
 	tag := Tag{
@@ -41,17 +40,15 @@ func (s *TagSuite) TestToProto() {
 				UpdatedAt: updatedAt,
 			},
 		},
-		UserID:      uint64(userID),
-		Name:        name,
-		Description: description,
+		UserID: uint64(userID),
+		Name:   name,
 	}
 
 	s.Equal(&protopackage.Tag{
-		Id:          "1",
-		UserId:      "1",
-		Name:        name,
-		Description: description,
-		CreatedAt:   createAt.ToString(),
-		UpdatedAt:   updatedAt.ToString(),
+		Id:        "1",
+		UserId:    "1",
+		Name:      name,
+		CreatedAt: createAt.ToString(),
+		UpdatedAt: updatedAt.ToString(),
 	}, tag.ToProto())
 }

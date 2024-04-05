@@ -3,6 +3,7 @@ package controllers
 import (
 	"context"
 	"errors"
+
 	"github.com/goravel/framework/facades"
 
 	"market.goravel.dev/package/app/services"
@@ -10,18 +11,18 @@ import (
 	utilsresponse "market.goravel.dev/utils/response"
 )
 
-type TagController struct {
+type PackageController struct {
 	protopackage.UnimplementedPackageServiceServer
 	tagService services.Tag
 }
 
-func NewTagController() *TagController {
-	return &TagController{
+func NewPackageController() *PackageController {
+	return &PackageController{
 		tagService: services.NewTagImpl(),
 	}
 }
 
-func (r *TagController) GetTags(ctx context.Context, req *protopackage.GetTagsRequest) (*protopackage.GetTagsResponse, error) {
+func (r *PackageController) GetTags(ctx context.Context, req *protopackage.GetTagsRequest) (*protopackage.GetTagsResponse, error) {
 	query := req.GetQuery()
 	packageID := query.GetPackageId()
 	name := query.GetName()

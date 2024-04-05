@@ -8,5 +8,5 @@ import (
 )
 
 func Grpc() {
-	protopackage.RegisterTagServiceServer(facades.Grpc().Server(), controllers.NewTagController())
+	protopackage.RegisterPackageServiceServer(facades.Grpc().Server(), controllers.NewPackageController())
 }

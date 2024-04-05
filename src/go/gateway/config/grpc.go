@@ -31,7 +31,6 @@ func init() {
 				"port": config.Env("GRPC_PACKAGE_PORT", ""),
 				"handlers": []gateway.Handler{
 					protopackage.RegisterPackageServiceHandler,
-					protopackage.RegisterTagServiceHandler,
 				},
 				"interceptors": []string{},
 			},

@@ -28,12 +28,11 @@ func NewTag() *Tag {
 
 func (r *Tag) ToProto() *protopackage.Tag {
 	return &protopackage.Tag{
-		Id:          cast.ToString(r.ID),
-		UserId:      cast.ToString(r.UserID),
-		Name:        r.Name,
-		Description: r.Description,
-		CreatedAt:   r.CreatedAt.ToString(),
-		UpdatedAt:   r.UpdatedAt.ToString(),
-		DeletedAt:   carbon.FromStdTime(r.DeletedAt.Time).ToString(),
+		Id:        cast.ToString(r.ID),
+		UserId:    cast.ToString(r.UserID),
+		Name:      r.Name,
+		CreatedAt: r.CreatedAt.ToString(),
+		UpdatedAt: r.UpdatedAt.ToString(),
+		DeletedAt: carbon.FromStdTime(r.DeletedAt.Time).ToString(),
 	}
 }
