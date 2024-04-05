@@ -4,17 +4,15 @@ package package;
 
 option go_package="market.goravel.dev/proto/package";
 
-import "google/api/annotations.proto";
 import "base/base.proto";
 
 message Tag {
   string id = 1;
   string user_id = 2;
   string name = 3;
-  string description = 4;
-  string created_at = 5;
-  string updated_at = 6;
-  string deleted_at = 7;
+  string created_at = 4;
+  string updated_at = 5;
+  string deleted_at = 6;
 }
 
 message TagsQuery {
@@ -31,12 +29,4 @@ message GetTagsResponse {
   base.Status status = 1;
   repeated Tag tags = 2;
   int64 total = 3;
-}
-
-service TagService {
-  rpc GetTags(GetTagsRequest) returns (GetTagsResponse) {
-    option (google.api.http) = {
-      get: "/tags"
-    };
-  }
 }

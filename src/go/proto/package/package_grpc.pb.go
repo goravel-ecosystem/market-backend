@@ -20,6 +20,7 @@ const _ = grpc.SupportPackageIsVersion7
 
 const (
 	PackageService_GetPackage_FullMethodName = "/package.PackageService/GetPackage"
+	PackageService_GetTags_FullMethodName    = "/package.PackageService/GetTags"
 )
 
 // PackageServiceClient is the client API for PackageService service.
@@ -27,6 +28,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PackageServiceClient interface {
 	GetPackage(ctx context.Context, in *GetPackageRequest, opts ...grpc.CallOption) (*GetPackageResponse, error)
+	GetTags(ctx context.Context, in *GetTagsRequest, opts ...grpc.CallOption) (*GetTagsResponse, error)
 }
 
 type packageServiceClient struct {
@@ -46,11 +48,21 @@ func (c *packageServiceClient) GetPackage(ctx context.Context, in *GetPackageReq
 	return out, nil
 }
 
+func (c *packageServiceClient) GetTags(ctx context.Context, in *GetTagsRequest, opts ...grpc.CallOption) (*GetTagsResponse, error) {
+	out := new(GetTagsResponse)
+	err := c.cc.Invoke(ctx, PackageService_GetTags_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PackageServiceServer is the server API for PackageService service.
 // All implementations must embed UnimplementedPackageServiceServer
 // for forward compatibility
 type PackageServiceServer interface {
 	GetPackage(context.Context, *GetPackageRequest) (*GetPackageResponse, error)
+	GetTags(context.Context, *GetTagsRequest) (*GetTagsResponse, error)
 	mustEmbedUnimplementedPackageServiceServer()
 }
 
@@ -60,6 +72,9 @@ type UnimplementedPackageServiceServer struct {
 
 func (UnimplementedPackageServiceServer) GetPackage(context.Context, *GetPackageRequest) (*GetPackageResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPackage not implemented")
+}
+func (UnimplementedPackageServiceServer) GetTags(context.Context, *GetTagsRequest) (*GetTagsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTags not implemented")
 }
 func (UnimplementedPackageServiceServer) mustEmbedUnimplementedPackageServiceServer() {}
 
@@ -92,6 +107,24 @@ func _PackageService_GetPackage_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PackageService_GetTags_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTagsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PackageServiceServer).GetTags(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PackageService_GetTags_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PackageServiceServer).GetTags(ctx, req.(*GetTagsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PackageService_ServiceDesc is the grpc.ServiceDesc for PackageService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -102,6 +135,10 @@ var PackageService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetPackage",
 			Handler:    _PackageService_GetPackage_Handler,
+		},
+		{
+			MethodName: "GetTags",
+			Handler:    _PackageService_GetTags_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
