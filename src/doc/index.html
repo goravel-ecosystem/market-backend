@@ -204,6 +204,10 @@
             <ul>
               
                 <li>
+                  <a href="#base.Pagination"><span class="badge">M</span>Pagination</a>
+                </li>
+              
+                <li>
                   <a href="#base.Response"><span class="badge">M</span>Response</a>
                 </li>
               
@@ -250,15 +254,19 @@
             <ul>
               
                 <li>
-                  <a href="#package.GetTagRequest"><span class="badge">M</span>GetTagRequest</a>
+                  <a href="#package.GetTagsRequest"><span class="badge">M</span>GetTagsRequest</a>
                 </li>
               
                 <li>
-                  <a href="#package.GetTagResponse"><span class="badge">M</span>GetTagResponse</a>
+                  <a href="#package.GetTagsResponse"><span class="badge">M</span>GetTagsResponse</a>
                 </li>
               
                 <li>
                   <a href="#package.Tag"><span class="badge">M</span>Tag</a>
+                </li>
+              
+                <li>
+                  <a href="#package.TagsQuery"><span class="badge">M</span>TagsQuery</a>
                 </li>
               
               
@@ -343,6 +351,37 @@
 
       
 
+      
+        <h3 id="base.Pagination">Pagination</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>page</td>
+                  <td><a href="#int32">int32</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>limit</td>
+                  <td><a href="#int32">int32</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
       
         <h3 id="base.Response">Response</h3>
         <p></p>
@@ -640,8 +679,8 @@
             
               <tr>
                 <td>GetTags</td>
-                <td><a href="#package.GetTagRequest">GetTagRequest</a></td>
-                <td><a href="#package.GetTagResponse">GetTagResponse</a></td>
+                <td><a href="#package.GetTagsRequest">GetTagsRequest</a></td>
+                <td><a href="#package.GetTagsResponse">GetTagsResponse</a></td>
                 <td><p></p></td>
               </tr>
             
@@ -679,7 +718,7 @@
         
 
       
-        <h3 id="package.GetTagRequest">GetTagRequest</h3>
+        <h3 id="package.GetTagsRequest">GetTagsRequest</h3>
         <p></p>
 
         
@@ -690,22 +729,15 @@
             <tbody>
               
                 <tr>
-                  <td>user_id</td>
-                  <td><a href="#string">string</a></td>
+                  <td>pagination</td>
+                  <td><a href="#base.Pagination">base.Pagination</a></td>
                   <td></td>
                   <td><p> </p></td>
                 </tr>
               
                 <tr>
-                  <td>package_id</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>name</td>
-                  <td><a href="#string">string</a></td>
+                  <td>query</td>
+                  <td><a href="#package.TagsQuery">TagsQuery</a></td>
                   <td></td>
                   <td><p> </p></td>
                 </tr>
@@ -717,7 +749,7 @@
 
         
       
-        <h3 id="package.GetTagResponse">GetTagResponse</h3>
+        <h3 id="package.GetTagsResponse">GetTagsResponse</h3>
         <p></p>
 
         
@@ -802,6 +834,37 @@
               
                 <tr>
                   <td>deleted_at</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="package.TagsQuery">TagsQuery</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>package_id</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>name</td>
                   <td><a href="#string">string</a></td>
                   <td></td>
                   <td><p> </p></td>
