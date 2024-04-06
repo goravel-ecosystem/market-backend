@@ -17,29 +17,29 @@ import (
 	mocksservice "market.goravel.dev/package/app/mocks/services"
 )
 
-type TagControllerSuite struct {
+type PackageControllerSuite struct {
 	suite.Suite
-	ctx            context.Context
-	tagController  *TagController
-	mockLang       *mockstranslation.Translator
-	mockTagService *mocksservice.Tag
+	ctx               context.Context
+	packageController *PackageController
+	mockLang          *mockstranslation.Translator
+	mockTagService    *mocksservice.Tag
 }
 
-func TestTagControllerSuite(t *testing.T) {
-	suite.Run(t, new(TagControllerSuite))
+func TestPackageControllerSuite(t *testing.T) {
+	suite.Run(t, new(PackageControllerSuite))
 }
 
-func (s *TagControllerSuite) SetupTest() {
+func (s *PackageControllerSuite) SetupTest() {
 	s.ctx = context.Background()
 	mockFactory := testingmock.Factory()
 	s.mockLang = mockFactory.Lang(s.ctx)
 	s.mockTagService = &mocksservice.Tag{}
-	s.tagController = &TagController{
+	s.packageController = &PackageController{
 		tagService: s.mockTagService,
 	}
 }
 
-func (s *TagControllerSuite) TestGetTags() {
+func (s *PackageControllerSuite) TestGetTags() {
 	var (
 		packageID  = "1"
 		userID     = "1"
@@ -124,7 +124,7 @@ func (s *TagControllerSuite) TestGetTags() {
 	for _, test := range tests {
 		s.Run(test.name, func() {
 			test.setup()
-			response, err := s.tagController.GetTags(s.ctx, test.request)
+			response, err := s.packageController.GetTags(s.ctx, test.request)
 			s.Equal(test.expectedResponse, response)
 			s.Equal(test.expectedErr, err)
 
