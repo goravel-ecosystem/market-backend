@@ -8,17 +8,17 @@ import (
 	mocksmodels "market.goravel.dev/package/app/mocks/models"
 )
 
-type UserTestSuite struct {
+type TagTestSuite struct {
 	suite.Suite
 	mockTag *mocksmodels.TagInterface
 	tagImpl *TagImpl
 }
 
-func TestUserTestSuite(t *testing.T) {
-	suite.Run(t, new(UserTestSuite))
+func TestTagTestSuite(t *testing.T) {
+	suite.Run(t, new(TagTestSuite))
 }
 
-func (s *UserTestSuite) SetupTest() {
+func (s *TagTestSuite) SetupTest() {
 	s.mockTag = new(mocksmodels.TagInterface)
 	s.tagImpl = &TagImpl{
 		tagModel: s.mockTag,
