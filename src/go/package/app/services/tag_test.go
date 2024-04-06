@@ -25,6 +25,6 @@ func (s *TagTestSuite) SetupTest() {
 	}
 }
 
-func (s *UserTestSuite) TestGetTags() {
+func (s *TagTestSuite) TestGetTags() {
 	// TODO: Implement me
 }
