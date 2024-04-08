@@ -6,5 +6,5 @@ import (
 )
 
 func Packages() {
-	facades.Route().Get("/tags", gateway.Get)
+	facades.Route().Get("/packages/tags", gateway.Get)
 }

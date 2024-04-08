@@ -18,7 +18,6 @@ type Tag struct {
 	Name        string
 	Description string
 	IsShow      uint
-	Packages    []*Package `gorm:"many2many:package_tags;"`
 	orm.SoftDeletes
 }
 

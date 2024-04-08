@@ -8,7 +8,7 @@ import (
 )
 
 type Tag interface {
-	GetTags(packageID, name string, pagination *protobase.Pagination, total *int64) ([]*models.Tag, error)
+	GetTags(packageID, name string, pagination *protobase.Pagination) ([]*models.Tag, int64, error)
 }
 
 type TagImpl struct {
@@ -21,32 +21,30 @@ func NewTagImpl() *TagImpl {
 	}
 }
 
-func (r *TagImpl) GetTags(packageID, name string, pagination *protobase.Pagination, total *int64) ([]*models.Tag, error) {
+func (r *TagImpl) GetTags(packageID, name string, pagination *protobase.Pagination) ([]*models.Tag, int64, error) {
 	var tags []*models.Tag
 	query := facades.Orm().Query()
+	var total int64
+
+	page := pagination.GetPage()
+	limit := pagination.GetLimit()
 
 	if packageID != "" {
-		query = query.Join("JOIN package_tags ON package_tags.tag_id = tags.id").
-			Where("package_tags.package_id = ?", packageID)
+		var tagIDs []any
+		if err := facades.Orm().Query().Table("package_tags").Where("package_id = ?", packageID).Pluck("tag_id", &tagIDs); err != nil {
+			return nil, 0, err
+		}
+
+		query = query.WhereIn("id", tagIDs)
 	}
 
 	if name != "" {
 		// fuzzy search
 		query = query.Where("name LIKE ?", "%"+name+"%")
 	}
-
-	page := pagination.GetPage()
-	limit := pagination.GetLimit()
-	if limit <= 0 {
-		limit = 20
+	if err := query.Select([]string{"id", "name", "user_id"}).Paginate(int(page), int(limit), &tags, &total); err != nil {
+		return nil, 0, err
 	}
 
-	if page <= 0 {
-		page = 1
-	}
-	if err := query.Select([]string{"tags.id", "tags.name", "tags.user_id"}).Paginate(int(page), int(limit), &tags, total); err != nil {
-		return nil, err
-	}
-
-	return tags, nil
+	return tags, total, nil
 }

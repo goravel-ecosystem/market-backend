@@ -34,12 +34,6 @@ func init() {
 				},
 				"interceptors": []string{},
 			},
-			//"business": map[string]any{
-			//	"host":         config.Env("GRPC_BUSINESS_HOST", ""),
-			//	"port":         config.Env("GRPC_BUSINESS_PORT", ""),
-			//	"handlers":     []gateway.Handler{business.RegisterBusinessServiceHandler},
-			//	"interceptors": []string{},
-			//},
 		},
 	})
 }

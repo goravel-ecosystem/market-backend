@@ -2,12 +2,10 @@ package controllers
 
 import (
 	"context"
-	"errors"
-
-	"github.com/goravel/framework/facades"
 
 	"market.goravel.dev/package/app/services"
 	protopackage "market.goravel.dev/proto/package"
+	utilspagination "market.goravel.dev/utils/pagination"
 	utilsresponse "market.goravel.dev/utils/response"
 )
 
@@ -22,25 +20,30 @@ func NewPackageController() *PackageController {
 	}
 }
 
-func (r *PackageController) GetTags(ctx context.Context, req *protopackage.GetTagsRequest) (*protopackage.GetTagsResponse, error) {
+func (r *PackageController) GetTags(_ context.Context, req *protopackage.GetTagsRequest) (*protopackage.GetTagsResponse, error) {
 	query := req.GetQuery()
 	packageID := query.GetPackageId()
 	name := query.GetName()
 	pagination := req.GetPagination()
-	var total int64
 
-	tags, err := r.tagService.GetTags(packageID, name, pagination, &total)
+	if pagination == nil {
+		pagination = utilspagination.Default()
+	}
+
+	if pagination.GetPage() <= 0 {
+		pagination.Page = 1
+	}
+
+	if pagination.GetLimit() <= 0 {
+		pagination.Limit = 10
+	}
+
+	tags, total, err := r.tagService.GetTags(packageID, name, pagination)
 	if err != nil {
 		return nil, err
 	}
 
-	if len(tags) == 0 {
-		return &protopackage.GetTagsResponse{
-			Status: utilsresponse.NewNotFoundStatus(errors.New(facades.Lang(ctx).Get("not_exist.tags"))),
-		}, nil
-	}
-
-	var tagsProto []*protopackage.Tag
+	tagsProto := make([]*protopackage.Tag, 0)
 	for _, tag := range tags {
 		tagsProto = append(tagsProto, tag.ToProto())
 	}
