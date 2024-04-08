@@ -14,30 +14,37 @@ type Tag struct {
 	mock.Mock
 }
 
-// GetTags provides a mock function with given fields: packageID, name, pagination, total
-func (_m *Tag) GetTags(packageID string, name string, pagination *base.Pagination, total *int64) ([]*models.Tag, error) {
-	ret := _m.Called(packageID, name, pagination, total)
+// GetTags provides a mock function with given fields: packageID, name, pagination
+func (_m *Tag) GetTags(packageID string, name string, pagination *base.Pagination) ([]*models.Tag, int64, error) {
+	ret := _m.Called(packageID, name, pagination)
 
 	var r0 []*models.Tag
-	var r1 error
-	if rf, ok := ret.Get(0).(func(string, string, *base.Pagination, *int64) ([]*models.Tag, error)); ok {
-		return rf(packageID, name, pagination, total)
+	var r1 int64
+	var r2 error
+	if rf, ok := ret.Get(0).(func(string, string, *base.Pagination) ([]*models.Tag, int64, error)); ok {
+		return rf(packageID, name, pagination)
 	}
-	if rf, ok := ret.Get(0).(func(string, string, *base.Pagination, *int64) []*models.Tag); ok {
-		r0 = rf(packageID, name, pagination, total)
+	if rf, ok := ret.Get(0).(func(string, string, *base.Pagination) []*models.Tag); ok {
+		r0 = rf(packageID, name, pagination)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]*models.Tag)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(string, string, *base.Pagination, *int64) error); ok {
-		r1 = rf(packageID, name, pagination, total)
+	if rf, ok := ret.Get(1).(func(string, string, *base.Pagination) int64); ok {
+		r1 = rf(packageID, name, pagination)
 	} else {
-		r1 = ret.Error(1)
+		r1 = ret.Get(1).(int64)
 	}
 
-	return r0, r1
+	if rf, ok := ret.Get(2).(func(string, string, *base.Pagination) error); ok {
+		r2 = rf(packageID, name, pagination)
+	} else {
+		r2 = ret.Error(2)
+	}
+
+	return r0, r1, r2
 }
 
 // NewTag creates a new instance of Tag. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
