@@ -68,7 +68,8 @@ func (s *PackageControllerSuite) TestGetTags() {
 				},
 			},
 			setup: func() {
-				s.mockTagService.On("GetTags", packageID, name, pagination, &total).Return([]*models.Tag{
+				total = 1
+				s.mockTagService.On("GetTags", packageID, name, pagination).Return([]*models.Tag{
 					{
 						UUIDModel: models.UUIDModel{
 							ID: 1,
@@ -76,7 +77,7 @@ func (s *PackageControllerSuite) TestGetTags() {
 						UserID: 1,
 						Name:   "goravel",
 					},
-				}, nil).Once()
+				}, total, nil).Once()
 			},
 			expectedResponse: &protopackage.GetTagsResponse{
 				Status: utilsresponse.NewOkStatus(),
@@ -87,7 +88,7 @@ func (s *PackageControllerSuite) TestGetTags() {
 						Name:   "goravel",
 					},
 				},
-				Total: total,
+				Total: 1,
 			},
 		},
 		{
@@ -99,7 +100,8 @@ func (s *PackageControllerSuite) TestGetTags() {
 				},
 			},
 			setup: func() {
-				s.mockTagService.On("GetTags", "", name, pagination, &total).Return(nil, errors.New("error")).Once()
+				total = 0
+				s.mockTagService.On("GetTags", "", name, pagination).Return(nil, total, errors.New("error")).Once()
 			},
 			expectedErr: errors.New("error"),
 		},
@@ -112,11 +114,57 @@ func (s *PackageControllerSuite) TestGetTags() {
 				},
 			},
 			setup: func() {
-				s.mockTagService.On("GetTags", "", name, pagination, &total).Return([]*models.Tag{}, nil).Once()
-				s.mockLang.On("Get", "not_exist.tags").Return("tags not found").Once()
+				total = 0
+				s.mockTagService.On("GetTags", "", name, pagination).Return([]*models.Tag{}, total, nil).Once()
 			},
 			expectedResponse: &protopackage.GetTagsResponse{
-				Status: utilsresponse.NewNotFoundStatus(errors.New("tags not found")),
+				Status: utilsresponse.NewOkStatus(),
+				Tags:   []*protopackage.Tag{},
+			},
+		},
+		{
+			name: "Sad path - pagination is nil",
+			request: &protopackage.GetTagsRequest{
+				Query: &protopackage.TagsQuery{
+					Name: name,
+				},
+			},
+			setup: func() {
+				total = 0
+				s.mockTagService.On("GetTags", "", name, &protobase.Pagination{Page: 1, Limit: 10}).Return([]*models.Tag{}, total, nil).Once()
+			},
+			expectedResponse: &protopackage.GetTagsResponse{
+				Status: utilsresponse.NewOkStatus(),
+				Tags:   []*protopackage.Tag{},
+			},
+		},
+		{
+			name: "Sad path - query is nil",
+			request: &protopackage.GetTagsRequest{
+				Pagination: pagination,
+			},
+			setup: func() {
+				total = 1
+				s.mockTagService.On("GetTags", "", "", pagination).Return([]*models.Tag{
+					{
+						UUIDModel: models.UUIDModel{
+							ID: 1,
+						},
+						UserID: 1,
+						Name:   "goravel",
+					},
+				}, total, nil).Once()
+			},
+			expectedResponse: &protopackage.GetTagsResponse{
+				Status: utilsresponse.NewOkStatus(),
+				Tags: []*protopackage.Tag{
+					{
+						Id:     "1",
+						UserId: userID,
+						Name:   "goravel",
+					},
+				},
+				Total: 1,
 			},
 		},
 	}
