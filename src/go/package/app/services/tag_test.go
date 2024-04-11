@@ -67,6 +67,7 @@ func (s *TagTestSuite) TestGetTags() {
 				mockOrmQuery.On("WhereIn", "id", mock.Anything).Return(mockOrmQuery).Once()
 				mockOrmQuery.On("Where", "name LIKE ?", "%"+name+"%").Return(mockOrmQuery).Once()
 				mockOrmQuery.On("Select", fields).Return(mockOrmQuery).Once()
+				mockOrmQuery.On("Where", "is_show = ?", "1").Return(mockOrmQuery).Once()
 				mockOrmQuery.On("Paginate", int(pagination.GetPage()), int(pagination.GetLimit()), mock.AnythingOfType("*[]*models.Tag"), mock.AnythingOfType("*int64")).
 					Return(nil).
 					Run(func(args mock.Arguments) {
@@ -99,6 +100,7 @@ func (s *TagTestSuite) TestGetTags() {
 				mockOrmQuery.On("Pluck", "tag_id", mock.Anything).Return(nil).Once()
 				mockOrmQuery.On("WhereIn", "id", mock.Anything).Return(mockOrmQuery).Once()
 				mockOrmQuery.On("Select", fields).Return(mockOrmQuery).Once()
+				mockOrmQuery.On("Where", "is_show = ?", "1").Return(mockOrmQuery).Once()
 				mockOrmQuery.On("Paginate", int(pagination.GetPage()), int(pagination.GetLimit()), mock.AnythingOfType("*[]*models.Tag"), mock.AnythingOfType("*int64")).
 					Return(nil).
 					Run(func(args mock.Arguments) {
@@ -127,6 +129,7 @@ func (s *TagTestSuite) TestGetTags() {
 
 				mockOrmQuery.On("Where", "name LIKE ?", "%"+name+"%").Return(mockOrmQuery).Once()
 				mockOrmQuery.On("Select", fields).Return(mockOrmQuery).Once()
+				mockOrmQuery.On("Where", "is_show = ?", "1").Return(mockOrmQuery).Once()
 				mockOrmQuery.On("Paginate", int(pagination.GetPage()), int(pagination.GetLimit()), mock.AnythingOfType("*[]*models.Tag"), mock.AnythingOfType("*int64")).
 					Return(nil).
 					Run(func(args mock.Arguments) {
@@ -171,6 +174,7 @@ func (s *TagTestSuite) TestGetTags() {
 
 				mockOrmQuery.On("Where", "name LIKE ?", "%"+name+"%").Return(mockOrmQuery).Once()
 				mockOrmQuery.On("Select", fields).Return(mockOrmQuery).Once()
+				mockOrmQuery.On("Where", "is_show = ?", "1").Return(mockOrmQuery).Once()
 				mockOrmQuery.On("Paginate", int(pagination.GetPage()), int(pagination.GetLimit()), mock.AnythingOfType("*[]*models.Tag"), mock.AnythingOfType("*int64")).
 					Return(errors.New("paginate error")).Once()
 			},
