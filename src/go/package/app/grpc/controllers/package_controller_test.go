@@ -9,12 +9,11 @@ import (
 	testingmock "github.com/goravel/framework/testing/mock"
 	"github.com/stretchr/testify/suite"
 
+	mocksservice "market.goravel.dev/package/app/mocks/services"
 	"market.goravel.dev/package/app/models"
 	protobase "market.goravel.dev/proto/base"
 	protopackage "market.goravel.dev/proto/package"
 	utilsresponse "market.goravel.dev/utils/response"
-
-	mocksservice "market.goravel.dev/package/app/mocks/services"
 )
 
 type PackageControllerSuite struct {
@@ -106,7 +105,7 @@ func (s *PackageControllerSuite) TestGetTags() {
 			expectedErr: errors.New("error"),
 		},
 		{
-			name: "Sad path - tags is empty",
+			name: "Happy path - tags is empty",
 			request: &protopackage.GetTagsRequest{
 				Pagination: pagination,
 				Query: &protopackage.TagsQuery{
@@ -123,7 +122,7 @@ func (s *PackageControllerSuite) TestGetTags() {
 			},
 		},
 		{
-			name: "Sad path - pagination is nil",
+			name: "Happy path - pagination is nil",
 			request: &protopackage.GetTagsRequest{
 				Query: &protopackage.TagsQuery{
 					Name: name,
@@ -139,7 +138,7 @@ func (s *PackageControllerSuite) TestGetTags() {
 			},
 		},
 		{
-			name: "Sad path - query is nil",
+			name: "Happy path - query is nil",
 			request: &protopackage.GetTagsRequest{
 				Pagination: pagination,
 			},

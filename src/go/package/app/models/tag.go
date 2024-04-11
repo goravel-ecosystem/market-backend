@@ -8,10 +8,6 @@ import (
 	protopackage "market.goravel.dev/proto/package"
 )
 
-type TagInterface interface {
-	//GetTags(packageID, userID, name string, fields []string) ([]*Tag, error)
-}
-
 type Tag struct {
 	UUIDModel
 	UserID      uint64

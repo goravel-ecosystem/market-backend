@@ -12,13 +12,10 @@ type Tag interface {
 }
 
 type TagImpl struct {
-	tagModel models.TagInterface
 }
 
 func NewTagImpl() *TagImpl {
-	return &TagImpl{
-		tagModel: models.NewTag(),
-	}
+	return &TagImpl{}
 }
 
 func (r *TagImpl) GetTags(packageID, name string, pagination *protobase.Pagination) ([]*models.Tag, int64, error) {
@@ -42,7 +39,7 @@ func (r *TagImpl) GetTags(packageID, name string, pagination *protobase.Paginati
 		// fuzzy search
 		query = query.Where("name LIKE ?", "%"+name+"%")
 	}
-	if err := query.Select([]string{"id", "name", "user_id"}).Paginate(int(page), int(limit), &tags, &total); err != nil {
+	if err := query.Select([]string{"id", "name"}).Paginate(int(page), int(limit), &tags, &total); err != nil {
 		return nil, 0, err
 	}
 
