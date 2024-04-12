@@ -10,10 +10,9 @@ import (
 
 type Tag struct {
 	UUIDModel
-	UserID      uint64
-	Name        string
-	Description string
-	IsShow      uint
+	UserID uint64
+	Name   string
+	IsShow uint
 	orm.SoftDeletes
 }
 

@@ -3,6 +3,7 @@ package controllers
 import (
 	"context"
 	"errors"
+	"fmt"
 	"testing"
 
 	mockstranslation "github.com/goravel/framework/mocks/translation"
@@ -41,8 +42,8 @@ func (s *PackageControllerSuite) SetupTest() {
 func (s *PackageControllerSuite) TestGetTags() {
 	var (
 		packageID  = "1"
-		userID     = "1"
-		name       = "go"
+		userID     = uint64(1)
+		name       = "goravel"
 		pagination = &protobase.Pagination{
 			Page:  1,
 			Limit: 10,
@@ -73,8 +74,8 @@ func (s *PackageControllerSuite) TestGetTags() {
 						UUIDModel: models.UUIDModel{
 							ID: 1,
 						},
-						UserID: 1,
-						Name:   "goravel",
+						UserID: userID,
+						Name:   name,
 					},
 				}, total, nil).Once()
 			},
@@ -83,8 +84,8 @@ func (s *PackageControllerSuite) TestGetTags() {
 				Tags: []*protopackage.Tag{
 					{
 						Id:     "1",
-						UserId: userID,
-						Name:   "goravel",
+						UserId: fmt.Sprint(userID),
+						Name:   name,
 					},
 				},
 				Total: 1,
@@ -149,8 +150,8 @@ func (s *PackageControllerSuite) TestGetTags() {
 						UUIDModel: models.UUIDModel{
 							ID: 1,
 						},
-						UserID: 1,
-						Name:   "goravel",
+						UserID: userID,
+						Name:   name,
 					},
 				}, total, nil).Once()
 			},
@@ -159,8 +160,8 @@ func (s *PackageControllerSuite) TestGetTags() {
 				Tags: []*protopackage.Tag{
 					{
 						Id:     "1",
-						UserId: userID,
-						Name:   "goravel",
+						UserId: fmt.Sprint(userID),
+						Name:   name,
 					},
 				},
 				Total: 1,
