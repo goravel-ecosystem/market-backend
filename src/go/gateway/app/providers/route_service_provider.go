@@ -24,6 +24,7 @@ func (receiver *RouteServiceProvider) Boot(app foundation.Application) {
 	receiver.configureRateLimiting()
 
 	routes.Users()
+	routes.Packages()
 }
 
 func (receiver *RouteServiceProvider) configureRateLimiting() {

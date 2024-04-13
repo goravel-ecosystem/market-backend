@@ -17,6 +17,7 @@ import (
 	mocksservice "market.goravel.dev/user/app/mocks/services"
 	"market.goravel.dev/user/app/models"
 	utilserrors "market.goravel.dev/utils/errors"
+	utilsresponse "market.goravel.dev/utils/response"
 )
 
 type UsersControllerSuite struct {
@@ -82,7 +83,7 @@ func (s *UsersControllerSuite) TestEmailLogin() {
 				s.mockAuth.On("LoginUsingID", user.ID).Return("token", nil).Once()
 			},
 			expectedResponse: &protouser.EmailLoginResponse{
-				Status: NewOkStatus(),
+				Status: utilsresponse.NewOkStatus(),
 				User:   user.ToProto(),
 				Token:  "Bearer token",
 			},
@@ -203,7 +204,7 @@ func (s *UsersControllerSuite) TestEmailRegister() {
 				s.mockAuth.On("LoginUsingID", user.ID).Return("token", nil).Once()
 			},
 			expectedResponse: &protouser.EmailRegisterResponse{
-				Status: NewOkStatus(),
+				Status: utilsresponse.NewOkStatus(),
 				User:   user.ToProto(),
 				Token:  "Bearer token",
 			},
@@ -419,7 +420,7 @@ func (s *UsersControllerSuite) TestGetEmailRegisterCode() {
 				s.mockNotificationService.On("SendEmailRegisterCode", s.ctx, email).Return(key, nil).Once()
 			},
 			expectedResponse: &protouser.GetEmailRegisterCodeResponse{
-				Status: NewOkStatus(),
+				Status: utilsresponse.NewOkStatus(),
 				Key:    key,
 			},
 		},
@@ -508,7 +509,7 @@ func (s *UsersControllerSuite) TestGetUser() {
 				}, nil).Once()
 			},
 			expectedResponse: &protouser.GetUserResponse{
-				Status: NewOkStatus(),
+				Status: utilsresponse.NewOkStatus(),
 				User: &protouser.User{
 					Id:   "1",
 					Name: name,
@@ -524,7 +525,7 @@ func (s *UsersControllerSuite) TestGetUser() {
 				s.mockLang.On("Get", "required.user_id").Return("required user id").Once()
 			},
 			expectedResponse: &protouser.GetUserResponse{
-				Status: NewBadRequestStatus(errors.New("required user id")),
+				Status: utilsresponse.NewBadRequestStatus(errors.New("required user id")),
 			},
 		},
 		{
@@ -547,7 +548,7 @@ func (s *UsersControllerSuite) TestGetUser() {
 				s.mockLang.On("Get", "not_exist.user").Return("user not found").Once()
 			},
 			expectedResponse: &protouser.GetUserResponse{
-				Status: NewNotFoundStatus(errors.New("user not found")),
+				Status: utilsresponse.NewNotFoundStatus(errors.New("user not found")),
 			},
 		},
 	}
