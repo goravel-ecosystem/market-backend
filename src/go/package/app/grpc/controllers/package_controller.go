@@ -16,13 +16,13 @@ import (
 type PackageController struct {
 	protopackage.UnimplementedPackageServiceServer
 	packageService services.Package
-	tagService services.Tag
+	tagService     services.Tag
 }
 
 func NewPackageController() *PackageController {
 	return &PackageController{
 		packageService: services.NewPackageImpl(),
-    tagService: services.NewTagImpl(),
+		tagService:     services.NewTagImpl(),
 	}
 }
 
@@ -53,7 +53,7 @@ func (r *PackageController) GetPackage(ctx context.Context, req *protopackage.Ge
 	return &protopackage.GetPackageResponse{
 		Status:  utilsresponse.NewOkStatus(),
 		Package: packageData.ToProto(),
-	}
+	}, nil
 }
 
 func (r *PackageController) GetTags(_ context.Context, req *protopackage.GetTagsRequest) (*protopackage.GetTagsResponse, error) {
