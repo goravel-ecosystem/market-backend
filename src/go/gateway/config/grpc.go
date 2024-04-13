@@ -36,14 +36,6 @@ func init() {
 				},
 				"interceptors": []string{},
 			},
-			"package": map[string]any{
-				"host": config.Env("GRPC_PACKAGE_HOST", ""),
-				"port": config.Env("GRPC_PACKAGE_PORT", ""),
-				"handlers": []gateway.Handler{
-					protopackage.RegisterPackageServiceHandler,
-				},
-				"interceptors": []string{},
-			},
 		},
 	})
 }
