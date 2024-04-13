@@ -21,9 +21,14 @@ func NewTag() *Tag {
 }
 
 func (r *Tag) ToProto() *protopackage.Tag {
+	var userID string
+	if r.UserID != 0 {
+		userID = cast.ToString(r.UserID)
+	}
+
 	return &protopackage.Tag{
 		Id:        cast.ToString(r.ID),
-		UserId:    cast.ToString(r.UserID),
+		UserId:    userID,
 		Name:      r.Name,
 		CreatedAt: r.CreatedAt.ToString(),
 		UpdatedAt: r.UpdatedAt.ToString(),
