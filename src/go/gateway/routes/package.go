@@ -11,5 +11,6 @@ import (
 func Packages() {
 	userService := services.NewUserImpl()
 
+  facades.Route().Get("/packages/tags", gateway.Get)
 	facades.Route().Middleware(middleware.Jwt(userService)).Get("/packages/{id}", gateway.Get)
 }

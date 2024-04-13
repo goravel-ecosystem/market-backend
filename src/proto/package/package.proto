@@ -6,6 +6,7 @@ option go_package="market.goravel.dev/proto/package";
 
 import "google/api/annotations.proto";
 import "base/base.proto";
+import "package/tag.proto";
 
 message Package {
   string id = 1;
@@ -36,6 +37,12 @@ service PackageService {
   rpc GetPackage (GetPackageRequest) returns (GetPackageResponse) {
     option (google.api.http) = {
       get: "/packages/{id}"
+    };
+  }
+
+  rpc GetTags(GetTagsRequest) returns (GetTagsResponse) {
+    option (google.api.http) = {
+      get: "/packages/tags"
     };
   }
 }

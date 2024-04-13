@@ -329,14 +329,18 @@ var file_package_package_proto_goTypes = []interface{}{
 	(*GetPackageRequest)(nil),  // 1: package.GetPackageRequest
 	(*GetPackageResponse)(nil), // 2: package.GetPackageResponse
 	(*base.Status)(nil),        // 3: base.Status
+	(*GetTagsRequest)(nil),     // 4: package.GetTagsRequest
+	(*GetTagsResponse)(nil),    // 5: package.GetTagsResponse
 }
 var file_package_package_proto_depIdxs = []int32{
 	3, // 0: package.GetPackageResponse.status:type_name -> base.Status
 	0, // 1: package.GetPackageResponse.package:type_name -> package.Package
 	1, // 2: package.PackageService.GetPackage:input_type -> package.GetPackageRequest
-	2, // 3: package.PackageService.GetPackage:output_type -> package.GetPackageResponse
-	3, // [3:4] is the sub-list for method output_type
-	2, // [2:3] is the sub-list for method input_type
+	4, // 3: package.PackageService.GetTags:input_type -> package.GetTagsRequest
+	2, // 4: package.PackageService.GetPackage:output_type -> package.GetPackageResponse
+	5, // 5: package.PackageService.GetTags:output_type -> package.GetTagsResponse
+	4, // [4:6] is the sub-list for method output_type
+	2, // [2:4] is the sub-list for method input_type
 	2, // [2:2] is the sub-list for extension type_name
 	2, // [2:2] is the sub-list for extension extendee
 	0, // [0:2] is the sub-list for field type_name
@@ -347,6 +351,7 @@ func file_package_package_proto_init() {
 	if File_package_package_proto != nil {
 		return
 	}
+	file_package_tag_proto_init()
 	if !protoimpl.UnsafeEnabled {
 		file_package_package_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Package); i {

@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package package;
+
+option go_package="market.goravel.dev/proto/package";
+
+import "base/base.proto";
+
+message Tag {
+  string id = 1;
+  string user_id = 2;
+  string name = 3;
+  string created_at = 4;
+  string updated_at = 5;
+  string deleted_at = 6;
+}
+
+message TagsQuery {
+  string package_id = 1;
+  string name = 2;
+}
+
+message GetTagsRequest {
+  base.Pagination pagination = 1;
+  TagsQuery query = 2;
+}
+
+message GetTagsResponse {
+  base.Status status = 1;
+  repeated Tag tags = 2;
+  int64 total = 3;
+}
