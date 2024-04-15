@@ -39,7 +39,7 @@ func TestResponse(t *testing.T) {
 			name: "Sad path, handler returns utilserrors.ErrorWithCode",
 			req:  "Goravel",
 			handler: func(ctx context.Context, req any) (any, error) {
-				return nil, utilserrors.NewValidate("error")
+				return nil, utilserrors.NewBadRequest("error")
 			},
 			expectResponse: &base.Response{
 				Status: &base.Status{

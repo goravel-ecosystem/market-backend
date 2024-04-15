@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/cast"
 
 	protopackage "market.goravel.dev/proto/package"
+	"market.goravel.dev/utils/errors"
 )
 
 type PackageInterface interface {
@@ -32,7 +33,7 @@ func NewPackage() *Package {
 func (r *Package) GetPackageByID(id string, fields []string) (*Package, error) {
 	var packageModel Package
 	if err := facades.Orm().Query().Where("id", id).Select(fields).FirstOrFail(&packageModel); err != nil {
-		return nil, err
+		return nil, errors.NewInternalServerError(err)
 	}
 
 	return &packageModel, nil

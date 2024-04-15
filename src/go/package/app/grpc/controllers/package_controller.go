@@ -9,6 +9,7 @@ import (
 
 	"market.goravel.dev/package/app/services"
 	protopackage "market.goravel.dev/proto/package"
+	utilserrors "market.goravel.dev/utils/errors"
 	utilspagination "market.goravel.dev/utils/pagination"
 	utilsresponse "market.goravel.dev/utils/response"
 )
@@ -29,23 +30,17 @@ func NewPackageController() *PackageController {
 func (r *PackageController) GetPackage(ctx context.Context, req *protopackage.GetPackageRequest) (*protopackage.GetPackageResponse, error) {
 	userID := req.GetUserId()
 	if userID == "" {
-		return &protopackage.GetPackageResponse{
-			Status: utilsresponse.NewBadRequestStatus(errors.New(facades.Lang(ctx).Get("required.user_id"))),
-		}, nil
+		return nil, utilserrors.NewBadRequest(facades.Lang(ctx).Get("required.user_id"))
 	}
 	packageID := req.GetId()
 	if packageID == "" {
-		return &protopackage.GetPackageResponse{
-			Status: utilsresponse.NewBadRequestStatus(errors.New(facades.Lang(ctx).Get("required.package_id"))),
-		}, nil
+		return nil, utilserrors.NewBadRequest(facades.Lang(ctx).Get("required.package_id"))
 	}
 
-	packageData, err := r.packageService.GetPackageByID(packageID)
+	packageData, err := r.packageService.GetPackageByID(ctx, packageID)
 	if err != nil {
 		if errors.Is(err, orm.ErrRecordNotFound) {
-			return &protopackage.GetPackageResponse{
-				Status: utilsresponse.NewNotFoundStatus(errors.New(facades.Lang(ctx).Get("not_exist.package"))),
-			}, nil
+			return nil, utilserrors.NewNotFound(facades.Lang(ctx).Get("not_exist.package"))
 		}
 		return nil, err
 	}
