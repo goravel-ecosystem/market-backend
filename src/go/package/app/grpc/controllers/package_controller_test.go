@@ -23,7 +23,8 @@ type PackageControllerSuite struct {
 	packageController  *PackageController
 	mockLang           *mockstranslation.Translator
 	mockPackageService *mocksservice.Package
-  mockTagService    *mocksservice.Tag
+	mockTagService     *mocksservice.Tag
+	mockUserService    *mocksservice.User
 }
 
 func TestPackageControllerSuite(t *testing.T) {
@@ -35,10 +36,12 @@ func (s *PackageControllerSuite) SetupTest() {
 	mockFactory := testingmock.Factory()
 	s.mockLang = mockFactory.Lang(s.ctx)
 	s.mockPackageService = &mocksservice.Package{}
-  s.mockTagService = &mocksservice.Tag{}
+	s.mockTagService = &mocksservice.Tag{}
+	s.mockUserService = &mocksservice.User{}
 	s.packageController = &PackageController{
 		packageService: s.mockPackageService,
-    tagService: s.mockTagService,
+		tagService:     s.mockTagService,
+		userService:    s.mockUserService,
 	}
 }
 

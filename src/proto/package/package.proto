@@ -7,6 +7,7 @@ option go_package="market.goravel.dev/proto/package";
 import "google/api/annotations.proto";
 import "base/base.proto";
 import "package/tag.proto";
+import "user/user.proto";
 
 message Package {
   string id = 1;
@@ -20,6 +21,8 @@ message Package {
   string created_at = 9;
   string updated_at = 10;
   string deleted_at = 11;
+  user.User user = 12;
+  repeated Tag tags = 13;
 }
 
 message GetPackageRequest {
