@@ -2,9 +2,7 @@ package controllers
 
 import (
 	"context"
-	"errors"
 
-	"github.com/goravel/framework/database/orm"
 	"github.com/goravel/framework/facades"
 	"github.com/goravel/framework/http"
 
@@ -15,20 +13,20 @@ import (
 	utilsresponse "market.goravel.dev/utils/response"
 )
 
-type UsersController struct {
+type UserController struct {
 	protouser.UnimplementedUserServiceServer
 	notificationService services.Notification
 	userService         services.User
 }
 
-func NewUsersController() *UsersController {
-	return &UsersController{
+func NewUserController() *UserController {
+	return &UserController{
 		notificationService: services.NewNotificationImpl(),
 		userService:         services.NewUserImpl(),
 	}
 }
 
-func (r *UsersController) EmailLogin(ctx context.Context, req *protouser.EmailLoginRequest) (*protouser.EmailLoginResponse, error) {
+func (r *UserController) EmailLogin(ctx context.Context, req *protouser.EmailLoginRequest) (*protouser.EmailLoginResponse, error) {
 	if err := validateEmailLoginRequest(ctx, req); err != nil {
 		return nil, err
 	}
@@ -54,7 +52,7 @@ func (r *UsersController) EmailLogin(ctx context.Context, req *protouser.EmailLo
 	}, nil
 }
 
-func (r *UsersController) EmailRegister(ctx context.Context, req *protouser.EmailRegisterRequest) (*protouser.EmailRegisterResponse, error) {
+func (r *UserController) EmailRegister(ctx context.Context, req *protouser.EmailRegisterRequest) (*protouser.EmailRegisterResponse, error) {
 	if err := validateEmailRegisterRequest(ctx, req); err != nil {
 		return nil, err
 	}
@@ -88,7 +86,7 @@ func (r *UsersController) EmailRegister(ctx context.Context, req *protouser.Emai
 	}, nil
 }
 
-func (r *UsersController) GetEmailRegisterCode(ctx context.Context, req *protouser.GetEmailRegisterCodeRequest) (*protouser.GetEmailRegisterCodeResponse, error) {
+func (r *UserController) GetEmailRegisterCode(ctx context.Context, req *protouser.GetEmailRegisterCodeRequest) (*protouser.GetEmailRegisterCodeResponse, error) {
 	if err := validateGetEmailRegisterCodeRequest(ctx, req); err != nil {
 		return nil, err
 	}
@@ -112,7 +110,7 @@ func (r *UsersController) GetEmailRegisterCode(ctx context.Context, req *protous
 	}, nil
 }
 
-func (r *UsersController) GetUser(ctx context.Context, req *protouser.GetUserRequest) (*protouser.GetUserResponse, error) {
+func (r *UserController) GetUser(ctx context.Context, req *protouser.GetUserRequest) (*protouser.GetUserResponse, error) {
 	userID := req.GetUserId()
 	if userID == "" {
 		return nil, utilserrors.NewBadRequest(facades.Lang(ctx).Get("required.user_id"))
@@ -120,10 +118,11 @@ func (r *UsersController) GetUser(ctx context.Context, req *protouser.GetUserReq
 
 	user, err := r.userService.GetUserByID(userID)
 	if err != nil {
-		if errors.Is(err, orm.ErrRecordNotFound) {
-			return nil, utilserrors.NewNotFound(facades.Lang(ctx).Get("not_exist.user"))
-		}
 		return nil, err
+	}
+
+	if user.ID == 0 {
+		return nil, utilserrors.NewNotFound(facades.Lang(ctx).Get("not_exist.user"))
 	}
 
 	return &protouser.GetUserResponse{
@@ -132,7 +131,7 @@ func (r *UsersController) GetUser(ctx context.Context, req *protouser.GetUserReq
 	}, nil
 }
 
-func (r *UsersController) GetUserByToken(ctx context.Context, req *protouser.GetUserByTokenRequest) (*protouser.GetUserByTokenResponse, error) {
+func (r *UserController) GetUserByToken(ctx context.Context, req *protouser.GetUserByTokenRequest) (*protouser.GetUserByTokenResponse, error) {
 	token := req.GetToken()
 	if token == "" {
 		return nil, utilserrors.NewBadRequest(facades.Lang(ctx).Get("required.token"))

@@ -9,5 +9,5 @@ import (
 )
 
 func Grpc() {
-	user.RegisterUserServiceServer(facades.Grpc().Server(), controllers.NewUsersController())
+	user.RegisterUserServiceServer(facades.Grpc().Server(), controllers.NewUserController())
 }

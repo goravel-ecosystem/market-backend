@@ -5,7 +5,6 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/goravel/framework/database/orm"
 	"github.com/goravel/framework/http"
 	mocksauth "github.com/goravel/framework/mocks/auth"
 	mockshash "github.com/goravel/framework/mocks/hash"
@@ -23,7 +22,7 @@ import (
 type UsersControllerSuite struct {
 	suite.Suite
 	ctx                     context.Context
-	usersController         *UsersController
+	userController          *UserController
 	mockAuth                *mocksauth.Auth
 	mockHash                *mockshash.Hash
 	mockLang                *mockstranslation.Translator
@@ -43,7 +42,7 @@ func (s *UsersControllerSuite) SetupTest() {
 	s.mockLang = mockFactory.Lang(s.ctx)
 	s.mockNotificationService = &mocksservice.Notification{}
 	s.mockUserService = &mocksservice.User{}
-	s.usersController = &UsersController{
+	s.userController = &UserController{
 		notificationService: s.mockNotificationService,
 		userService:         s.mockUserService,
 	}
@@ -152,7 +151,7 @@ func (s *UsersControllerSuite) TestEmailLogin() {
 	for _, test := range tests {
 		s.Run(test.name, func() {
 			test.setup()
-			response, err := s.usersController.EmailLogin(s.ctx, test.request)
+			response, err := s.userController.EmailLogin(s.ctx, test.request)
 			s.Equal(test.expectedResponse, response)
 			s.Equal(test.expectedErr, err)
 
@@ -385,7 +384,7 @@ func (s *UsersControllerSuite) TestEmailRegister() {
 	for _, test := range tests {
 		s.Run(test.name, func() {
 			test.setup()
-			response, err := s.usersController.EmailRegister(s.ctx, test.request)
+			response, err := s.userController.EmailRegister(s.ctx, test.request)
 			s.Equal(test.expectedResponse, response)
 			s.Equal(test.expectedErr, err)
 
@@ -471,7 +470,7 @@ func (s *UsersControllerSuite) TestGetEmailRegisterCode() {
 	for _, test := range tests {
 		s.Run(test.name, func() {
 			test.setup()
-			response, err := s.usersController.GetEmailRegisterCode(s.ctx, test.request)
+			response, err := s.userController.GetEmailRegisterCode(s.ctx, test.request)
 			s.Equal(test.expectedResponse, response)
 			s.Equal(test.expectedErr, err)
 
@@ -524,9 +523,7 @@ func (s *UsersControllerSuite) TestGetUser() {
 			setup: func() {
 				s.mockLang.On("Get", "required.user_id").Return("required user id").Once()
 			},
-			expectedResponse: &protouser.GetUserResponse{
-				Status: utilsresponse.NewBadRequestStatus(errors.New("required user id")),
-			},
+			expectedErr: utilserrors.NewBadRequest("required user id"),
 		},
 		{
 			name: "Sad path - GetUserByID returns error",
@@ -544,19 +541,17 @@ func (s *UsersControllerSuite) TestGetUser() {
 				UserId: userID,
 			},
 			setup: func() {
-				s.mockUserService.On("GetUserByID", userID).Return(nil, orm.ErrRecordNotFound).Once()
-				s.mockLang.On("Get", "not_exist.user").Return("user not found").Once()
+				s.mockUserService.On("GetUserByID", userID).Return(&models.User{}, nil).Once()
+				s.mockLang.On("Get", "not_exist.user").Return("User not found").Once()
 			},
-			expectedResponse: &protouser.GetUserResponse{
-				Status: utilsresponse.NewNotFoundStatus(errors.New("user not found")),
-			},
+			expectedErr: utilserrors.NewNotFound("User not found"),
 		},
 	}
 
 	for _, test := range tests {
 		s.Run(test.name, func() {
 			test.setup()
-			response, err := s.usersController.GetUser(s.ctx, test.request)
+			response, err := s.userController.GetUser(s.ctx, test.request)
 			s.Equal(test.expectedResponse, response)
 			s.Equal(test.expectedErr, err)
 
