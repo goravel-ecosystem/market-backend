@@ -32,7 +32,7 @@ func NewPackage() *Package {
 
 func (r *Package) GetPackageByID(id string, fields []string) (*Package, error) {
 	var packageModel Package
-	if err := facades.Orm().Query().Where("id", id).Select(fields).FirstOrFail(&packageModel); err != nil {
+	if err := facades.Orm().Query().Where("id", id).Select(fields).First(&packageModel); err != nil {
 		return nil, errors.NewInternalServerError(err)
 	}
 
