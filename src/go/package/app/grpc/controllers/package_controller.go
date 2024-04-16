@@ -30,10 +30,6 @@ func NewPackageController() *PackageController {
 }
 
 func (r *PackageController) GetPackage(ctx context.Context, req *protopackage.GetPackageRequest) (*protopackage.GetPackageResponse, error) {
-	userID := req.GetUserId()
-	if userID == "" {
-		return nil, utilserrors.NewBadRequest(facades.Lang(ctx).Get("required.user_id"))
-	}
 	packageID := req.GetId()
 	if packageID == "" {
 		return nil, utilserrors.NewBadRequest(facades.Lang(ctx).Get("required.package_id"))
@@ -52,19 +48,17 @@ func (r *PackageController) GetPackage(ctx context.Context, req *protopackage.Ge
 		return nil, err
 	}
 
-	pkgProto := pkg.ToProto()
-	pkgProto.User = user
-
 	tags, err := r.GetTags(ctx, &protopackage.GetTagsRequest{
 		Query: &protopackage.TagsQuery{
 			PackageId: packageID,
 		},
 	})
-
 	if err != nil {
 		return nil, err
 	}
 
+	pkgProto := pkg.ToProto()
+	pkgProto.User = user
 	pkgProto.Tags = tags.GetTags()
 
 	return &protopackage.GetPackageResponse{
