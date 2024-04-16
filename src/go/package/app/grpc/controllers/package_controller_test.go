@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/goravel/framework/database/orm"
 	mockstranslation "github.com/goravel/framework/mocks/translation"
 	testingmock "github.com/goravel/framework/testing/mock"
 	"github.com/stretchr/testify/suite"
@@ -121,7 +120,7 @@ func (s *PackageControllerSuite) TestGetPackage() {
 				Id: packageID,
 			},
 			setup: func() {
-				s.mockPackageService.On("GetPackageByID", packageID).Return(nil, errors.New("error")).Once()
+				s.mockPackageService.On("GetPackageByID", packageID).Return(&models.Package{}, errors.New("error")).Once()
 			},
 			expectedErr: errors.New("error"),
 		},
@@ -131,7 +130,7 @@ func (s *PackageControllerSuite) TestGetPackage() {
 				Id: packageID,
 			},
 			setup: func() {
-				s.mockPackageService.On("GetPackageByID", packageID).Return(nil, orm.ErrRecordNotFound).Once()
+				s.mockPackageService.On("GetPackageByID", packageID).Return(&models.Package{}, nil).Once()
 				s.mockLang.On("Get", "not_exist.package").Return("Package not found").Once()
 			},
 			expectedErr: utilserrors.NewNotFound("Package not found"),

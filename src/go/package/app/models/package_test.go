@@ -4,6 +4,7 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/goravel/framework/contracts/http"
 	"github.com/goravel/framework/database/orm"
 	mocksorm "github.com/goravel/framework/mocks/database/orm"
 	"github.com/goravel/framework/support/carbon"
@@ -12,11 +13,12 @@ import (
 	"github.com/stretchr/testify/suite"
 
 	protopackage "market.goravel.dev/proto/package"
+	utilserrors "market.goravel.dev/utils/errors"
 )
 
 type PackageSuite struct {
 	suite.Suite
-	pack *Package
+	pkg *Package
 }
 
 func TestPackageSuite(t *testing.T) {
@@ -24,7 +26,7 @@ func TestPackageSuite(t *testing.T) {
 }
 
 func (s *PackageSuite) SetupTest() {
-	s.pack = NewPackage()
+	s.pkg = NewPackage()
 }
 
 func (s *PackageSuite) TestGetPackageByID() {
@@ -41,6 +43,7 @@ func (s *PackageSuite) TestGetPackageByID() {
 		mockFactory := testingmock.Factory()
 		mockOrm = mockFactory.Orm()
 		mockOrmQuery = mockFactory.OrmQuery()
+		mockFactory.Log()
 		mockOrm.On("Query").Return(mockOrmQuery).Once()
 		mockOrmQuery.On("Where", "id", id).Return(mockOrmQuery).Once()
 		mockOrmQuery.On("Select", []string{"name"}).Return(mockOrmQuery).Once()
@@ -55,7 +58,7 @@ func (s *PackageSuite) TestGetPackageByID() {
 		{
 			name: "Happy path",
 			setup: func() {
-				mockOrmQuery.On("FirstOrFail", &pack).Run(func(args mock.Arguments) {
+				mockOrmQuery.On("First", &pack).Run(func(args mock.Arguments) {
 					pack := args.Get(0).(*Package)
 					pack.ID = 1
 					pack.Name = "Goravel"
@@ -72,9 +75,9 @@ func (s *PackageSuite) TestGetPackageByID() {
 			name: "Sad path - get package error",
 			setup: func() {
 				var pack Package
-				mockOrmQuery.On("FirstOrFail", &pack).Return(errors.New("error")).Once()
+				mockOrmQuery.On("First", &pack).Return(errors.New("error")).Once()
 			},
-			expectedErr: errors.New("error"),
+			expectedErr: utilserrors.New(http.StatusInternalServerError, "error"),
 		},
 	}
 
@@ -82,7 +85,7 @@ func (s *PackageSuite) TestGetPackageByID() {
 		s.Run(test.name, func() {
 			beforeSetup()
 			test.setup()
-			returnedPackage, err := s.pack.GetPackageByID(id, fields)
+			returnedPackage, err := s.pkg.GetPackageByID(id, fields)
 
 			if test.expectedErr != nil {
 				s.Nil(returnedPackage)

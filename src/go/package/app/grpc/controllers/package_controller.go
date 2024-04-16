@@ -2,9 +2,7 @@ package controllers
 
 import (
 	"context"
-	"errors"
 
-	"github.com/goravel/framework/database/orm"
 	"github.com/goravel/framework/facades"
 
 	"market.goravel.dev/package/app/services"
@@ -37,10 +35,11 @@ func (r *PackageController) GetPackage(ctx context.Context, req *protopackage.Ge
 
 	pkg, err := r.packageService.GetPackageByID(packageID)
 	if err != nil {
-		if errors.Is(err, orm.ErrRecordNotFound) {
-			return nil, utilserrors.NewNotFound(facades.Lang(ctx).Get("not_exist.package"))
-		}
 		return nil, err
+	}
+
+	if pkg.ID == 0 {
+		return nil, utilserrors.NewNotFound(facades.Lang(ctx).Get("not_exist.package"))
 	}
 
 	user, err := r.userService.GetUser(ctx, pkg.UserID)
