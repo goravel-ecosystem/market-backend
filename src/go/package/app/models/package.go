@@ -51,6 +51,5 @@ func (r *Package) ToProto() *protopackage.Package {
 		LastUpdatedAt: r.LastUpdatedAt.ToString(),
 		CreatedAt:     r.CreatedAt.ToString(),
 		UpdatedAt:     r.UpdatedAt.ToString(),
-		DeletedAt:     carbon.FromStdTime(r.DeletedAt.Time).ToString(),
 	}
 }

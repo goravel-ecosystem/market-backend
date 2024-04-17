@@ -20,9 +20,8 @@ message Package {
   string last_updated_at = 8;
   string created_at = 9;
   string updated_at = 10;
-  string deleted_at = 11;
-  user.User user = 12;
-  repeated Tag tags = 13;
+  user.User user = 11;
+  repeated Tag tags = 12;
 }
 
 message GetPackageRequest {
