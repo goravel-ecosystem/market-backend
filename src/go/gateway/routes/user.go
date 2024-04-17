@@ -12,8 +12,8 @@ import (
 func Users() {
 	userService := services.NewUserImpl()
 
-	facades.Route().Post("/user/email/login", gateway.Post)
-	facades.Route().Post("/user/email/register", gateway.Post)
-	facades.Route().Middleware(httpmiddleware.Throttle("VerifyCode")).Get("/user/email/register/code", gateway.Get)
-	facades.Route().Middleware(middleware.Jwt(userService)).Get("/user/self", gateway.Get)
+	facades.Route().Post("/users/email/login", gateway.Post)
+	facades.Route().Post("/users/email/register", gateway.Post)
+	facades.Route().Middleware(httpmiddleware.Throttle("VerifyCode")).Get("/users/email/register/code", gateway.Get)
+	facades.Route().Middleware(middleware.Jwt(userService)).Get("/users/self", gateway.Get)
 }
