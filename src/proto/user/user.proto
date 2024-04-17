@@ -74,7 +74,8 @@ message GetUsersRequest {
 }
 
 message GetUsersResponse {
-  repeated User users = 1;
+  base.Status status = 1;
+  repeated User users = 2;
 }
 
 service UserService {
