@@ -9,5 +9,5 @@ CREATE TABLE packages (
   last_updated_at timestamp NOT NULL,
   created_at timestamp NOT NULL,
   updated_at timestamp NOT NULL,
-  deleted_at timestamp NOT NULL
+  deleted_at timestamp DEFAULT NULL
 );

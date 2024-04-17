@@ -7,6 +7,7 @@ option go_package="market.goravel.dev/proto/package";
 import "google/api/annotations.proto";
 import "base/base.proto";
 import "package/tag.proto";
+import "user/user.proto";
 
 message Package {
   string id = 1;
@@ -19,7 +20,8 @@ message Package {
   string last_updated_at = 8;
   string created_at = 9;
   string updated_at = 10;
-  string deleted_at = 11;
+  user.User user = 11;
+  repeated Tag tags = 12;
 }
 
 message GetPackageRequest {
@@ -36,8 +38,7 @@ message GetPackageResponse {
 service PackageService {
   rpc GetPackage (GetPackageRequest) returns (GetPackageResponse) {
     option (google.api.http) = {
-      post: "/packages/{id}"
-      body: "*"
+      get: "/packages/{id}"
     };
   }
 

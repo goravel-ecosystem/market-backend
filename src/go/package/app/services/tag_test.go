@@ -4,6 +4,7 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/goravel/framework/contracts/http"
 	mocksorm "github.com/goravel/framework/mocks/database/orm"
 	testingmock "github.com/goravel/framework/testing/mock"
 	"github.com/stretchr/testify/mock"
@@ -11,6 +12,7 @@ import (
 
 	"market.goravel.dev/package/app/models"
 	protobase "market.goravel.dev/proto/base"
+	utilserrors "market.goravel.dev/utils/errors"
 )
 
 type TagTestSuite struct {
@@ -40,6 +42,7 @@ func (s *TagTestSuite) TestGetTags() {
 	beforeSetup := func() {
 		mockFactory := testingmock.Factory()
 		mockOrm = mockFactory.Orm()
+		mockFactory.Log()
 		mockOrmQuery = mockFactory.OrmQuery()
 		mockOrm.On("Query").Return(mockOrmQuery).Once()
 	}
@@ -158,7 +161,7 @@ func (s *TagTestSuite) TestGetTags() {
 			},
 			expectTags:    nil,
 			expectedTotal: 0,
-			expectedErr:   errors.New("pluck error"),
+			expectedErr:   utilserrors.New(http.StatusInternalServerError, "pluck error"),
 		},
 		{
 			name: "Sad path - Paginate return error",
@@ -180,7 +183,7 @@ func (s *TagTestSuite) TestGetTags() {
 			},
 			expectTags:    nil,
 			expectedTotal: 0,
-			expectedErr:   errors.New("paginate error"),
+			expectedErr:   utilserrors.New(http.StatusInternalServerError, "paginate error"),
 		},
 	}
 

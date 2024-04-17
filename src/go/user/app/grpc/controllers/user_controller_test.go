@@ -5,7 +5,6 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/goravel/framework/database/orm"
 	"github.com/goravel/framework/http"
 	mocksauth "github.com/goravel/framework/mocks/auth"
 	mockshash "github.com/goravel/framework/mocks/hash"
@@ -23,7 +22,7 @@ import (
 type UsersControllerSuite struct {
 	suite.Suite
 	ctx                     context.Context
-	usersController         *UsersController
+	userController          *UserController
 	mockAuth                *mocksauth.Auth
 	mockHash                *mockshash.Hash
 	mockLang                *mockstranslation.Translator
@@ -43,7 +42,7 @@ func (s *UsersControllerSuite) SetupTest() {
 	s.mockLang = mockFactory.Lang(s.ctx)
 	s.mockNotificationService = &mocksservice.Notification{}
 	s.mockUserService = &mocksservice.User{}
-	s.usersController = &UsersController{
+	s.userController = &UserController{
 		notificationService: s.mockNotificationService,
 		userService:         s.mockUserService,
 	}
@@ -97,7 +96,7 @@ func (s *UsersControllerSuite) TestEmailLogin() {
 			setup: func() {
 				s.mockLang.On("Get", "required.email").Return("required email").Once()
 			},
-			expectedErr: utilserrors.NewValidate("required email"),
+			expectedErr: utilserrors.NewBadRequest("required email"),
 		},
 		{
 			name: "Sad path - password is invalid",
@@ -108,7 +107,7 @@ func (s *UsersControllerSuite) TestEmailLogin() {
 			setup: func() {
 				s.mockLang.On("Get", "required.password").Return("required password").Once()
 			},
-			expectedErr: utilserrors.NewValidate("required password"),
+			expectedErr: utilserrors.NewBadRequest("required password"),
 		},
 		{
 			name: "Sad path - GetUserByEmail returns error",
@@ -132,7 +131,7 @@ func (s *UsersControllerSuite) TestEmailLogin() {
 				s.mockHash.On("Check", password, hashedPassword).Return(false).Once()
 				s.mockLang.On("Get", "invalid.password.error").Return("invalid password error").Once()
 			},
-			expectedErr: utilserrors.NewValidate("invalid password error"),
+			expectedErr: utilserrors.NewBadRequest("invalid password error"),
 		},
 		{
 			name: "Sad path - LoginUsingID returns error",
@@ -152,7 +151,7 @@ func (s *UsersControllerSuite) TestEmailLogin() {
 	for _, test := range tests {
 		s.Run(test.name, func() {
 			test.setup()
-			response, err := s.usersController.EmailLogin(s.ctx, test.request)
+			response, err := s.userController.EmailLogin(s.ctx, test.request)
 			s.Equal(test.expectedResponse, response)
 			s.Equal(test.expectedErr, err)
 
@@ -256,7 +255,7 @@ func (s *UsersControllerSuite) TestEmailRegister() {
 				s.mockNotificationService.On("VerifyEmailRegisterCode", codeKey, code).Return(false).Once()
 				s.mockLang.On("Get", "invalid.code").Return("invalid code").Once()
 			},
-			expectedErr: utilserrors.NewValidate("invalid code"),
+			expectedErr: utilserrors.NewBadRequest("invalid code"),
 		},
 		{
 			name: "Sad path - IsEmailExist returns error",
@@ -285,7 +284,7 @@ func (s *UsersControllerSuite) TestEmailRegister() {
 				s.mockUserService.On("IsEmailExist", email).Return(true, nil).Once()
 				s.mockLang.On("Get", "exist.email").Return("exist email").Once()
 			},
-			expectedErr: utilserrors.NewValidate("exist email"),
+			expectedErr: utilserrors.NewBadRequest("exist email"),
 		},
 		{
 			name: "Sad path - email is empty",
@@ -298,7 +297,7 @@ func (s *UsersControllerSuite) TestEmailRegister() {
 			setup: func() {
 				s.mockLang.On("Get", "required.email").Return("email is required").Once()
 			},
-			expectedErr: utilserrors.NewValidate("email is required"),
+			expectedErr: utilserrors.NewBadRequest("email is required"),
 		},
 		{
 			name: "Sad path - email is invalid",
@@ -312,7 +311,7 @@ func (s *UsersControllerSuite) TestEmailRegister() {
 			setup: func() {
 				s.mockLang.On("Get", "invalid.email").Return("email is invalid").Once()
 			},
-			expectedErr: utilserrors.NewValidate("email is invalid"),
+			expectedErr: utilserrors.NewBadRequest("email is invalid"),
 		},
 		{
 			name: "Sad path - name is empty",
@@ -325,7 +324,7 @@ func (s *UsersControllerSuite) TestEmailRegister() {
 			setup: func() {
 				s.mockLang.On("Get", "required.name").Return("name is empty").Once()
 			},
-			expectedErr: utilserrors.NewValidate("name is empty"),
+			expectedErr: utilserrors.NewBadRequest("name is empty"),
 		},
 		{
 			name: "Sad path - password is empty",
@@ -338,7 +337,7 @@ func (s *UsersControllerSuite) TestEmailRegister() {
 			setup: func() {
 				s.mockLang.On("Get", "required.password").Return("password is empty").Once()
 			},
-			expectedErr: utilserrors.NewValidate("password is empty"),
+			expectedErr: utilserrors.NewBadRequest("password is empty"),
 		},
 		{
 			name: "Sad path - password len < 6",
@@ -352,7 +351,7 @@ func (s *UsersControllerSuite) TestEmailRegister() {
 			setup: func() {
 				s.mockLang.On("Get", "invalid.password.min").Return("password is invalid").Once()
 			},
-			expectedErr: utilserrors.NewValidate("password is invalid"),
+			expectedErr: utilserrors.NewBadRequest("password is invalid"),
 		},
 		{
 			name: "Sad path - code is empty",
@@ -365,7 +364,7 @@ func (s *UsersControllerSuite) TestEmailRegister() {
 			setup: func() {
 				s.mockLang.On("Get", "required.code").Return("code is required").Once()
 			},
-			expectedErr: utilserrors.NewValidate("code is required"),
+			expectedErr: utilserrors.NewBadRequest("code is required"),
 		},
 		{
 			name: "Sad path - code key is empty",
@@ -378,14 +377,14 @@ func (s *UsersControllerSuite) TestEmailRegister() {
 			setup: func() {
 				s.mockLang.On("Get", "required.code_key").Return("code key is required").Once()
 			},
-			expectedErr: utilserrors.NewValidate("code key is required"),
+			expectedErr: utilserrors.NewBadRequest("code key is required"),
 		},
 	}
 
 	for _, test := range tests {
 		s.Run(test.name, func() {
 			test.setup()
-			response, err := s.usersController.EmailRegister(s.ctx, test.request)
+			response, err := s.userController.EmailRegister(s.ctx, test.request)
 			s.Equal(test.expectedResponse, response)
 			s.Equal(test.expectedErr, err)
 
@@ -454,7 +453,7 @@ func (s *UsersControllerSuite) TestGetEmailRegisterCode() {
 				s.mockUserService.On("IsEmailExist", email).Return(true, nil).Once()
 				s.mockLang.On("Get", "exist.email").Return("email already exist").Once()
 			},
-			expectedErr: utilserrors.NewValidate("email already exist"),
+			expectedErr: utilserrors.NewBadRequest("email already exist"),
 		},
 		{
 			name: "Sad path - validateGetEmailRegisterCodeRequest returns error",
@@ -464,14 +463,14 @@ func (s *UsersControllerSuite) TestGetEmailRegisterCode() {
 			setup: func() {
 				s.mockLang.On("Get", "required.email").Return("email is required").Once()
 			},
-			expectedErr: utilserrors.NewValidate("email is required"),
+			expectedErr: utilserrors.NewBadRequest("email is required"),
 		},
 	}
 
 	for _, test := range tests {
 		s.Run(test.name, func() {
 			test.setup()
-			response, err := s.usersController.GetEmailRegisterCode(s.ctx, test.request)
+			response, err := s.userController.GetEmailRegisterCode(s.ctx, test.request)
 			s.Equal(test.expectedResponse, response)
 			s.Equal(test.expectedErr, err)
 
@@ -524,9 +523,7 @@ func (s *UsersControllerSuite) TestGetUser() {
 			setup: func() {
 				s.mockLang.On("Get", "required.user_id").Return("required user id").Once()
 			},
-			expectedResponse: &protouser.GetUserResponse{
-				Status: utilsresponse.NewBadRequestStatus(errors.New("required user id")),
-			},
+			expectedErr: utilserrors.NewBadRequest("required user id"),
 		},
 		{
 			name: "Sad path - GetUserByID returns error",
@@ -544,19 +541,17 @@ func (s *UsersControllerSuite) TestGetUser() {
 				UserId: userID,
 			},
 			setup: func() {
-				s.mockUserService.On("GetUserByID", userID).Return(nil, orm.ErrRecordNotFound).Once()
-				s.mockLang.On("Get", "not_exist.user").Return("user not found").Once()
+				s.mockUserService.On("GetUserByID", userID).Return(&models.User{}, nil).Once()
+				s.mockLang.On("Get", "not_exist.user").Return("User not found").Once()
 			},
-			expectedResponse: &protouser.GetUserResponse{
-				Status: utilsresponse.NewNotFoundStatus(errors.New("user not found")),
-			},
+			expectedErr: utilserrors.NewNotFound("User not found"),
 		},
 	}
 
 	for _, test := range tests {
 		s.Run(test.name, func() {
 			test.setup()
-			response, err := s.usersController.GetUser(s.ctx, test.request)
+			response, err := s.userController.GetUser(s.ctx, test.request)
 			s.Equal(test.expectedResponse, response)
 			s.Equal(test.expectedErr, err)
 

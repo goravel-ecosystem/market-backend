@@ -15,7 +15,7 @@ func validateEmailLoginRequest(ctx context.Context, req *protouser.EmailLoginReq
 		return err
 	}
 	if req.GetPassword() == "" {
-		return utilserrors.NewValidate(facades.Lang(ctx).Get("required.password"))
+		return utilserrors.NewBadRequest(facades.Lang(ctx).Get("required.password"))
 	}
 
 	return nil
@@ -26,19 +26,19 @@ func validateEmailRegisterRequest(ctx context.Context, req *protouser.EmailRegis
 		return err
 	}
 	if req.GetName() == "" {
-		return utilserrors.NewValidate(facades.Lang(ctx).Get("required.name"))
+		return utilserrors.NewBadRequest(facades.Lang(ctx).Get("required.name"))
 	}
 	if req.GetPassword() == "" {
-		return utilserrors.NewValidate(facades.Lang(ctx).Get("required.password"))
+		return utilserrors.NewBadRequest(facades.Lang(ctx).Get("required.password"))
 	}
 	if len(req.GetPassword()) < 6 {
-		return utilserrors.NewValidate(facades.Lang(ctx).Get("invalid.password.min"))
+		return utilserrors.NewBadRequest(facades.Lang(ctx).Get("invalid.password.min"))
 	}
 	if req.GetCode() == "" {
-		return utilserrors.NewValidate(facades.Lang(ctx).Get("required.code"))
+		return utilserrors.NewBadRequest(facades.Lang(ctx).Get("required.code"))
 	}
 	if req.GetCodeKey() == "" {
-		return utilserrors.NewValidate(facades.Lang(ctx).Get("required.code_key"))
+		return utilserrors.NewBadRequest(facades.Lang(ctx).Get("required.code_key"))
 	}
 
 	return nil
@@ -46,13 +46,13 @@ func validateEmailRegisterRequest(ctx context.Context, req *protouser.EmailRegis
 
 func validateEmailValid(ctx context.Context, email string) error {
 	if email == "" {
-		return utilserrors.NewValidate(facades.Lang(ctx).Get("required.email"))
+		return utilserrors.NewBadRequest(facades.Lang(ctx).Get("required.email"))
 	}
 
 	pattern := `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`
 
 	if matched, err := regexp.MatchString(pattern, email); !matched || err != nil {
-		return utilserrors.NewValidate(facades.Lang(ctx).Get("invalid.email"))
+		return utilserrors.NewBadRequest(facades.Lang(ctx).Get("invalid.email"))
 	}
 
 	return nil

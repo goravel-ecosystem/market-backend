@@ -46,7 +46,7 @@ func TestValidateEmailLoginRequest(t *testing.T) {
 			setup: func() {
 				mockLang.On("Get", "required.email").Return("required email").Once()
 			},
-			expectErr: utilserrors.NewValidate("required email"),
+			expectErr: utilserrors.NewBadRequest("required email"),
 		},
 		{
 			name: "Sad path - password is empty",
@@ -57,7 +57,7 @@ func TestValidateEmailLoginRequest(t *testing.T) {
 			setup: func() {
 				mockLang.On("Get", "required.password").Return("password is required").Once()
 			},
-			expectErr: utilserrors.NewValidate("password is required"),
+			expectErr: utilserrors.NewBadRequest("password is required"),
 		},
 	}
 
@@ -112,7 +112,7 @@ func TestValidateEmailRegisterRequest(t *testing.T) {
 			setup: func() {
 				mockLang.On("Get", "required.email").Return("required email").Once()
 			},
-			expectErr: utilserrors.NewValidate("required email"),
+			expectErr: utilserrors.NewBadRequest("required email"),
 		},
 		{
 			name: "Sad path - name is empty",
@@ -126,7 +126,7 @@ func TestValidateEmailRegisterRequest(t *testing.T) {
 			setup: func() {
 				mockLang.On("Get", "required.name").Return("required name").Once()
 			},
-			expectErr: utilserrors.NewValidate("required name"),
+			expectErr: utilserrors.NewBadRequest("required name"),
 		},
 		{
 			name: "Sad path - password is empty",
@@ -140,7 +140,7 @@ func TestValidateEmailRegisterRequest(t *testing.T) {
 			setup: func() {
 				mockLang.On("Get", "required.password").Return("required password").Once()
 			},
-			expectErr: utilserrors.NewValidate("required password"),
+			expectErr: utilserrors.NewBadRequest("required password"),
 		},
 		{
 			name: "Sad path - the password is less than 6 characters",
@@ -154,7 +154,7 @@ func TestValidateEmailRegisterRequest(t *testing.T) {
 			setup: func() {
 				mockLang.On("Get", "invalid.password.min").Return("invalid password min").Once()
 			},
-			expectErr: utilserrors.NewValidate("invalid password min"),
+			expectErr: utilserrors.NewBadRequest("invalid password min"),
 		},
 		{
 			name: "Sad path - code is empty",
@@ -168,7 +168,7 @@ func TestValidateEmailRegisterRequest(t *testing.T) {
 			setup: func() {
 				mockLang.On("Get", "required.code").Return("required code").Once()
 			},
-			expectErr: utilserrors.NewValidate("required code"),
+			expectErr: utilserrors.NewBadRequest("required code"),
 		},
 		{
 			name: "Sad path - code key is empty",
@@ -182,7 +182,7 @@ func TestValidateEmailRegisterRequest(t *testing.T) {
 			setup: func() {
 				mockLang.On("Get", "required.code_key").Return("required code_key").Once()
 			},
-			expectErr: utilserrors.NewValidate("required code_key"),
+			expectErr: utilserrors.NewBadRequest("required code_key"),
 		},
 	}
 
@@ -225,7 +225,7 @@ func TestValidateEmailValid(t *testing.T) {
 			setup: func() {
 				mockLang.On("Get", "invalid.email").Return("invalid email").Once()
 			},
-			expectErr: utilserrors.NewValidate("invalid email"),
+			expectErr: utilserrors.NewBadRequest("invalid email"),
 		},
 		{
 			name:  "Sad path - email is empty",
@@ -233,7 +233,7 @@ func TestValidateEmailValid(t *testing.T) {
 			setup: func() {
 				mockLang.On("Get", "required.email").Return("required email").Once()
 			},
-			expectErr: utilserrors.NewValidate("required email"),
+			expectErr: utilserrors.NewBadRequest("required email"),
 		},
 	}
 

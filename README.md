@@ -51,14 +51,20 @@ Based on the request process, we can get some key points:
 
 ## Required Tools
 
-- [mockery](https://vektra.github.io/mockery/latest/installation/#github-release): Generate mock files for testing.
-- [protoc](https://grpc.io/docs/protoc-installation/): Generate proto files.
-- [protoc-gen-go](https://grpc.io/docs/languages/go/quickstart/#prerequisites): Generate go files from proto files.
-  - `go install google.golang.org/protobuf/cmd/protoc-gen-go@latest`
-- [protoc-gen-go-grpc](https://grpc.io/docs/languages/go/quickstart/#prerequisites): Generate go grpc files from proto 
+- [mockery@v2.42.1](https://vektra.github.io/mockery/latest/installation/#github-release): Generate mock files for testing.
+  - check the version by `mockery --version`
+- [protoc@libprotoc 25.1](https://grpc.io/docs/protoc-installation/): Generate proto files.
+  - check the version by `protoc --version`
+- [protoc-gen-go@v1.33.0](https://grpc.io/docs/languages/go/quickstart/#prerequisites): Generate go files from proto files.
+  - `go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.33.0`
+  - check the version by `protoc-gen-go --version`
+- [protoc-gen-go-grpc@1.3.0](https://grpc.io/docs/languages/go/quickstart/#prerequisites): Generate go grpc files from proto 
   files.
-  - `go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest`
-- [protoc-gen-grpc-gateway](https://github.com/grpc-ecosystem/grpc-gateway): Generate grpc gateway files from proto files.
-  - `go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@v2`
-- [protoc-gen-doc](https://github.com/pseudomuto/protoc-gen-doc): Generate documentation from proto files.
-  - `go install github.com/pseudomuto/protoc-gen-doc/cmd/protoc-gen-doc@latest`
+  - `go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.3.0`
+  - check the version by `protoc-gen-go-grpc --version`
+- [protoc-gen-grpc-gateway@v2.19.1](https://github.com/grpc-ecosystem/grpc-gateway): Generate grpc gateway files from proto files.
+  - `go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@v2.19.1`
+  - check the version by `protoc-gen-grpc-gateway --version`, but it will print: `Version dev, commit unknown, built at unknown`
+- [protoc-gen-doc@v1.5.1](https://github.com/pseudomuto/protoc-gen-doc): Generate documentation from proto files.
+  - `go install github.com/pseudomuto/protoc-gen-doc/cmd/protoc-gen-doc@v1.5.1`
+  - check the version by `protoc-gen-doc --version`

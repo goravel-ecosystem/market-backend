@@ -6,6 +6,7 @@ import (
 	"github.com/spf13/cast"
 
 	protouser "market.goravel.dev/proto/user"
+	utilserrors "market.goravel.dev/utils/errors"
 )
 
 type UserInterface interface {
@@ -39,8 +40,8 @@ func (r *User) GetUserByEmail(email string, fields []string) (*User, error) {
 
 func (r *User) GetUserByID(id string, fields []string) (*User, error) {
 	var user User
-	if err := facades.Orm().Query().Where("id", id).Select(fields).FirstOrFail(&user); err != nil {
-		return nil, err
+	if err := facades.Orm().Query().Where("id", id).Select(fields).First(&user); err != nil {
+		return nil, utilserrors.NewInternalServerError(err)
 	}
 
 	return &user, nil

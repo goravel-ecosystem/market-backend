@@ -2,6 +2,7 @@ package models
 
 import (
 	"errors"
+	"net/http"
 	"testing"
 
 	mocksorm "github.com/goravel/framework/mocks/database/orm"
@@ -11,6 +12,7 @@ import (
 	"github.com/stretchr/testify/suite"
 
 	protouser "market.goravel.dev/proto/user"
+	utilserrors "market.goravel.dev/utils/errors"
 )
 
 type UserSuite struct {
@@ -103,6 +105,7 @@ func (s *UserSuite) TestGetUserByID() {
 	beforeSetup := func() {
 		mockFactory := testingmock.Factory()
 		mockOrm = mockFactory.Orm()
+		mockFactory.Log()
 		mockOrmQuery = mockFactory.OrmQuery()
 		mockOrm.On("Query").Return(mockOrmQuery).Once()
 		mockOrmQuery.On("Where", "id", id).Return(mockOrmQuery).Once()
@@ -118,7 +121,7 @@ func (s *UserSuite) TestGetUserByID() {
 		{
 			name: "Happy path",
 			setup: func() {
-				mockOrmQuery.On("FirstOrFail", &user).Run(func(args mock.Arguments) {
+				mockOrmQuery.On("First", &user).Run(func(args mock.Arguments) {
 					user := args.Get(0).(*User)
 					user.ID = 1
 					user.Name = "Goravel"
@@ -129,9 +132,9 @@ func (s *UserSuite) TestGetUserByID() {
 			name: "Sad path - get user error",
 			setup: func() {
 				var user User
-				mockOrmQuery.On("FirstOrFail", &user).Return(errors.New("error")).Once()
+				mockOrmQuery.On("First", &user).Return(errors.New("error")).Once()
 			},
-			expectedErr: errors.New("error"),
+			expectedErr: utilserrors.New(http.StatusInternalServerError, "error"),
 		},
 	}
 

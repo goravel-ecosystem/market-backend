@@ -3,21 +3,67 @@ package controllers
 import (
 	"context"
 
+	"github.com/goravel/framework/facades"
+
 	"market.goravel.dev/package/app/services"
 	protopackage "market.goravel.dev/proto/package"
+	utilserrors "market.goravel.dev/utils/errors"
 	utilspagination "market.goravel.dev/utils/pagination"
 	utilsresponse "market.goravel.dev/utils/response"
 )
 
 type PackageController struct {
 	protopackage.UnimplementedPackageServiceServer
-	tagService services.Tag
+	packageService services.Package
+	tagService     services.Tag
+	userService    services.User
 }
 
 func NewPackageController() *PackageController {
 	return &PackageController{
-		tagService: services.NewTagImpl(),
+		packageService: services.NewPackageImpl(),
+		tagService:     services.NewTagImpl(),
+		userService:    services.NewUserImpl(),
 	}
+}
+
+func (r *PackageController) GetPackage(ctx context.Context, req *protopackage.GetPackageRequest) (*protopackage.GetPackageResponse, error) {
+	packageID := req.GetId()
+	if packageID == "" {
+		return nil, utilserrors.NewBadRequest(facades.Lang(ctx).Get("required.package_id"))
+	}
+
+	pkg, err := r.packageService.GetPackageByID(packageID)
+	if err != nil {
+		return nil, err
+	}
+
+	if pkg.ID == 0 {
+		return nil, utilserrors.NewNotFound(facades.Lang(ctx).Get("not_exist.package"))
+	}
+
+	user, err := r.userService.GetUser(ctx, pkg.UserID)
+	if err != nil {
+		return nil, err
+	}
+
+	tags, err := r.GetTags(ctx, &protopackage.GetTagsRequest{
+		Query: &protopackage.TagsQuery{
+			PackageId: packageID,
+		},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	pkgProto := pkg.ToProto()
+	pkgProto.User = user
+	pkgProto.Tags = tags.GetTags()
+
+	return &protopackage.GetPackageResponse{
+		Status:  utilsresponse.NewOkStatus(),
+		Package: pkgProto,
+	}, nil
 }
 
 func (r *PackageController) GetTags(_ context.Context, req *protopackage.GetTagsRequest) (*protopackage.GetTagsResponse, error) {
