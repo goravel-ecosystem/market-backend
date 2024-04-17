@@ -321,6 +321,14 @@
                 </li>
               
                 <li>
+                  <a href="#user.GetUsersRequest"><span class="badge">M</span>GetUsersRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#user.GetUsersResponse"><span class="badge">M</span>GetUsersResponse</a>
+                </li>
+              
+                <li>
                   <a href="#user.User"><span class="badge">M</span>User</a>
                 </li>
               
@@ -905,6 +913,13 @@
                 <td><p></p></td>
               </tr>
             
+              <tr>
+                <td>GetUsers</td>
+                <td><a href="#user.GetUsersRequest">GetUsersRequest</a></td>
+                <td><a href="#user.GetUsersResponse">GetUsersResponse</a></td>
+                <td><p></p></td>
+              </tr>
+            
           </tbody>
         </table>
 
@@ -928,7 +943,7 @@
               <tr>
                 <td>GetEmailRegisterCode</td>
                 <td>GET</td>
-                <td>/user/email/register/code</td>
+                <td>/users/email/register/code</td>
                 <td></td>
               </tr>
               
@@ -938,7 +953,7 @@
               <tr>
                 <td>EmailRegister</td>
                 <td>POST</td>
-                <td>/user/email/register</td>
+                <td>/users/email/register</td>
                 <td>*</td>
               </tr>
               
@@ -948,7 +963,7 @@
               <tr>
                 <td>EmailLogin</td>
                 <td>POST</td>
-                <td>/user/email/login</td>
+                <td>/users/email/login</td>
                 <td>*</td>
               </tr>
               
@@ -958,7 +973,7 @@
               <tr>
                 <td>GetUser</td>
                 <td>GET</td>
-                <td>/user/self</td>
+                <td>/users/self</td>
                 <td></td>
               </tr>
               
@@ -1283,6 +1298,54 @@
                   <td>user</td>
                   <td><a href="#user.User">User</a></td>
                   <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="user.GetUsersRequest">GetUsersRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>user_ids</td>
+                  <td><a href="#string">string</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="user.GetUsersResponse">GetUsersResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>users</td>
+                  <td><a href="#user.User">User</a></td>
+                  <td>repeated</td>
                   <td><p> </p></td>
                 </tr>
               

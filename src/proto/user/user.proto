@@ -69,13 +69,21 @@ message GetUserByTokenResponse {
   User user = 2;
 }
 
+message GetUsersRequest {
+  repeated string user_ids = 1;
+}
+
+message GetUsersResponse {
+  repeated User users = 1;
+}
+
 service UserService {
   /*
    * Get email register code
    */
   rpc GetEmailRegisterCode (GetEmailRegisterCodeRequest) returns (GetEmailRegisterCodeResponse) {
     option (google.api.http) = {
-      get: "/user/email/register/code"
+      get: "/users/email/register/code"
     };
   }
 
@@ -84,22 +92,25 @@ service UserService {
    */
   rpc EmailRegister (EmailRegisterRequest) returns (EmailRegisterResponse) {
     option (google.api.http) = {
-      post: "/user/email/register"
+      post: "/users/email/register"
       body: "*"
     };
   }
 
   rpc EmailLogin (EmailLoginRequest) returns (EmailLoginResponse) {
     option (google.api.http) = {
-      post: "/user/email/login"
+      post: "/users/email/login"
       body: "*"
     };
   }
 
   rpc GetUser (GetUserRequest) returns (GetUserResponse){
     option (google.api.http) = {
-      get: "/user/self"
+      get: "/users/self"
     };
   }
+
   rpc GetUserByToken (GetUserByTokenRequest) returns (GetUserByTokenResponse){}
+
+  rpc GetUsers(GetUsersRequest) returns (GetUsersResponse) {}
 }
