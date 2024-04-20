@@ -7,6 +7,7 @@ import (
 type User interface {
 	GetUserByEmail(email string) (*models.User, error)
 	GetUserByID(id string) (*models.User, error)
+	GetUsers(ids []string) ([]*models.User, error)
 	IsEmailExist(email string) (bool, error)
 	Register(name, email, password string) (*models.User, error)
 }
@@ -27,6 +28,10 @@ func (r *UserImpl) GetUserByEmail(email string) (*models.User, error) {
 
 func (r *UserImpl) GetUserByID(id string) (*models.User, error) {
 	return r.userModel.GetUserByID(id, []string{"id", "name", "avatar", "summary"})
+}
+
+func (r *UserImpl) GetUsers(ids []string) ([]*models.User, error) {
+	return r.userModel.GetUsers(ids, []string{"id", "name", "avatar"})
 }
 
 func (r *UserImpl) IsEmailExist(email string) (bool, error) {

@@ -130,6 +130,61 @@ func (_c *UserInterface_GetUserByID_Call) RunAndReturn(run func(string, []string
 	return _c
 }
 
+// GetUsers provides a mock function with given fields: ids, fields
+func (_m *UserInterface) GetUsers(ids []string, fields []string) ([]*models.User, error) {
+	ret := _m.Called(ids, fields)
+
+	var r0 []*models.User
+	var r1 error
+	if rf, ok := ret.Get(0).(func([]string, []string) ([]*models.User, error)); ok {
+		return rf(ids, fields)
+	}
+	if rf, ok := ret.Get(0).(func([]string, []string) []*models.User); ok {
+		r0 = rf(ids, fields)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]*models.User)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func([]string, []string) error); ok {
+		r1 = rf(ids, fields)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// UserInterface_GetUsers_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetUsers'
+type UserInterface_GetUsers_Call struct {
+	*mock.Call
+}
+
+// GetUsers is a helper method to define mock.On call
+//   - ids []string
+//   - fields []string
+func (_e *UserInterface_Expecter) GetUsers(ids interface{}, fields interface{}) *UserInterface_GetUsers_Call {
+	return &UserInterface_GetUsers_Call{Call: _e.mock.On("GetUsers", ids, fields)}
+}
+
+func (_c *UserInterface_GetUsers_Call) Run(run func(ids []string, fields []string)) *UserInterface_GetUsers_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].([]string), args[1].([]string))
+	})
+	return _c
+}
+
+func (_c *UserInterface_GetUsers_Call) Return(_a0 []*models.User, _a1 error) *UserInterface_GetUsers_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *UserInterface_GetUsers_Call) RunAndReturn(run func([]string, []string) ([]*models.User, error)) *UserInterface_GetUsers_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // Register provides a mock function with given fields: name, email, password
 func (_m *UserInterface) Register(name string, email string, password string) (*models.User, error) {
 	ret := _m.Called(name, email, password)
