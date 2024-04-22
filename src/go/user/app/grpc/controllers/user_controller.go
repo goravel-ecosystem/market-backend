@@ -152,3 +152,22 @@ func (r *UserController) GetUserByToken(ctx context.Context, req *protouser.GetU
 		User:   user.ToProto(),
 	}, nil
 }
+
+func (r *UserController) GetUsers(_ context.Context, req *protouser.GetUsersRequest) (*protouser.GetUsersResponse, error) {
+	userIDs := req.GetUserIds()
+
+	users, err := r.userService.GetUsers(userIDs)
+	if err != nil {
+		return nil, err
+	}
+
+	usersProto := make([]*protouser.User, 0)
+	for _, user := range users {
+		usersProto = append(usersProto, user.ToProto())
+	}
+
+	return &protouser.GetUsersResponse{
+		Status: utilsresponse.NewOkStatus(),
+		Users:  usersProto,
+	}, nil
+}

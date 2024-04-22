@@ -12,6 +12,7 @@ import (
 type UserInterface interface {
 	GetUserByEmail(email string, fields []string) (*User, error)
 	GetUserByID(id string, fields []string) (*User, error)
+	GetUsers(ids []string, fields []string) ([]*User, error)
 	Register(name, email, password string) (*User, error)
 }
 
@@ -45,6 +46,21 @@ func (r *User) GetUserByID(id string, fields []string) (*User, error) {
 	}
 
 	return &user, nil
+}
+
+func (r *User) GetUsers(ids []string, fields []string) ([]*User, error) {
+	var users []*User
+
+	var userIDs []any
+	for _, id := range ids {
+		userIDs = append(userIDs, id)
+	}
+
+	if err := facades.Orm().Query().WhereIn("id", userIDs).Select(fields).Find(&users); err != nil {
+		return nil, utilserrors.NewInternalServerError(err)
+	}
+
+	return users, nil
 }
 
 func (r *User) Register(name, email, password string) (*User, error) {

@@ -19,7 +19,7 @@ import (
 	utilsresponse "market.goravel.dev/utils/response"
 )
 
-type UsersControllerSuite struct {
+type UserControllerSuite struct {
 	suite.Suite
 	ctx                     context.Context
 	userController          *UserController
@@ -31,10 +31,10 @@ type UsersControllerSuite struct {
 }
 
 func TestUsersControllerSuite(t *testing.T) {
-	suite.Run(t, new(UsersControllerSuite))
+	suite.Run(t, new(UserControllerSuite))
 }
 
-func (s *UsersControllerSuite) SetupTest() {
+func (s *UserControllerSuite) SetupTest() {
 	s.ctx = context.Background()
 	mockFactory := testingmock.Factory()
 	s.mockAuth = mockFactory.Auth(http.Background())
@@ -48,7 +48,7 @@ func (s *UsersControllerSuite) SetupTest() {
 	}
 }
 
-func (s *UsersControllerSuite) TestEmailLogin() {
+func (s *UserControllerSuite) TestEmailLogin() {
 	var (
 		email          = "hello@goravel.dev"
 		password       = "password"
@@ -163,7 +163,7 @@ func (s *UsersControllerSuite) TestEmailLogin() {
 	}
 }
 
-func (s *UsersControllerSuite) TestEmailRegister() {
+func (s *UserControllerSuite) TestEmailRegister() {
 	var (
 		code     = "code"
 		codeKey  = "code_key"
@@ -396,7 +396,7 @@ func (s *UsersControllerSuite) TestEmailRegister() {
 	}
 }
 
-func (s *UsersControllerSuite) TestGetEmailRegisterCode() {
+func (s *UserControllerSuite) TestGetEmailRegisterCode() {
 	var (
 		email = "hello@goravel.dev"
 		key   = "key"
@@ -481,7 +481,7 @@ func (s *UsersControllerSuite) TestGetEmailRegisterCode() {
 	}
 }
 
-func (s *UsersControllerSuite) TestGetUser() {
+func (s *UserControllerSuite) TestGetUser() {
 	var (
 		userID = "1"
 		name   = "Goravel"
@@ -561,5 +561,66 @@ func (s *UsersControllerSuite) TestGetUser() {
 			s.mockUserService.AssertExpectations(s.T())
 		})
 	}
+}
 
+func (s *UserControllerSuite) TestGetUsers() {
+	var (
+		userID = "1"
+		name   = "Goravel"
+	)
+
+	tests := []struct {
+		name             string
+		request          *protouser.GetUsersRequest
+		setup            func()
+		expectedResponse *protouser.GetUsersResponse
+		expectedErr      error
+	}{
+		{
+			name: "Happy path",
+			request: &protouser.GetUsersRequest{
+				UserIds: []string{userID},
+			},
+			setup: func() {
+				s.mockUserService.On("GetUsers", []string{userID}).Return([]*models.User{
+					{
+						UUIDModel: models.UUIDModel{
+							ID: 1,
+						},
+						Name: name,
+					},
+				}, nil).Once()
+			},
+			expectedResponse: &protouser.GetUsersResponse{
+				Status: utilsresponse.NewOkStatus(),
+				Users: []*protouser.User{
+					{
+						Id:   "1",
+						Name: name,
+					},
+				},
+			},
+		},
+		{
+			name: "Sad path - GetUsers returns error",
+			request: &protouser.GetUsersRequest{
+				UserIds: []string{userID},
+			},
+			setup: func() {
+				s.mockUserService.On("GetUsers", []string{userID}).Return(nil, errors.New("error")).Once()
+			},
+			expectedErr: errors.New("error"),
+		},
+	}
+
+	for _, test := range tests {
+		s.Run(test.name, func() {
+			test.setup()
+			response, err := s.userController.GetUsers(s.ctx, test.request)
+			s.Equal(test.expectedResponse, response)
+			s.Equal(test.expectedErr, err)
+
+			s.mockUserService.AssertExpectations(s.T())
+		})
+	}
 }

@@ -128,6 +128,60 @@ func (_c *User_GetUserByID_Call) RunAndReturn(run func(string) (*models.User, er
 	return _c
 }
 
+// GetUsers provides a mock function with given fields: ids
+func (_m *User) GetUsers(ids []string) ([]*models.User, error) {
+	ret := _m.Called(ids)
+
+	var r0 []*models.User
+	var r1 error
+	if rf, ok := ret.Get(0).(func([]string) ([]*models.User, error)); ok {
+		return rf(ids)
+	}
+	if rf, ok := ret.Get(0).(func([]string) []*models.User); ok {
+		r0 = rf(ids)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]*models.User)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func([]string) error); ok {
+		r1 = rf(ids)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// User_GetUsers_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetUsers'
+type User_GetUsers_Call struct {
+	*mock.Call
+}
+
+// GetUsers is a helper method to define mock.On call
+//   - ids []string
+func (_e *User_Expecter) GetUsers(ids interface{}) *User_GetUsers_Call {
+	return &User_GetUsers_Call{Call: _e.mock.On("GetUsers", ids)}
+}
+
+func (_c *User_GetUsers_Call) Run(run func(ids []string)) *User_GetUsers_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].([]string))
+	})
+	return _c
+}
+
+func (_c *User_GetUsers_Call) Return(_a0 []*models.User, _a1 error) *User_GetUsers_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *User_GetUsers_Call) RunAndReturn(run func([]string) ([]*models.User, error)) *User_GetUsers_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // IsEmailExist provides a mock function with given fields: email
 func (_m *User) IsEmailExist(email string) (bool, error) {
 	ret := _m.Called(email)

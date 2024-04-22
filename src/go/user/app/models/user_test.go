@@ -158,6 +158,86 @@ func (s *UserSuite) TestGetUserByID() {
 	}
 }
 
+func (s *UserSuite) TestGetUsers() {
+	var (
+		ids    = []string{"1"}
+		fields = []string{"name"}
+
+		mockOrm      *mocksorm.Orm
+		mockOrmQuery *mocksorm.Query
+		users        []*User
+	)
+
+	beforeSetup := func() {
+		mockFactory := testingmock.Factory()
+		mockOrm = mockFactory.Orm()
+		mockFactory.Log()
+		mockOrmQuery = mockFactory.OrmQuery()
+		mockOrm.On("Query").Return(mockOrmQuery).Once()
+		mockOrmQuery.On("WhereIn", "id", []any{"1"}).Return(mockOrmQuery).Once()
+		mockOrmQuery.On("Select", []string{"name"}).Return(mockOrmQuery).Once()
+	}
+
+	tests := []struct {
+		name        string
+		setup       func()
+		expectUsers []*User
+		expectedErr error
+	}{
+		{
+			name: "Happy path",
+			setup: func() {
+				mockOrmQuery.On("Find", &users).Run(func(args mock.Arguments) {
+					users := args.Get(0).(*[]*User)
+					*users = []*User{
+						{
+							UUIDModel: UUIDModel{
+								ID: 1,
+							},
+							Name: "Krishna",
+						},
+					}
+				}).Return(nil).Once()
+			},
+			expectUsers: []*User{
+				{
+					UUIDModel: UUIDModel{
+						ID: 1,
+					},
+					Name: "Krishna",
+				},
+			},
+		},
+		{
+			name: "Sad path - get users error",
+			setup: func() {
+				var users []*User
+				mockOrmQuery.On("Find", &users).Return(errors.New("error")).Once()
+			},
+			expectedErr: utilserrors.New(http.StatusInternalServerError, "error"),
+		},
+	}
+
+	for _, test := range tests {
+		s.Run(test.name, func() {
+			beforeSetup()
+			test.setup()
+			returnedUsers, err := s.user.GetUsers(ids, fields)
+
+			if test.expectedErr != nil {
+				s.Nil(returnedUsers)
+				s.Equal(test.expectedErr, err)
+			} else {
+				s.NotNil(returnedUsers)
+				s.Nil(err)
+			}
+
+			mockOrm.AssertExpectations(s.T())
+			mockOrmQuery.AssertExpectations(s.T())
+		})
+	}
+}
+
 func (s *UserSuite) TestRegister() {
 	var (
 		email          = "hello@goravel.dev"
