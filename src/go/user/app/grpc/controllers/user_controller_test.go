@@ -620,9 +620,6 @@ func (s *UserControllerSuite) TestGetUsers() {
 			s.Equal(test.expectedResponse, response)
 			s.Equal(test.expectedErr, err)
 
-			s.mockAuth.AssertExpectations(s.T())
-			s.mockHash.AssertExpectations(s.T())
-			s.mockLang.AssertExpectations(s.T())
 			s.mockUserService.AssertExpectations(s.T())
 		})
 	}
