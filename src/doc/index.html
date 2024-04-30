@@ -235,7 +235,19 @@
                 </li>
               
                 <li>
+                  <a href="#package.GetPackagesRequest"><span class="badge">M</span>GetPackagesRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#package.GetPackagesResponse"><span class="badge">M</span>GetPackagesResponse</a>
+                </li>
+              
+                <li>
                   <a href="#package.Package"><span class="badge">M</span>Package</a>
+                </li>
+              
+                <li>
+                  <a href="#package.PackagesQuery"><span class="badge">M</span>PackagesQuery</a>
                 </li>
               
               
@@ -478,6 +490,13 @@
                 <td><p></p></td>
               </tr>
             
+              <tr>
+                <td>GetPackages</td>
+                <td><a href="#package.GetPackagesRequest">GetPackagesRequest</a></td>
+                <td><a href="#package.GetPackagesResponse">GetPackagesResponse</a></td>
+                <td><p></p></td>
+              </tr>
+            
           </tbody>
         </table>
 
@@ -512,6 +531,16 @@
                 <td>GetTags</td>
                 <td>GET</td>
                 <td>/packages/tags</td>
+                <td></td>
+              </tr>
+              
+            
+              
+              
+              <tr>
+                <td>GetPackages</td>
+                <td>GET</td>
+                <td>/packages</td>
                 <td></td>
               </tr>
               
@@ -573,6 +602,75 @@
                 <tr>
                   <td>package</td>
                   <td><a href="#package.Package">Package</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="package.GetPackagesRequest">GetPackagesRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>pagination</td>
+                  <td><a href="#base.Pagination">base.Pagination</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>query</td>
+                  <td><a href="#package.PackagesQuery">PackagesQuery</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="package.GetPackagesResponse">GetPackagesResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>status</td>
+                  <td><a href="#base.Status">base.Status</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>package</td>
+                  <td><a href="#package.Package">Package</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>total</td>
+                  <td><a href="#int64">int64</a></td>
                   <td></td>
                   <td><p> </p></td>
                 </tr>
@@ -675,6 +773,44 @@
                   <td>tags</td>
                   <td><a href="#package.Tag">Tag</a></td>
                   <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="package.PackagesQuery">PackagesQuery</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>category</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>user_id</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
                   <td><p> </p></td>
                 </tr>
               
