@@ -19,8 +19,9 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	PackageService_GetPackage_FullMethodName = "/package.PackageService/GetPackage"
-	PackageService_GetTags_FullMethodName    = "/package.PackageService/GetTags"
+	PackageService_GetPackage_FullMethodName  = "/package.PackageService/GetPackage"
+	PackageService_GetTags_FullMethodName     = "/package.PackageService/GetTags"
+	PackageService_GetPackages_FullMethodName = "/package.PackageService/GetPackages"
 )
 
 // PackageServiceClient is the client API for PackageService service.
@@ -29,6 +30,7 @@ const (
 type PackageServiceClient interface {
 	GetPackage(ctx context.Context, in *GetPackageRequest, opts ...grpc.CallOption) (*GetPackageResponse, error)
 	GetTags(ctx context.Context, in *GetTagsRequest, opts ...grpc.CallOption) (*GetTagsResponse, error)
+	GetPackages(ctx context.Context, in *GetPackagesRequest, opts ...grpc.CallOption) (*GetPackagesResponse, error)
 }
 
 type packageServiceClient struct {
@@ -57,12 +59,22 @@ func (c *packageServiceClient) GetTags(ctx context.Context, in *GetTagsRequest, 
 	return out, nil
 }
 
+func (c *packageServiceClient) GetPackages(ctx context.Context, in *GetPackagesRequest, opts ...grpc.CallOption) (*GetPackagesResponse, error) {
+	out := new(GetPackagesResponse)
+	err := c.cc.Invoke(ctx, PackageService_GetPackages_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PackageServiceServer is the server API for PackageService service.
 // All implementations must embed UnimplementedPackageServiceServer
 // for forward compatibility
 type PackageServiceServer interface {
 	GetPackage(context.Context, *GetPackageRequest) (*GetPackageResponse, error)
 	GetTags(context.Context, *GetTagsRequest) (*GetTagsResponse, error)
+	GetPackages(context.Context, *GetPackagesRequest) (*GetPackagesResponse, error)
 	mustEmbedUnimplementedPackageServiceServer()
 }
 
@@ -75,6 +87,9 @@ func (UnimplementedPackageServiceServer) GetPackage(context.Context, *GetPackage
 }
 func (UnimplementedPackageServiceServer) GetTags(context.Context, *GetTagsRequest) (*GetTagsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTags not implemented")
+}
+func (UnimplementedPackageServiceServer) GetPackages(context.Context, *GetPackagesRequest) (*GetPackagesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPackages not implemented")
 }
 func (UnimplementedPackageServiceServer) mustEmbedUnimplementedPackageServiceServer() {}
 
@@ -125,6 +140,24 @@ func _PackageService_GetTags_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PackageService_GetPackages_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetPackagesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PackageServiceServer).GetPackages(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PackageService_GetPackages_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PackageServiceServer).GetPackages(ctx, req.(*GetPackagesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PackageService_ServiceDesc is the grpc.ServiceDesc for PackageService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -139,6 +172,10 @@ var PackageService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetTags",
 			Handler:    _PackageService_GetTags_Handler,
+		},
+		{
+			MethodName: "GetPackages",
+			Handler:    _PackageService_GetPackages_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

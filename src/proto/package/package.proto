@@ -35,6 +35,23 @@ message GetPackageResponse {
   Package package = 2;
 }
 
+message PackagesQuery {
+  string category = 1;
+  string name = 2;
+  string user_id = 3;
+}
+
+message GetPackagesRequest {
+  base.Pagination pagination = 1;
+  PackagesQuery query = 2;
+}
+
+message GetPackagesResponse {
+  base.Status status = 1;
+  repeated Package package = 2;
+  int64 total = 3;
+}
+
 service PackageService {
   rpc GetPackage (GetPackageRequest) returns (GetPackageResponse) {
     option (google.api.http) = {
@@ -42,9 +59,15 @@ service PackageService {
     };
   }
 
-  rpc GetTags(GetTagsRequest) returns (GetTagsResponse) {
+  rpc GetTags (GetTagsRequest) returns (GetTagsResponse) {
     option (google.api.http) = {
       get: "/packages/tags"
+    };
+  }
+
+  rpc GetPackages (GetPackagesRequest) returns (GetPackagesResponse) {
+    option (google.api.http) = {
+      get: "/packages"
     };
   }
 }
