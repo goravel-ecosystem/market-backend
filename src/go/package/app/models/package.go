@@ -23,6 +23,7 @@ type Package struct {
 	Link          string
 	Version       string
 	LastUpdatedAt carbon.DateTime
+	Tags          []*Tag `gorm:"many2many:package_tags;"`
 	orm.SoftDeletes
 }
 
@@ -40,6 +41,11 @@ func (r *Package) GetPackageByID(id string, fields []string) (*Package, error) {
 }
 
 func (r *Package) ToProto() *protopackage.Package {
+	tagsProto := make([]*protopackage.Tag, 0)
+	for _, tag := range r.Tags {
+		tagsProto = append(tagsProto, tag.ToProto())
+	}
+
 	return &protopackage.Package{
 		Id:            cast.ToString(r.ID),
 		UserId:        cast.ToString(r.UserID),
@@ -51,5 +57,6 @@ func (r *Package) ToProto() *protopackage.Package {
 		LastUpdatedAt: r.LastUpdatedAt.ToString(),
 		CreatedAt:     r.CreatedAt.ToString(),
 		UpdatedAt:     r.UpdatedAt.ToString(),
+		Tags:          tagsProto,
 	}
 }

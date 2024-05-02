@@ -48,7 +48,7 @@ message GetPackagesRequest {
 
 message GetPackagesResponse {
   base.Status status = 1;
-  repeated Package package = 2;
+  repeated Package packages = 2;
   int64 total = 3;
 }
 

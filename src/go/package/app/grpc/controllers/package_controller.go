@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/goravel/framework/facades"
+	"github.com/spf13/cast"
 
 	"market.goravel.dev/package/app/services"
 	protopackage "market.goravel.dev/proto/package"
@@ -63,6 +64,56 @@ func (r *PackageController) GetPackage(ctx context.Context, req *protopackage.Ge
 	return &protopackage.GetPackageResponse{
 		Status:  utilsresponse.NewOkStatus(),
 		Package: pkgProto,
+	}, nil
+}
+
+func (r *PackageController) GetPackages(ctx context.Context, req *protopackage.GetPackagesRequest) (*protopackage.GetPackagesResponse, error) {
+	query := req.GetQuery()
+	pagination := req.GetPagination()
+
+	if pagination == nil {
+		pagination = utilspagination.Default()
+	}
+
+	if pagination.GetPage() <= 0 {
+		pagination.Page = 1
+	}
+
+	if pagination.GetLimit() <= 0 {
+		pagination.Limit = 10
+	}
+
+	packages, total, err := r.packageService.GetPackages(query, pagination)
+	if err != nil {
+		return nil, err
+	}
+
+	packagesProto := make([]*protopackage.Package, 0)
+	var userIDs []string
+	for _, pkg := range packages {
+		userIDs = append(userIDs, cast.ToString(pkg.UserID))
+	}
+
+	users, err := r.userService.GetUsers(ctx, userIDs)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, pkg := range packages {
+		pkgProto := pkg.ToProto()
+		for _, user := range users {
+			if cast.ToString(pkg.UserID) == user.GetId() {
+				pkgProto.User = user
+				break
+			}
+		}
+		packagesProto = append(packagesProto, pkgProto)
+	}
+
+	return &protopackage.GetPackagesResponse{
+		Status:   utilsresponse.NewOkStatus(),
+		Packages: packagesProto,
+		Total:    total,
 	}, nil
 }
 
