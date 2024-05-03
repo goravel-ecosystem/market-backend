@@ -7,6 +7,7 @@ import (
 	"market.goravel.dev/package/app/models"
 	protobase "market.goravel.dev/proto/base"
 	protopackage "market.goravel.dev/proto/package"
+	"market.goravel.dev/utils/errors"
 )
 
 type Package interface {
@@ -39,9 +40,9 @@ func (r *PackageImpl) GetPackages(query *protopackage.PackagesQuery, pagination 
 	}
 
 	if err := ormQuery.With("Tags", func(query orm.Query) orm.Query {
-		return query.Select([]string{"id", "name"})
+		return query.Where("is_show = ?", "1").Select([]string{"id", "name"})
 	}).Select([]string{"id", "name", "user_id", "summary", "link"}).Paginate(int(page), int(limit), &packages, &total); err != nil {
-		return nil, 0, err
+		return nil, 0, errors.NewInternalServerError(err)
 	}
 
 	return packages, total, nil
