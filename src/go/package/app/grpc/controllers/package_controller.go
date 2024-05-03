@@ -8,6 +8,7 @@ import (
 
 	"market.goravel.dev/package/app/services"
 	protopackage "market.goravel.dev/proto/package"
+	protouser "market.goravel.dev/proto/user"
 	utilserrors "market.goravel.dev/utils/errors"
 	utilspagination "market.goravel.dev/utils/pagination"
 	utilsresponse "market.goravel.dev/utils/response"
@@ -88,10 +89,9 @@ func (r *PackageController) GetPackages(ctx context.Context, req *protopackage.G
 		return nil, err
 	}
 
-	packagesProto := make([]*protopackage.Package, 0)
-	var userIDs []string
-	for _, pkg := range packages {
-		userIDs = append(userIDs, cast.ToString(pkg.UserID))
+	userIDs := make([]string, len(packages))
+	for i, pkg := range packages {
+		userIDs[i] = cast.ToString(pkg.UserID)
 	}
 
 	users, err := r.userService.GetUsers(ctx, userIDs)
@@ -99,13 +99,16 @@ func (r *PackageController) GetPackages(ctx context.Context, req *protopackage.G
 		return nil, err
 	}
 
+	userMap := make(map[string]*protouser.User)
+	for _, user := range users {
+		userMap[user.GetId()] = user
+	}
+
+	packagesProto := make([]*protopackage.Package, 0, len(packages))
 	for _, pkg := range packages {
 		pkgProto := pkg.ToProto()
-		for _, user := range users {
-			if cast.ToString(pkg.UserID) == user.GetId() {
-				pkgProto.User = user
-				break
-			}
+		if user, ok := userMap[cast.ToString(pkg.UserID)]; ok {
+			pkgProto.User = user
 		}
 		packagesProto = append(packagesProto, pkgProto)
 	}
