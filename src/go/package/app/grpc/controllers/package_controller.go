@@ -94,9 +94,12 @@ func (r *PackageController) GetPackages(ctx context.Context, req *protopackage.G
 		userIDs[i] = cast.ToString(pkg.UserID)
 	}
 
-	users, err := r.userService.GetUsers(ctx, userIDs)
-	if err != nil {
-		return nil, err
+	var users []*protouser.User
+	if len(packages) > 0 {
+		users, err = r.userService.GetUsers(ctx, userIDs)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	userMap := make(map[string]*protouser.User)
