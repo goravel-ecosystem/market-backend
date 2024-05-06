@@ -189,6 +189,10 @@ func (s *PackageControllerSuite) TestGetPackage() {
 	}
 }
 
+func (s *PackageControllerSuite) TestGetPackages() {
+
+}
+
 func (s *PackageControllerSuite) TestGetTags() {
 	var (
 		packageID  = "1"

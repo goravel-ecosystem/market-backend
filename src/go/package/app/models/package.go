@@ -22,6 +22,7 @@ type Package struct {
 	Description   string
 	Link          string
 	Version       string
+	ViewCount     uint32
 	LastUpdatedAt carbon.DateTime
 	Tags          []*Tag `gorm:"many2many:package_tags;"`
 	orm.SoftDeletes
@@ -54,6 +55,7 @@ func (r *Package) ToProto() *protopackage.Package {
 		Description:   r.Description,
 		Link:          r.Link,
 		Version:       r.Version,
+		ViewCount:     r.ViewCount,
 		LastUpdatedAt: r.LastUpdatedAt.ToString(),
 		CreatedAt:     r.CreatedAt.ToString(),
 		UpdatedAt:     r.UpdatedAt.ToString(),

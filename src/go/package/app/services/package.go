@@ -26,12 +26,26 @@ func NewPackageImpl() *PackageImpl {
 }
 
 func (r *PackageImpl) GetPackages(query *protopackage.PackagesQuery, pagination *protobase.Pagination) ([]*models.Package, int64, error) {
+	const (
+		categoryHot    = "hot"
+		categoryNewest = "newest"
+	)
+
 	var packages []*models.Package
 	ormQuery := facades.Orm().Query()
 	var total int64
 
 	page := pagination.GetPage()
 	limit := pagination.GetLimit()
+
+	category := query.GetCategory()
+
+	switch category {
+	case categoryHot:
+		ormQuery = ormQuery.OrderBy("view_count")
+	case categoryNewest:
+		ormQuery = ormQuery.OrderBy("created_at")
+	}
 
 	name := query.GetName()
 	if name != "" {
@@ -41,7 +55,7 @@ func (r *PackageImpl) GetPackages(query *protopackage.PackagesQuery, pagination 
 
 	if err := ormQuery.With("Tags", func(query orm.Query) orm.Query {
 		return query.Where("is_show = ?", "1").Select([]string{"id", "name"})
-	}).Select([]string{"id", "name", "user_id", "summary", "link"}).Paginate(int(page), int(limit), &packages, &total); err != nil {
+	}).Select([]string{"id", "name", "user_id", "summary", "link", "view_count"}).Paginate(int(page), int(limit), &packages, &total); err != nil {
 		return nil, 0, errors.NewInternalServerError(err)
 	}
 
@@ -49,5 +63,5 @@ func (r *PackageImpl) GetPackages(query *protopackage.PackagesQuery, pagination 
 }
 
 func (r *PackageImpl) GetPackageByID(id string) (*models.Package, error) {
-	return r.packageModel.GetPackageByID(id, []string{"id", "name", "user_id", "summary", "description", "link", "version", "last_updated_at"})
+	return r.packageModel.GetPackageByID(id, []string{"id", "name", "user_id", "summary", "description", "link", "version", "last_updated_at", "view_count"})
 }

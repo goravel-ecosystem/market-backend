@@ -22,6 +22,7 @@ message Package {
   string updated_at = 10;
   user.User user = 11;
   repeated Tag tags = 12;
+  uint32 view_count = 13;
 }
 
 message GetPackageRequest {

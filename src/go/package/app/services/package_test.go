@@ -32,7 +32,7 @@ func (s *PackageTestSuite) SetupTest() {
 func (s *PackageTestSuite) TestGetTags() {
 	var (
 		name   = "go"
-		fields = []string{"id", "name", "user_id", "summary", "link"}
+		fields = []string{"id", "name", "user_id", "summary", "link", "view_count"}
 
 		mockOrm      *mocksorm.Orm
 		mockOrmQuery *mocksorm.Query
@@ -63,10 +63,12 @@ func (s *PackageTestSuite) TestGetTags() {
 					Limit: 10,
 				}
 				query = &protopackage.PackagesQuery{
-					Name: name,
+					Name:     name,
+					Category: "hot",
 				}
 
 				beforeSetup()
+				mockOrmQuery.On("OrderBy", "view_count").Return(mockOrmQuery).Once()
 				mockOrmQuery.On("With", "Tags", mock.Anything).Return(mockOrmQuery).Once()
 				mockOrmQuery.On("Where", "name LIKE ?", "%"+name+"%").Return(mockOrmQuery).Once()
 				mockOrmQuery.On("Select", fields).Return(mockOrmQuery).Once()
