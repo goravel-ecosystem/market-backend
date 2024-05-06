@@ -6,6 +6,7 @@ CREATE TABLE packages (
   description text DEFAULT NULL,
   link varchar(255) DEFAULT NULL,
   version varchar(255) DEFAULT NULL,
+  view_count bigint DEFAULT 0,
   last_updated_at timestamp NOT NULL,
   created_at timestamp NOT NULL,
   updated_at timestamp NOT NULL,

@@ -68,7 +68,7 @@ func (s *PackageTestSuite) TestGetTags() {
 				}
 
 				beforeSetup()
-				mockOrmQuery.On("OrderBy", "view_count").Return(mockOrmQuery).Once()
+				mockOrmQuery.On("OrderByDesc", "view_count").Return(mockOrmQuery).Once()
 				mockOrmQuery.On("With", "Tags", mock.Anything).Return(mockOrmQuery).Once()
 				mockOrmQuery.On("Where", "name LIKE ?", "%"+name+"%").Return(mockOrmQuery).Once()
 				mockOrmQuery.On("Select", fields).Return(mockOrmQuery).Once()

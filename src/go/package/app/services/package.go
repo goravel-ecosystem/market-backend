@@ -42,9 +42,9 @@ func (r *PackageImpl) GetPackages(query *protopackage.PackagesQuery, pagination 
 
 	switch category {
 	case categoryHot:
-		ormQuery = ormQuery.OrderBy("view_count")
+		ormQuery = ormQuery.OrderByDesc("view_count")
 	case categoryNewest:
-		ormQuery = ormQuery.OrderBy("created_at")
+		ormQuery = ormQuery.OrderByDesc("created_at")
 	}
 
 	name := query.GetName()
