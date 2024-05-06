@@ -144,5 +144,6 @@ func (s *PackageSuite) TestToProto() {
 		LastUpdatedAt: lastUpdatedAt.ToString(),
 		CreatedAt:     createAt.ToString(),
 		UpdatedAt:     updatedAt.ToString(),
+		Tags:          []*protopackage.Tag{},
 	}, pack.ToProto())
 }
