@@ -14,6 +14,7 @@ var userInstance *UserImpl
 
 type User interface {
 	GetUser(ctx context.Context, userID uint64) (*user.User, error)
+	GetUsers(ctx context.Context, userIDs []string) ([]*user.User, error)
 }
 
 type UserImpl struct {
@@ -45,4 +46,13 @@ func (r *UserImpl) GetUser(ctx context.Context, userID uint64) (*user.User, erro
 	}
 
 	return resp.GetUser(), nil
+}
+
+func (r *UserImpl) GetUsers(ctx context.Context, userIDs []string) ([]*user.User, error) {
+	resp, err := r.client.GetUsers(ctx, &user.GetUsersRequest{UserIds: userIDs})
+	if err := errors.NewResponse(resp, err); err != nil {
+		return nil, err
+	}
+
+	return resp.GetUsers(), nil
 }

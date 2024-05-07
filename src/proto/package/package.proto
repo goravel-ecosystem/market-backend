@@ -22,6 +22,7 @@ message Package {
   string updated_at = 10;
   user.User user = 11;
   repeated Tag tags = 12;
+  uint32 view_count = 13;
 }
 
 message GetPackageRequest {
@@ -48,7 +49,7 @@ message GetPackagesRequest {
 
 message GetPackagesResponse {
   base.Status status = 1;
-  repeated Package package = 2;
+  repeated Package packages = 2;
   int64 total = 3;
 }
 

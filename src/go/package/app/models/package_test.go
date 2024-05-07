@@ -58,6 +58,7 @@ func (s *PackageSuite) TestGetPackageByID() {
 		{
 			name: "Happy path",
 			setup: func() {
+				mockOrmQuery.On("With", "Tags", mock.Anything).Return(mockOrmQuery).Once()
 				mockOrmQuery.On("First", &pack).Run(func(args mock.Arguments) {
 					pack := args.Get(0).(*Package)
 					pack.ID = 1
@@ -75,6 +76,7 @@ func (s *PackageSuite) TestGetPackageByID() {
 			name: "Sad path - get package error",
 			setup: func() {
 				var pack Package
+				mockOrmQuery.On("With", "Tags", mock.Anything).Return(mockOrmQuery).Once()
 				mockOrmQuery.On("First", &pack).Return(errors.New("error")).Once()
 			},
 			expectedErr: utilserrors.New(http.StatusInternalServerError, "error"),
@@ -144,5 +146,6 @@ func (s *PackageSuite) TestToProto() {
 		LastUpdatedAt: lastUpdatedAt.ToString(),
 		CreatedAt:     createAt.ToString(),
 		UpdatedAt:     updatedAt.ToString(),
+		Tags:          []*protopackage.Tag{},
 	}, pack.ToProto())
 }

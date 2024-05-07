@@ -16,14 +16,12 @@ type PackageController struct {
 	protopackage.UnimplementedPackageServiceServer
 	packageService services.Package
 	tagService     services.Tag
-	userService    services.User
 }
 
 func NewPackageController() *PackageController {
 	return &PackageController{
 		packageService: services.NewPackageImpl(),
 		tagService:     services.NewTagImpl(),
-		userService:    services.NewUserImpl(),
 	}
 }
 
@@ -42,27 +40,42 @@ func (r *PackageController) GetPackage(ctx context.Context, req *protopackage.Ge
 		return nil, utilserrors.NewNotFound(facades.Lang(ctx).Get("not_exist.package"))
 	}
 
-	user, err := r.userService.GetUser(ctx, pkg.UserID)
-	if err != nil {
-		return nil, err
-	}
-
-	tags, err := r.GetTags(ctx, &protopackage.GetTagsRequest{
-		Query: &protopackage.TagsQuery{
-			PackageId: packageID,
-		},
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	pkgProto := pkg.ToProto()
-	pkgProto.User = user
-	pkgProto.Tags = tags.GetTags()
-
 	return &protopackage.GetPackageResponse{
 		Status:  utilsresponse.NewOkStatus(),
-		Package: pkgProto,
+		Package: pkg.ToProto(),
+	}, nil
+}
+
+func (r *PackageController) GetPackages(_ context.Context, req *protopackage.GetPackagesRequest) (*protopackage.GetPackagesResponse, error) {
+	query := req.GetQuery()
+	pagination := req.GetPagination()
+
+	if pagination == nil {
+		pagination = utilspagination.Default()
+	}
+
+	if pagination.GetPage() <= 0 {
+		pagination.Page = 1
+	}
+
+	if pagination.GetLimit() <= 0 {
+		pagination.Limit = 10
+	}
+
+	packages, total, err := r.packageService.GetPackages(query, pagination)
+	if err != nil {
+		return nil, err
+	}
+
+	packagesProto := make([]*protopackage.Package, 0, len(packages))
+	for _, pkg := range packages {
+		packagesProto = append(packagesProto, pkg.ToProto())
+	}
+
+	return &protopackage.GetPackagesResponse{
+		Status:   utilsresponse.NewOkStatus(),
+		Packages: packagesProto,
+		Total:    total,
 	}, nil
 }
 
