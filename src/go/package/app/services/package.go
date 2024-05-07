@@ -57,6 +57,11 @@ func (r *PackageImpl) GetPackages(query *protopackage.PackagesQuery, pagination 
 		ormQuery = ormQuery.Where("name LIKE ?", "%"+name+"%")
 	}
 
+	userID := query.GetUserId()
+	if userID != "" {
+		ormQuery = ormQuery.Where("user_id = ?", userID)
+	}
+
 	if err := ormQuery.With("Tags", func(query orm.Query) orm.Query {
 		return query.Where("is_show = ?", "1").Select([]string{"id", "name"})
 	}).Select([]string{"id", "name", "user_id", "summary", "link", "view_count"}).Paginate(int(page), int(limit), &packages, &total); err != nil {
