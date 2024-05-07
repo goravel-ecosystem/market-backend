@@ -53,6 +53,22 @@ message GetPackagesResponse {
   int64 total = 3;
 }
 
+message CreatePackageRequest {
+  // Auto-injected by the API Gateway.
+  string user_id = 1;
+  string name = 2;
+  string cover = 3;
+  string url = 4;
+  string summary = 5;
+  string description = 6;
+  repeated string tags = 7;
+}
+
+message CreatePackageResponse {
+  base.Status status = 1;
+  Package package = 2;
+}
+
 service PackageService {
   rpc GetPackage (GetPackageRequest) returns (GetPackageResponse) {
     option (google.api.http) = {
@@ -69,6 +85,13 @@ service PackageService {
   rpc GetPackages (GetPackagesRequest) returns (GetPackagesResponse) {
     option (google.api.http) = {
       get: "/packages"
+    };
+  }
+
+  rpc CreatePackage (CreatePackageRequest) returns (CreatePackageResponse) {
+    option (google.api.http) = {
+      post: "/packages/new"
+      body: "*"
     };
   }
 }
