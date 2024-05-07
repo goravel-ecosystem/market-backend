@@ -1,12 +1,16 @@
 package services
 
 import (
+	"context"
+
 	"github.com/goravel/framework/contracts/database/orm"
 	"github.com/goravel/framework/facades"
+	"github.com/spf13/cast"
 
 	"market.goravel.dev/package/app/models"
 	protobase "market.goravel.dev/proto/base"
 	protopackage "market.goravel.dev/proto/package"
+	protouser "market.goravel.dev/proto/user"
 	"market.goravel.dev/utils/errors"
 )
 
@@ -17,23 +21,23 @@ type Package interface {
 
 type PackageImpl struct {
 	packageModel models.PackageInterface
+	userService  User
 }
 
 func NewPackageImpl() *PackageImpl {
 	return &PackageImpl{
 		packageModel: models.NewPackage(),
+		userService:  NewUserImpl(),
 	}
 }
 
-func (r *PackageImpl) GetPackages(query *protopackage.PackagesQuery, pagination *protobase.Pagination) ([]*models.Package, int64, error) {
+func (r *PackageImpl) GetPackages(query *protopackage.PackagesQuery, pagination *protobase.Pagination) (packages []*models.Package, total int64, err error) {
 	const (
 		categoryHot    = "hot"
 		categoryNewest = "newest"
 	)
 
-	var packages []*models.Package
 	ormQuery := facades.Orm().Query()
-	var total int64
 
 	page := pagination.GetPage()
 	limit := pagination.GetLimit()
@@ -59,9 +63,44 @@ func (r *PackageImpl) GetPackages(query *protopackage.PackagesQuery, pagination 
 		return nil, 0, errors.NewInternalServerError(err)
 	}
 
+	userIDs := make([]string, len(packages))
+	for i, pkg := range packages {
+		userIDs[i] = cast.ToString(pkg.UserID)
+	}
+
+	var users []*protouser.User
+	if len(packages) > 0 {
+		users, err = r.userService.GetUsers(context.Background(), userIDs)
+		if err != nil {
+			return nil, 0, errors.NewInternalServerError(err)
+		}
+	}
+
+	userMap := make(map[string]*protouser.User)
+	for _, user := range users {
+		userMap[user.GetId()] = user
+	}
+
+	for _, pkg := range packages {
+		pkg.User = userMap[cast.ToString(pkg.UserID)]
+	}
+
 	return packages, total, nil
 }
 
-func (r *PackageImpl) GetPackageByID(id string) (*models.Package, error) {
-	return r.packageModel.GetPackageByID(id, []string{"id", "name", "user_id", "summary", "description", "link", "version", "last_updated_at", "view_count"})
+func (r *PackageImpl) GetPackageByID(id string) (pkg *models.Package, err error) {
+	pkg, err = r.packageModel.GetPackageByID(id, []string{"id", "name", "user_id", "summary", "description", "link", "version", "last_updated_at", "view_count"})
+	if err != nil {
+		return nil, err
+	}
+
+	if pkg.ID > 0 {
+		user, err := r.userService.GetUser(context.Background(), pkg.UserID)
+		pkg.User = user
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return pkg, nil
 }

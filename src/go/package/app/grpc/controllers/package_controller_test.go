@@ -26,7 +26,6 @@ type PackageControllerSuite struct {
 	mockLang           *mockstranslation.Translator
 	mockPackageService *mocksservice.Package
 	mockTagService     *mocksservice.Tag
-	mockUserService    *mocksservice.User
 }
 
 func TestPackageControllerSuite(t *testing.T) {
@@ -39,11 +38,9 @@ func (s *PackageControllerSuite) SetupTest() {
 	s.mockLang = mockFactory.Lang(s.ctx)
 	s.mockPackageService = &mocksservice.Package{}
 	s.mockTagService = &mocksservice.Tag{}
-	s.mockUserService = &mocksservice.User{}
 	s.packageController = &PackageController{
 		packageService: s.mockPackageService,
 		tagService:     s.mockTagService,
-		userService:    s.mockUserService,
 	}
 }
 
@@ -62,7 +59,6 @@ func (s *PackageControllerSuite) TestGetPackage() {
 				Name: "test",
 			},
 		}
-		total  = int64(1)
 		userID = uint64(1)
 		name   = "goravel"
 	)
@@ -86,9 +82,9 @@ func (s *PackageControllerSuite) TestGetPackage() {
 					},
 					UserID: userID,
 					Name:   name,
+					User:   user,
+					Tags:   tags,
 				}, nil).Once()
-				s.mockUserService.On("GetUser", s.ctx, userID).Return(user, nil).Once()
-				s.mockTagService.On("GetTags", packageID, "", &protobase.Pagination{Page: 1, Limit: 10}).Return(tags, total, nil).Once()
 			},
 			expectedResponse: &protopackage.GetPackageResponse{
 				Status: utilsresponse.NewOkStatus(),
@@ -135,42 +131,6 @@ func (s *PackageControllerSuite) TestGetPackage() {
 			},
 			expectedErr: utilserrors.NewNotFound("Package not found"),
 		},
-		{
-			name: "Sad path - GetUser returns error",
-			request: &protopackage.GetPackageRequest{
-				Id: packageID,
-			},
-			setup: func() {
-				s.mockPackageService.On("GetPackageByID", packageID).Return(&models.Package{
-					UUIDModel: models.UUIDModel{
-						ID: 1,
-					},
-					UserID: userID,
-					Name:   name,
-				}, nil).Once()
-				s.mockUserService.On("GetUser", s.ctx, userID).Return(nil, errors.New("error")).Once()
-			},
-			expectedErr: errors.New("error"),
-		},
-		{
-			name: "Sad path - GetTags returns error",
-			request: &protopackage.GetPackageRequest{
-				Id: packageID,
-			},
-			setup: func() {
-				s.mockPackageService.On("GetPackageByID", packageID).Return(&models.Package{
-					UUIDModel: models.UUIDModel{
-						ID: 1,
-					},
-					UserID: userID,
-					Name:   name,
-				}, nil).Once()
-				s.mockUserService.On("GetUser", s.ctx, userID).Return(user, nil).Once()
-				total = 0
-				s.mockTagService.On("GetTags", packageID, "", &protobase.Pagination{Page: 1, Limit: 10}).Return(nil, total, errors.New("error")).Once()
-			},
-			expectedErr: errors.New("error"),
-		},
 	}
 
 	for _, test := range tests {
@@ -183,7 +143,6 @@ func (s *PackageControllerSuite) TestGetPackage() {
 			s.mockLang.AssertExpectations(s.T())
 			s.mockPackageService.AssertExpectations(s.T())
 			s.mockTagService.AssertExpectations(s.T())
-			s.mockUserService.AssertExpectations(s.T())
 		})
 
 	}
@@ -231,9 +190,9 @@ func (s *PackageControllerSuite) TestGetPackages() {
 						},
 						UserID: userID,
 						Name:   name,
+						User:   users[0],
 					},
 				}, total, nil).Once()
-				s.mockUserService.On("GetUsers", s.ctx, []string{fmt.Sprint(userID)}).Return(users, nil).Once()
 			},
 			expectedResponse: &protopackage.GetPackagesResponse{
 				Status: utilsresponse.NewOkStatus(),
@@ -304,9 +263,9 @@ func (s *PackageControllerSuite) TestGetPackages() {
 						},
 						UserID: userID,
 						Name:   name,
+						User:   users[0],
 					},
 				}, total, nil).Once()
-				s.mockUserService.On("GetUsers", s.ctx, []string{fmt.Sprint(userID)}).Return(users, nil).Once()
 			},
 			expectedResponse: &protopackage.GetPackagesResponse{
 				Status: utilsresponse.NewOkStatus(),
@@ -321,26 +280,6 @@ func (s *PackageControllerSuite) TestGetPackages() {
 				},
 				Total: 1,
 			},
-		},
-		{
-			name: "Sad path - GetUsers returns error",
-			request: &protopackage.GetPackagesRequest{
-				Pagination: pagination,
-			},
-			setup: func() {
-				total = 1
-				s.mockPackageService.On("GetPackages", (*protopackage.PackagesQuery)(nil), pagination).Return([]*models.Package{
-					{
-						UUIDModel: models.UUIDModel{
-							ID: 1,
-						},
-						UserID: userID,
-						Name:   name,
-					},
-				}, total, nil).Once()
-				s.mockUserService.On("GetUsers", s.ctx, []string{fmt.Sprint(userID)}).Return(nil, errors.New("error")).Once()
-			},
-			expectedErr: errors.New("error"),
 		},
 	}
 

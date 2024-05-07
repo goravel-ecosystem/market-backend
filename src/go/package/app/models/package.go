@@ -1,12 +1,14 @@
 package models
 
 import (
+	contractsorm "github.com/goravel/framework/contracts/database/orm"
 	"github.com/goravel/framework/database/orm"
 	"github.com/goravel/framework/facades"
 	"github.com/goravel/framework/support/carbon"
 	"github.com/spf13/cast"
 
 	protopackage "market.goravel.dev/proto/package"
+	protouser "market.goravel.dev/proto/user"
 	"market.goravel.dev/utils/errors"
 )
 
@@ -24,7 +26,8 @@ type Package struct {
 	Version       string
 	ViewCount     uint32
 	LastUpdatedAt carbon.DateTime
-	Tags          []*Tag `gorm:"many2many:package_tags;"`
+	Tags          []*Tag          `gorm:"many2many:package_tags;"`
+	User          *protouser.User `gorm:"-"`
 	orm.SoftDeletes
 }
 
@@ -34,7 +37,9 @@ func NewPackage() *Package {
 
 func (r *Package) GetPackageByID(id string, fields []string) (*Package, error) {
 	var packageModel Package
-	if err := facades.Orm().Query().Where("id", id).Select(fields).First(&packageModel); err != nil {
+	if err := facades.Orm().Query().Where("id", id).With("Tags", func(query contractsorm.Query) contractsorm.Query {
+		return query.Where("is_show = ?", "1").Select([]string{"id", "name"})
+	}).Select(fields).First(&packageModel); err != nil {
 		return nil, errors.NewInternalServerError(err)
 	}
 
@@ -60,5 +65,6 @@ func (r *Package) ToProto() *protopackage.Package {
 		CreatedAt:     r.CreatedAt.ToString(),
 		UpdatedAt:     r.UpdatedAt.ToString(),
 		Tags:          tagsProto,
+		User:          r.User,
 	}
 }

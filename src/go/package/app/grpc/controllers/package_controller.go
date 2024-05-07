@@ -4,11 +4,9 @@ import (
 	"context"
 
 	"github.com/goravel/framework/facades"
-	"github.com/spf13/cast"
 
 	"market.goravel.dev/package/app/services"
 	protopackage "market.goravel.dev/proto/package"
-	protouser "market.goravel.dev/proto/user"
 	utilserrors "market.goravel.dev/utils/errors"
 	utilspagination "market.goravel.dev/utils/pagination"
 	utilsresponse "market.goravel.dev/utils/response"
@@ -18,14 +16,12 @@ type PackageController struct {
 	protopackage.UnimplementedPackageServiceServer
 	packageService services.Package
 	tagService     services.Tag
-	userService    services.User
 }
 
 func NewPackageController() *PackageController {
 	return &PackageController{
 		packageService: services.NewPackageImpl(),
 		tagService:     services.NewTagImpl(),
-		userService:    services.NewUserImpl(),
 	}
 }
 
@@ -44,31 +40,13 @@ func (r *PackageController) GetPackage(ctx context.Context, req *protopackage.Ge
 		return nil, utilserrors.NewNotFound(facades.Lang(ctx).Get("not_exist.package"))
 	}
 
-	user, err := r.userService.GetUser(ctx, pkg.UserID)
-	if err != nil {
-		return nil, err
-	}
-
-	tags, err := r.GetTags(ctx, &protopackage.GetTagsRequest{
-		Query: &protopackage.TagsQuery{
-			PackageId: packageID,
-		},
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	pkgProto := pkg.ToProto()
-	pkgProto.User = user
-	pkgProto.Tags = tags.GetTags()
-
 	return &protopackage.GetPackageResponse{
 		Status:  utilsresponse.NewOkStatus(),
-		Package: pkgProto,
+		Package: pkg.ToProto(),
 	}, nil
 }
 
-func (r *PackageController) GetPackages(ctx context.Context, req *protopackage.GetPackagesRequest) (*protopackage.GetPackagesResponse, error) {
+func (r *PackageController) GetPackages(_ context.Context, req *protopackage.GetPackagesRequest) (*protopackage.GetPackagesResponse, error) {
 	query := req.GetQuery()
 	pagination := req.GetPagination()
 
@@ -89,31 +67,9 @@ func (r *PackageController) GetPackages(ctx context.Context, req *protopackage.G
 		return nil, err
 	}
 
-	userIDs := make([]string, len(packages))
-	for i, pkg := range packages {
-		userIDs[i] = cast.ToString(pkg.UserID)
-	}
-
-	var users []*protouser.User
-	if len(packages) > 0 {
-		users, err = r.userService.GetUsers(ctx, userIDs)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	userMap := make(map[string]*protouser.User)
-	for _, user := range users {
-		userMap[user.GetId()] = user
-	}
-
 	packagesProto := make([]*protopackage.Package, 0, len(packages))
 	for _, pkg := range packages {
-		pkgProto := pkg.ToProto()
-		if user, ok := userMap[cast.ToString(pkg.UserID)]; ok {
-			pkgProto.User = user
-		}
-		packagesProto = append(packagesProto, pkgProto)
+		packagesProto = append(packagesProto, pkg.ToProto())
 	}
 
 	return &protopackage.GetPackagesResponse{
