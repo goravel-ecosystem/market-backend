@@ -625,6 +625,181 @@ func (x *CreatePackageResponse) GetPackage() *Package {
 	return nil
 }
 
+type UpdatePackageRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	// Auto-injected by the API Gateway.
+	UserId      string   `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Id          string   `protobuf:"bytes,2,opt,name=id,proto3" json:"id,omitempty"`
+	Name        string   `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	Cover       string   `protobuf:"bytes,4,opt,name=cover,proto3" json:"cover,omitempty"`
+	Url         string   `protobuf:"bytes,5,opt,name=url,proto3" json:"url,omitempty"`
+	Summary     string   `protobuf:"bytes,6,opt,name=summary,proto3" json:"summary,omitempty"`
+	Description string   `protobuf:"bytes,7,opt,name=description,proto3" json:"description,omitempty"`
+	IsPublic    bool     `protobuf:"varint,8,opt,name=is_public,json=isPublic,proto3" json:"is_public,omitempty"`
+	Version     string   `protobuf:"bytes,9,opt,name=version,proto3" json:"version,omitempty"`
+	Tags        []string `protobuf:"bytes,10,rep,name=tags,proto3" json:"tags,omitempty"`
+}
+
+func (x *UpdatePackageRequest) Reset() {
+	*x = UpdatePackageRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_package_package_proto_msgTypes[8]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *UpdatePackageRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdatePackageRequest) ProtoMessage() {}
+
+func (x *UpdatePackageRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_package_package_proto_msgTypes[8]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdatePackageRequest.ProtoReflect.Descriptor instead.
+func (*UpdatePackageRequest) Descriptor() ([]byte, []int) {
+	return file_package_package_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *UpdatePackageRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *UpdatePackageRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *UpdatePackageRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *UpdatePackageRequest) GetCover() string {
+	if x != nil {
+		return x.Cover
+	}
+	return ""
+}
+
+func (x *UpdatePackageRequest) GetUrl() string {
+	if x != nil {
+		return x.Url
+	}
+	return ""
+}
+
+func (x *UpdatePackageRequest) GetSummary() string {
+	if x != nil {
+		return x.Summary
+	}
+	return ""
+}
+
+func (x *UpdatePackageRequest) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *UpdatePackageRequest) GetIsPublic() bool {
+	if x != nil {
+		return x.IsPublic
+	}
+	return false
+}
+
+func (x *UpdatePackageRequest) GetVersion() string {
+	if x != nil {
+		return x.Version
+	}
+	return ""
+}
+
+func (x *UpdatePackageRequest) GetTags() []string {
+	if x != nil {
+		return x.Tags
+	}
+	return nil
+}
+
+type UpdatePackageResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Status  *base.Status `protobuf:"bytes,1,opt,name=status,proto3" json:"status,omitempty"`
+	Package *Package     `protobuf:"bytes,2,opt,name=package,proto3" json:"package,omitempty"`
+}
+
+func (x *UpdatePackageResponse) Reset() {
+	*x = UpdatePackageResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_package_package_proto_msgTypes[9]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *UpdatePackageResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdatePackageResponse) ProtoMessage() {}
+
+func (x *UpdatePackageResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_package_package_proto_msgTypes[9]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdatePackageResponse.ProtoReflect.Descriptor instead.
+func (*UpdatePackageResponse) Descriptor() ([]byte, []int) {
+	return file_package_package_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *UpdatePackageResponse) GetStatus() *base.Status {
+	if x != nil {
+		return x.Status
+	}
+	return nil
+}
+
+func (x *UpdatePackageResponse) GetPackage() *Package {
+	if x != nil {
+		return x.Package
+	}
+	return nil
+}
+
 var File_package_package_proto protoreflect.FileDescriptor
 
 var file_package_package_proto_rawDesc = []byte{
@@ -712,7 +887,30 @@ var file_package_package_proto_rawDesc = []byte{
 	0x52, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x2a, 0x0a, 0x07, 0x70, 0x61, 0x63, 0x6b,
 	0x61, 0x67, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x10, 0x2e, 0x70, 0x61, 0x63, 0x6b,
 	0x61, 0x67, 0x65, 0x2e, 0x50, 0x61, 0x63, 0x6b, 0x61, 0x67, 0x65, 0x52, 0x07, 0x70, 0x61, 0x63,
-	0x6b, 0x61, 0x67, 0x65, 0x32, 0x88, 0x03, 0x0a, 0x0e, 0x50, 0x61, 0x63, 0x6b, 0x61, 0x67, 0x65,
+	0x6b, 0x61, 0x67, 0x65, 0x22, 0x82, 0x02, 0x0a, 0x14, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x50,
+	0x61, 0x63, 0x6b, 0x61, 0x67, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x17, 0x0a,
+	0x07, 0x75, 0x73, 0x65, 0x72, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06,
+	0x75, 0x73, 0x65, 0x72, 0x49, 0x64, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x03,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x63, 0x6f,
+	0x76, 0x65, 0x72, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x63, 0x6f, 0x76, 0x65, 0x72,
+	0x12, 0x10, 0x0a, 0x03, 0x75, 0x72, 0x6c, 0x18, 0x05, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x75,
+	0x72, 0x6c, 0x12, 0x18, 0x0a, 0x07, 0x73, 0x75, 0x6d, 0x6d, 0x61, 0x72, 0x79, 0x18, 0x06, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x07, 0x73, 0x75, 0x6d, 0x6d, 0x61, 0x72, 0x79, 0x12, 0x20, 0x0a, 0x0b,
+	0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x07, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x0b, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x1b,
+	0x0a, 0x09, 0x69, 0x73, 0x5f, 0x70, 0x75, 0x62, 0x6c, 0x69, 0x63, 0x18, 0x08, 0x20, 0x01, 0x28,
+	0x08, 0x52, 0x08, 0x69, 0x73, 0x50, 0x75, 0x62, 0x6c, 0x69, 0x63, 0x12, 0x18, 0x0a, 0x07, 0x76,
+	0x65, 0x72, 0x73, 0x69, 0x6f, 0x6e, 0x18, 0x09, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x76, 0x65,
+	0x72, 0x73, 0x69, 0x6f, 0x6e, 0x12, 0x12, 0x0a, 0x04, 0x74, 0x61, 0x67, 0x73, 0x18, 0x0a, 0x20,
+	0x03, 0x28, 0x09, 0x52, 0x04, 0x74, 0x61, 0x67, 0x73, 0x22, 0x69, 0x0a, 0x15, 0x55, 0x70, 0x64,
+	0x61, 0x74, 0x65, 0x50, 0x61, 0x63, 0x6b, 0x61, 0x67, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
+	0x73, 0x65, 0x12, 0x24, 0x0a, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x0b, 0x32, 0x0c, 0x2e, 0x62, 0x61, 0x73, 0x65, 0x2e, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73,
+	0x52, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x2a, 0x0a, 0x07, 0x70, 0x61, 0x63, 0x6b,
+	0x61, 0x67, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x10, 0x2e, 0x70, 0x61, 0x63, 0x6b,
+	0x61, 0x67, 0x65, 0x2e, 0x50, 0x61, 0x63, 0x6b, 0x61, 0x67, 0x65, 0x52, 0x07, 0x70, 0x61, 0x63,
+	0x6b, 0x61, 0x67, 0x65, 0x32, 0xf3, 0x03, 0x0a, 0x0e, 0x50, 0x61, 0x63, 0x6b, 0x61, 0x67, 0x65,
 	0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x5d, 0x0a, 0x0a, 0x47, 0x65, 0x74, 0x50, 0x61,
 	0x63, 0x6b, 0x61, 0x67, 0x65, 0x12, 0x1a, 0x2e, 0x70, 0x61, 0x63, 0x6b, 0x61, 0x67, 0x65, 0x2e,
 	0x47, 0x65, 0x74, 0x50, 0x61, 0x63, 0x6b, 0x61, 0x67, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
@@ -736,10 +934,17 @@ var file_package_package_proto_rawDesc = []byte{
 	0x67, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1e, 0x2e, 0x70, 0x61, 0x63, 0x6b,
 	0x61, 0x67, 0x65, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x50, 0x61, 0x63, 0x6b, 0x61, 0x67,
 	0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x14, 0x82, 0xd3, 0xe4, 0x93, 0x02,
-	0x0e, 0x3a, 0x01, 0x2a, 0x22, 0x09, 0x2f, 0x70, 0x61, 0x63, 0x6b, 0x61, 0x67, 0x65, 0x73, 0x42,
-	0x22, 0x5a, 0x20, 0x6d, 0x61, 0x72, 0x6b, 0x65, 0x74, 0x2e, 0x67, 0x6f, 0x72, 0x61, 0x76, 0x65,
-	0x6c, 0x2e, 0x64, 0x65, 0x76, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x70, 0x61, 0x63, 0x6b,
-	0x61, 0x67, 0x65, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x0e, 0x3a, 0x01, 0x2a, 0x22, 0x09, 0x2f, 0x70, 0x61, 0x63, 0x6b, 0x61, 0x67, 0x65, 0x73, 0x12,
+	0x69, 0x0a, 0x0d, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x50, 0x61, 0x63, 0x6b, 0x61, 0x67, 0x65,
+	0x12, 0x1d, 0x2e, 0x70, 0x61, 0x63, 0x6b, 0x61, 0x67, 0x65, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74,
+	0x65, 0x50, 0x61, 0x63, 0x6b, 0x61, 0x67, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a,
+	0x1e, 0x2e, 0x70, 0x61, 0x63, 0x6b, 0x61, 0x67, 0x65, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65,
+	0x50, 0x61, 0x63, 0x6b, 0x61, 0x67, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22,
+	0x19, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x13, 0x3a, 0x01, 0x2a, 0x1a, 0x0e, 0x2f, 0x70, 0x61, 0x63,
+	0x6b, 0x61, 0x67, 0x65, 0x73, 0x2f, 0x7b, 0x69, 0x64, 0x7d, 0x42, 0x22, 0x5a, 0x20, 0x6d, 0x61,
+	0x72, 0x6b, 0x65, 0x74, 0x2e, 0x67, 0x6f, 0x72, 0x61, 0x76, 0x65, 0x6c, 0x2e, 0x64, 0x65, 0x76,
+	0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x70, 0x61, 0x63, 0x6b, 0x61, 0x67, 0x65, 0x62, 0x06,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -754,7 +959,7 @@ func file_package_package_proto_rawDescGZIP() []byte {
 	return file_package_package_proto_rawDescData
 }
 
-var file_package_package_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_package_package_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_package_package_proto_goTypes = []interface{}{
 	(*Package)(nil),               // 0: package.Package
 	(*GetPackageRequest)(nil),     // 1: package.GetPackageRequest
@@ -764,37 +969,43 @@ var file_package_package_proto_goTypes = []interface{}{
 	(*GetPackagesResponse)(nil),   // 5: package.GetPackagesResponse
 	(*CreatePackageRequest)(nil),  // 6: package.CreatePackageRequest
 	(*CreatePackageResponse)(nil), // 7: package.CreatePackageResponse
-	(*user.User)(nil),             // 8: user.User
-	(*Tag)(nil),                   // 9: package.Tag
-	(*base.Status)(nil),           // 10: base.Status
-	(*base.Pagination)(nil),       // 11: base.Pagination
-	(*GetTagsRequest)(nil),        // 12: package.GetTagsRequest
-	(*GetTagsResponse)(nil),       // 13: package.GetTagsResponse
+	(*UpdatePackageRequest)(nil),  // 8: package.UpdatePackageRequest
+	(*UpdatePackageResponse)(nil), // 9: package.UpdatePackageResponse
+	(*user.User)(nil),             // 10: user.User
+	(*Tag)(nil),                   // 11: package.Tag
+	(*base.Status)(nil),           // 12: base.Status
+	(*base.Pagination)(nil),       // 13: base.Pagination
+	(*GetTagsRequest)(nil),        // 14: package.GetTagsRequest
+	(*GetTagsResponse)(nil),       // 15: package.GetTagsResponse
 }
 var file_package_package_proto_depIdxs = []int32{
-	8,  // 0: package.Package.user:type_name -> user.User
-	9,  // 1: package.Package.tags:type_name -> package.Tag
-	10, // 2: package.GetPackageResponse.status:type_name -> base.Status
+	10, // 0: package.Package.user:type_name -> user.User
+	11, // 1: package.Package.tags:type_name -> package.Tag
+	12, // 2: package.GetPackageResponse.status:type_name -> base.Status
 	0,  // 3: package.GetPackageResponse.package:type_name -> package.Package
-	11, // 4: package.GetPackagesRequest.pagination:type_name -> base.Pagination
+	13, // 4: package.GetPackagesRequest.pagination:type_name -> base.Pagination
 	3,  // 5: package.GetPackagesRequest.query:type_name -> package.PackagesQuery
-	10, // 6: package.GetPackagesResponse.status:type_name -> base.Status
+	12, // 6: package.GetPackagesResponse.status:type_name -> base.Status
 	0,  // 7: package.GetPackagesResponse.packages:type_name -> package.Package
-	10, // 8: package.CreatePackageResponse.status:type_name -> base.Status
+	12, // 8: package.CreatePackageResponse.status:type_name -> base.Status
 	0,  // 9: package.CreatePackageResponse.package:type_name -> package.Package
-	1,  // 10: package.PackageService.GetPackage:input_type -> package.GetPackageRequest
-	12, // 11: package.PackageService.GetTags:input_type -> package.GetTagsRequest
-	4,  // 12: package.PackageService.GetPackages:input_type -> package.GetPackagesRequest
-	6,  // 13: package.PackageService.CreatePackage:input_type -> package.CreatePackageRequest
-	2,  // 14: package.PackageService.GetPackage:output_type -> package.GetPackageResponse
-	13, // 15: package.PackageService.GetTags:output_type -> package.GetTagsResponse
-	5,  // 16: package.PackageService.GetPackages:output_type -> package.GetPackagesResponse
-	7,  // 17: package.PackageService.CreatePackage:output_type -> package.CreatePackageResponse
-	14, // [14:18] is the sub-list for method output_type
-	10, // [10:14] is the sub-list for method input_type
-	10, // [10:10] is the sub-list for extension type_name
-	10, // [10:10] is the sub-list for extension extendee
-	0,  // [0:10] is the sub-list for field type_name
+	12, // 10: package.UpdatePackageResponse.status:type_name -> base.Status
+	0,  // 11: package.UpdatePackageResponse.package:type_name -> package.Package
+	1,  // 12: package.PackageService.GetPackage:input_type -> package.GetPackageRequest
+	14, // 13: package.PackageService.GetTags:input_type -> package.GetTagsRequest
+	4,  // 14: package.PackageService.GetPackages:input_type -> package.GetPackagesRequest
+	6,  // 15: package.PackageService.CreatePackage:input_type -> package.CreatePackageRequest
+	8,  // 16: package.PackageService.UpdatePackage:input_type -> package.UpdatePackageRequest
+	2,  // 17: package.PackageService.GetPackage:output_type -> package.GetPackageResponse
+	15, // 18: package.PackageService.GetTags:output_type -> package.GetTagsResponse
+	5,  // 19: package.PackageService.GetPackages:output_type -> package.GetPackagesResponse
+	7,  // 20: package.PackageService.CreatePackage:output_type -> package.CreatePackageResponse
+	9,  // 21: package.PackageService.UpdatePackage:output_type -> package.UpdatePackageResponse
+	17, // [17:22] is the sub-list for method output_type
+	12, // [12:17] is the sub-list for method input_type
+	12, // [12:12] is the sub-list for extension type_name
+	12, // [12:12] is the sub-list for extension extendee
+	0,  // [0:12] is the sub-list for field type_name
 }
 
 func init() { file_package_package_proto_init() }
@@ -900,6 +1111,30 @@ func file_package_package_proto_init() {
 				return nil
 			}
 		}
+		file_package_package_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*UpdatePackageRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_package_package_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*UpdatePackageResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -907,7 +1142,7 @@ func file_package_package_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_package_package_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   8,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
