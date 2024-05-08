@@ -14,5 +14,6 @@ func Packages() {
 	facades.Route().Get("/packages", gateway.Get)
 	facades.Route().Get("/packages/tags", gateway.Get)
 	facades.Route().Middleware(middleware.Jwt(userService)).Get("/packages/{id}", gateway.Get)
+	facades.Route().Middleware(middleware.Jwt(userService)).Put("/packages/{id}", gateway.Put)
 	facades.Route().Middleware(middleware.Jwt(userService)).Post("/packages", gateway.Post)
 }

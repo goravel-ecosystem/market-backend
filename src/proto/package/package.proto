@@ -71,6 +71,25 @@ message CreatePackageResponse {
   Package package = 2;
 }
 
+message UpdatePackageRequest {
+  // Auto-injected by the API Gateway.
+  string user_id = 1;
+  string id = 2;
+  string name = 3;
+  string cover = 4;
+  string url = 5;
+  string summary = 6;
+  string description = 7;
+  bool  is_public = 8;
+  string version = 9;
+  repeated string tags = 10;
+}
+
+message UpdatePackageResponse {
+  base.Status status = 1;
+  Package package = 2;
+}
+
 service PackageService {
   rpc GetPackage (GetPackageRequest) returns (GetPackageResponse) {
     option (google.api.http) = {
@@ -93,6 +112,13 @@ service PackageService {
   rpc CreatePackage (CreatePackageRequest) returns (CreatePackageResponse) {
     option (google.api.http) = {
       post: "/packages"
+      body: "*"
+    };
+  }
+
+  rpc UpdatePackage (UpdatePackageRequest) returns (UpdatePackageResponse) {
+    option (google.api.http) = {
+      put: "/packages/{id}"
       body: "*"
     };
   }
