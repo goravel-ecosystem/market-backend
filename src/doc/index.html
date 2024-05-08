@@ -227,6 +227,14 @@
             <ul>
               
                 <li>
+                  <a href="#package.CreatePackageRequest"><span class="badge">M</span>CreatePackageRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#package.CreatePackageResponse"><span class="badge">M</span>CreatePackageResponse</a>
+                </li>
+              
+                <li>
                   <a href="#package.GetPackageRequest"><span class="badge">M</span>GetPackageRequest</a>
                 </li>
               
@@ -497,6 +505,13 @@
                 <td><p></p></td>
               </tr>
             
+              <tr>
+                <td>CreatePackage</td>
+                <td><a href="#package.CreatePackageRequest">CreatePackageRequest</a></td>
+                <td><a href="#package.CreatePackageResponse">CreatePackageResponse</a></td>
+                <td><p></p></td>
+              </tr>
+            
           </tbody>
         </table>
 
@@ -545,11 +560,132 @@
               </tr>
               
             
+              
+              
+              <tr>
+                <td>CreatePackage</td>
+                <td>POST</td>
+                <td>/packages</td>
+                <td>*</td>
+              </tr>
+              
+            
             </tbody>
           </table>
           
         
 
+      
+        <h3 id="package.CreatePackageRequest">CreatePackageRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>user_id</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Auto-injected by the API Gateway. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>cover</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>url</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>summary</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>description</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>is_public</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>version</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>tags</td>
+                  <td><a href="#string">string</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="package.CreatePackageResponse">CreatePackageResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>status</td>
+                  <td><a href="#base.Status">base.Status</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>package</td>
+                  <td><a href="#package.Package">Package</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
       
         <h3 id="package.GetPackageRequest">GetPackageRequest</h3>
         <p></p>

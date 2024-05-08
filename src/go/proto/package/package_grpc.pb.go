@@ -19,9 +19,10 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	PackageService_GetPackage_FullMethodName  = "/package.PackageService/GetPackage"
-	PackageService_GetTags_FullMethodName     = "/package.PackageService/GetTags"
-	PackageService_GetPackages_FullMethodName = "/package.PackageService/GetPackages"
+	PackageService_GetPackage_FullMethodName    = "/package.PackageService/GetPackage"
+	PackageService_GetTags_FullMethodName       = "/package.PackageService/GetTags"
+	PackageService_GetPackages_FullMethodName   = "/package.PackageService/GetPackages"
+	PackageService_CreatePackage_FullMethodName = "/package.PackageService/CreatePackage"
 )
 
 // PackageServiceClient is the client API for PackageService service.
@@ -31,6 +32,7 @@ type PackageServiceClient interface {
 	GetPackage(ctx context.Context, in *GetPackageRequest, opts ...grpc.CallOption) (*GetPackageResponse, error)
 	GetTags(ctx context.Context, in *GetTagsRequest, opts ...grpc.CallOption) (*GetTagsResponse, error)
 	GetPackages(ctx context.Context, in *GetPackagesRequest, opts ...grpc.CallOption) (*GetPackagesResponse, error)
+	CreatePackage(ctx context.Context, in *CreatePackageRequest, opts ...grpc.CallOption) (*CreatePackageResponse, error)
 }
 
 type packageServiceClient struct {
@@ -68,6 +70,15 @@ func (c *packageServiceClient) GetPackages(ctx context.Context, in *GetPackagesR
 	return out, nil
 }
 
+func (c *packageServiceClient) CreatePackage(ctx context.Context, in *CreatePackageRequest, opts ...grpc.CallOption) (*CreatePackageResponse, error) {
+	out := new(CreatePackageResponse)
+	err := c.cc.Invoke(ctx, PackageService_CreatePackage_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PackageServiceServer is the server API for PackageService service.
 // All implementations must embed UnimplementedPackageServiceServer
 // for forward compatibility
@@ -75,6 +86,7 @@ type PackageServiceServer interface {
 	GetPackage(context.Context, *GetPackageRequest) (*GetPackageResponse, error)
 	GetTags(context.Context, *GetTagsRequest) (*GetTagsResponse, error)
 	GetPackages(context.Context, *GetPackagesRequest) (*GetPackagesResponse, error)
+	CreatePackage(context.Context, *CreatePackageRequest) (*CreatePackageResponse, error)
 	mustEmbedUnimplementedPackageServiceServer()
 }
 
@@ -90,6 +102,9 @@ func (UnimplementedPackageServiceServer) GetTags(context.Context, *GetTagsReques
 }
 func (UnimplementedPackageServiceServer) GetPackages(context.Context, *GetPackagesRequest) (*GetPackagesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPackages not implemented")
+}
+func (UnimplementedPackageServiceServer) CreatePackage(context.Context, *CreatePackageRequest) (*CreatePackageResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreatePackage not implemented")
 }
 func (UnimplementedPackageServiceServer) mustEmbedUnimplementedPackageServiceServer() {}
 
@@ -158,6 +173,24 @@ func _PackageService_GetPackages_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PackageService_CreatePackage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreatePackageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PackageServiceServer).CreatePackage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PackageService_CreatePackage_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PackageServiceServer).CreatePackage(ctx, req.(*CreatePackageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PackageService_ServiceDesc is the grpc.ServiceDesc for PackageService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -176,6 +209,10 @@ var PackageService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetPackages",
 			Handler:    _PackageService_GetPackages_Handler,
+		},
+		{
+			MethodName: "CreatePackage",
+			Handler:    _PackageService_CreatePackage_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
