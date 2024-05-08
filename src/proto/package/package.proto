@@ -92,7 +92,7 @@ service PackageService {
 
   rpc CreatePackage (CreatePackageRequest) returns (CreatePackageResponse) {
     option (google.api.http) = {
-      post: "/packages/new"
+      post: "/packages"
       body: "*"
     };
   }

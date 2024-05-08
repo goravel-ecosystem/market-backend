@@ -288,7 +288,7 @@ func RegisterPackageServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/package.PackageService/CreatePackage", runtime.WithHTTPPathPattern("/packages/new"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/package.PackageService/CreatePackage", runtime.WithHTTPPathPattern("/packages"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -418,7 +418,7 @@ func RegisterPackageServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/package.PackageService/CreatePackage", runtime.WithHTTPPathPattern("/packages/new"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/package.PackageService/CreatePackage", runtime.WithHTTPPathPattern("/packages"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -444,7 +444,7 @@ var (
 
 	pattern_PackageService_GetPackages_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"packages"}, ""))
 
-	pattern_PackageService_CreatePackage_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"packages", "new"}, ""))
+	pattern_PackageService_CreatePackage_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"packages"}, ""))
 )
 
 var (
