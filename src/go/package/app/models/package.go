@@ -23,8 +23,11 @@ type Package struct {
 	Summary       string
 	Description   string
 	Link          string
+	Cover         string
 	Version       string
 	ViewCount     uint32
+	IsPublic      int32
+	IsApproved    int32
 	LastUpdatedAt carbon.DateTime
 	Tags          []*Tag          `gorm:"many2many:package_tags;"`
 	User          *protouser.User `gorm:"-"`
@@ -52,6 +55,11 @@ func (r *Package) ToProto() *protopackage.Package {
 		tagsProto = append(tagsProto, tag.ToProto())
 	}
 
+	var isPublic bool
+	if r.IsPublic == 2 {
+		isPublic = true
+	}
+
 	return &protopackage.Package{
 		Id:            cast.ToString(r.ID),
 		UserId:        cast.ToString(r.UserID),
@@ -66,5 +74,7 @@ func (r *Package) ToProto() *protopackage.Package {
 		UpdatedAt:     r.UpdatedAt.ToString(),
 		Tags:          tagsProto,
 		User:          r.User,
+		IsPublic:      isPublic,
+		Cover:         r.Cover,
 	}
 }

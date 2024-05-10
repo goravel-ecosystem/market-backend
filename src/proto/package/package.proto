@@ -23,6 +23,8 @@ message Package {
   user.User user = 11;
   repeated Tag tags = 12;
   uint32 view_count = 13;
+  bool is_public = 14;
+  string cover = 15;
 }
 
 message GetPackageRequest {
@@ -61,7 +63,7 @@ message CreatePackageRequest {
   string url = 4;
   string summary = 5;
   string description = 6;
-  bool  is_public = 7;
+  int32  is_public = 7;
   string version = 8;
   repeated string tags = 9;
 }
@@ -80,7 +82,7 @@ message UpdatePackageRequest {
   string url = 5;
   string summary = 6;
   string description = 7;
-  bool  is_public = 8;
+  int32  is_public = 8;
   string version = 9;
   repeated string tags = 10;
 }

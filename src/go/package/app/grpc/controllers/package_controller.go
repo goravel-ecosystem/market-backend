@@ -2,9 +2,14 @@ package controllers
 
 import (
 	"context"
+	"errors"
 
+	"github.com/goravel/framework/database/orm"
 	"github.com/goravel/framework/facades"
+	"github.com/goravel/framework/support/carbon"
+	"github.com/spf13/cast"
 
+	"market.goravel.dev/package/app/models"
 	"market.goravel.dev/package/app/services"
 	protopackage "market.goravel.dev/proto/package"
 	utilserrors "market.goravel.dev/utils/errors"
@@ -23,6 +28,66 @@ func NewPackageController() *PackageController {
 		packageService: services.NewPackageImpl(),
 		tagService:     services.NewTagImpl(),
 	}
+}
+
+func (r *PackageController) CreatePackage(ctx context.Context, req *protopackage.CreatePackageRequest) (*protopackage.CreatePackageResponse, error) {
+	if err := validateCreatePackageRequest(ctx, req); err != nil {
+		return nil, err
+	}
+
+	pkg := &models.Package{
+		UserID:        cast.ToUint64(req.GetUserId()),
+		Name:          req.GetName(),
+		Summary:       req.GetSummary(),
+		Description:   req.GetDescription(),
+		Link:          req.GetUrl(),
+		Cover:         req.GetCover(),
+		Version:       req.GetVersion(),
+		IsPublic:      req.GetIsPublic(),
+		LastUpdatedAt: carbon.DateTime{Carbon: carbon.Now()},
+	}
+
+	pkg.ID = pkg.GetID()
+
+	if err := facades.Orm().Query().Create(&pkg); err != nil {
+		return nil, err
+	}
+
+	// tags
+	tags := req.GetTags()
+	var tagModels []*models.Tag
+	if len(tags) > 0 {
+		for _, tag := range tags {
+			var tagModel *models.Tag
+
+			if err := facades.Orm().Query().Where("name = ?", tag).FirstOrFail(&tagModel); err != nil {
+				if errors.Is(err, orm.ErrRecordNotFound) {
+					tagModel.Name = tag
+					tagModel.UserID = pkg.UserID
+					tagModel.IsShow = 1
+					tagModel.ID = tagModel.GetID()
+					if err := facades.Orm().Query().Create(&tagModel); err != nil {
+						return nil, err
+					}
+				} else {
+					return nil, err
+				}
+			}
+
+			tagModels = append(tagModels, tagModel)
+		}
+	}
+
+	if len(tagModels) > 0 {
+		if err := facades.Orm().Query().Model(&pkg).Association("Tags").Replace(tagModels); err != nil {
+			return nil, err
+		}
+	}
+
+	return &protopackage.CreatePackageResponse{
+		Status:  utilsresponse.NewOkStatus(),
+		Package: pkg.ToProto(),
+	}, nil
 }
 
 func (r *PackageController) GetPackage(ctx context.Context, req *protopackage.GetPackageRequest) (*protopackage.GetPackageResponse, error) {

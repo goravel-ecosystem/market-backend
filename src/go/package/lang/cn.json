@@ -1,9 +1,18 @@
 {
   "required": {
     "package_id": "PackageID 不能为空",
-    "user_id": "UserID 不能为空"
+    "user_id": "UserID 不能为空",
+    "name": "名称是必需的",
+    "url": "URL 是必需的"
   },
   "not_exist": {
     "package": "包不存在"
+  },
+  "max": {
+    "name": "名称必须少于 :max",
+    "summary": "摘要必须少于 :max",
+    "url": "URL 必须少于 :max",
+    "tags": "您只能添加 :max 个标签",
+    "description": "描述必须少于 :max"
   }
 }
