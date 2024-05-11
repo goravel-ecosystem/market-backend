@@ -66,6 +66,7 @@ message CreatePackageRequest {
   int32  is_public = 7;
   string version = 8;
   repeated string tags = 9;
+  string last_updated_at = 10;
 }
 
 message CreatePackageResponse {
@@ -85,6 +86,7 @@ message UpdatePackageRequest {
   int32  is_public = 8;
   string version = 9;
   repeated string tags = 10;
+  string last_updated_at = 11;
 }
 
 message UpdatePackageResponse {
