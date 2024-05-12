@@ -16,6 +16,32 @@ type Package struct {
 	mock.Mock
 }
 
+// CreatePackage provides a mock function with given fields: req
+func (_m *Package) CreatePackage(req *_package.CreatePackageRequest) (*models.Package, error) {
+	ret := _m.Called(req)
+
+	var r0 *models.Package
+	var r1 error
+	if rf, ok := ret.Get(0).(func(*_package.CreatePackageRequest) (*models.Package, error)); ok {
+		return rf(req)
+	}
+	if rf, ok := ret.Get(0).(func(*_package.CreatePackageRequest) *models.Package); ok {
+		r0 = rf(req)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*models.Package)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(*_package.CreatePackageRequest) error); ok {
+		r1 = rf(req)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // GetPackageByID provides a mock function with given fields: id
 func (_m *Package) GetPackageByID(id string) (*models.Package, error) {
 	ret := _m.Called(id)

@@ -5,6 +5,7 @@ import (
 
 	"github.com/goravel/framework/contracts/database/orm"
 	"github.com/goravel/framework/facades"
+	"github.com/goravel/framework/support/carbon"
 	"github.com/spf13/cast"
 
 	"market.goravel.dev/package/app/models"
@@ -15,6 +16,7 @@ import (
 )
 
 type Package interface {
+	CreatePackage(req *protopackage.CreatePackageRequest) (*models.Package, error)
 	GetPackages(query *protopackage.PackagesQuery, pagination *protobase.Pagination) ([]*models.Package, int64, error)
 	GetPackageByID(id string) (*models.Package, error)
 }
@@ -29,6 +31,69 @@ func NewPackageImpl() *PackageImpl {
 		packageModel: models.NewPackage(),
 		userService:  NewUserImpl(),
 	}
+}
+
+func (r *PackageImpl) CreatePackage(req *protopackage.CreatePackageRequest) (*models.Package, error) {
+	pkg := models.Package{
+		UserID:        cast.ToUint64(req.GetUserId()),
+		Name:          req.GetName(),
+		Summary:       req.GetSummary(),
+		Description:   req.GetDescription(),
+		Link:          req.GetUrl(),
+		Cover:         req.GetCover(),
+		Version:       req.GetVersion(),
+		IsPublic:      req.GetIsPublic(),
+		LastUpdatedAt: carbon.DateTime{Carbon: carbon.Parse(req.GetLastUpdatedAt())},
+	}
+
+	pkg.ID = pkg.GetID()
+
+	if err := facades.Orm().Query().Create(&pkg); err != nil {
+		return nil, errors.NewInternalServerError(err)
+	}
+
+	// Tags
+	tags := req.GetTags()
+	if len(tags) > 0 {
+		tagsAny := make([]any, len(tags))
+		for i, tag := range tags {
+			tagsAny[i] = tag
+		}
+		existTags := make([]*models.Tag, 0, len(tags))
+		if err := facades.Orm().Query().WhereIn("name", tagsAny).Find(&existTags); err != nil {
+			return nil, errors.NewInternalServerError(err)
+		}
+		existTagMap := make(map[string]bool, len(existTags))
+		for _, tag := range existTags {
+			existTagMap[tag.Name] = true
+		}
+
+		newTags := make([]*models.Tag, 0, len(tags))
+		for _, tag := range tags {
+			if !existTagMap[tag] {
+				newTag := models.Tag{
+					Name:   tag,
+					UserID: pkg.UserID,
+					IsShow: 1,
+				}
+				newTag.ID = newTag.GetID()
+				newTags = append(newTags, &newTag)
+			}
+		}
+
+		if len(newTags) > 0 {
+			if err := facades.Orm().Query().Create(newTags); err != nil {
+				return nil, errors.NewInternalServerError(err)
+			}
+			existTags = append(existTags, newTags...)
+		}
+
+		if err := facades.Orm().Query().Model(&pkg).Association("Tags").Replace(existTags); err != nil {
+			return nil, errors.NewInternalServerError(err)
+		}
+	}
+
+	return &pkg, nil
 }
 
 func (r *PackageImpl) GetPackages(query *protopackage.PackagesQuery, pagination *protobase.Pagination) (packages []*models.Package, total int64, err error) {
