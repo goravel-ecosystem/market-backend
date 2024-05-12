@@ -4,10 +4,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/http"
 	"testing"
 
+	"github.com/goravel/framework/database/orm"
+	mocksorm "github.com/goravel/framework/mocks/database/orm"
 	mockstranslation "github.com/goravel/framework/mocks/translation"
 	testingmock "github.com/goravel/framework/testing/mock"
+	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 
 	mocksservice "market.goravel.dev/package/app/mocks/services"
@@ -41,6 +45,316 @@ func (s *PackageControllerSuite) SetupTest() {
 	s.packageController = &PackageController{
 		packageService: s.mockPackageService,
 		tagService:     s.mockTagService,
+	}
+}
+
+func (s *PackageControllerSuite) TestCreatePackage() {
+	var (
+		name   = "goravel"
+		url    = "https://goravel.dev"
+		userID = uint64(1)
+
+		pkg = models.Package{
+			UUIDModel: models.UUIDModel{
+				ID: 1,
+			},
+			Name:   name,
+			UserID: userID,
+			Link:   url,
+		}
+
+		tags = []*models.Tag{
+			{
+				UUIDModel: models.UUIDModel{
+					ID: 1,
+				},
+				Name:   "goravel",
+				UserID: userID,
+			},
+		}
+		mockOrm            *mocksorm.Orm
+		mockOrmQuery       *mocksorm.Query
+		mockOrmAssociation *mocksorm.Association
+		mockLang           *mockstranslation.Translator
+	)
+
+	beforeEach := func() {
+		mockFactory := testingmock.Factory()
+		mockOrm = mockFactory.Orm()
+		mockFactory.Log()
+		mockOrmQuery = mockFactory.OrmQuery()
+		mockOrmAssociation = mockFactory.OrmAssociation()
+		mockLang = mockFactory.Lang(s.ctx)
+		mockOrm.On("Query").Return(mockOrmQuery).Once()
+	}
+
+	tests := []struct {
+		name             string
+		request          *protopackage.CreatePackageRequest
+		setup            func()
+		expectedResponse *protopackage.CreatePackageResponse
+		expectedErr      error
+	}{
+		{
+			name: "Happy path",
+			request: &protopackage.CreatePackageRequest{
+				UserId: fmt.Sprint(userID),
+				Name:   name,
+				Url:    url,
+			},
+			setup: func() {
+				beforeEach()
+				mockOrmQuery.On("Create", mock.MatchedBy(func(pkg *models.Package) bool {
+					if pkg.ID == 0 {
+						return false
+					}
+					pkg.ID = 1
+					return pkg.Name == name && pkg.UserID == userID && pkg.Link == url
+				})).Return(nil).Once()
+			},
+			expectedResponse: &protopackage.CreatePackageResponse{
+				Status:  utilsresponse.NewOkStatus(),
+				Package: pkg.ToProto(),
+			},
+		},
+		{
+			name: "Sad path - Create returns error",
+			request: &protopackage.CreatePackageRequest{
+				UserId: fmt.Sprint(userID),
+				Name:   name,
+				Url:    url,
+			},
+			setup: func() {
+				beforeEach()
+				mockOrmQuery.On("Create", mock.MatchedBy(func(pkg *models.Package) bool {
+					if pkg.ID == 0 {
+						return false
+					}
+					pkg.ID = 1
+					return pkg.Name == name && pkg.UserID == userID && pkg.Link == url
+				})).Return(errors.New("error")).Once()
+			},
+			expectedErr: utilserrors.New(http.StatusInternalServerError, "error"),
+		},
+		{
+			name: "Sad path - Create package with tags",
+			request: &protopackage.CreatePackageRequest{
+				UserId: fmt.Sprint(userID),
+				Name:   name,
+				Url:    url,
+				Tags:   []string{"goravel"},
+			},
+			setup: func() {
+				beforeEach()
+				mockOrmQuery.On("Create", mock.MatchedBy(func(pkg *models.Package) bool {
+					if pkg.ID == 0 {
+						return false
+					}
+					pkg.ID = 1
+					return pkg.Name == name && pkg.UserID == userID && pkg.Link == url
+				})).Return(nil).Once()
+				mockOrm.On("Query").Return(mockOrmQuery).Once()
+				mockOrmQuery.On("Where", "name = ?", "goravel").Return(mockOrmQuery).Once()
+				mockOrmQuery.On("FirstOrFail", mock.AnythingOfType("*models.Tag")).
+					Return(nil).
+					Run(func(args mock.Arguments) {
+						tagPtr := args.Get(0).(*models.Tag)
+						*tagPtr = models.Tag{UUIDModel: models.UUIDModel{ID: 1}, Name: "goravel", UserID: userID}
+					}).Once()
+
+				mockOrm.On("Query").Return(mockOrmQuery).Once()
+				mockOrmQuery.On("Model", mock.AnythingOfType("*models.Package")).Return(mockOrmQuery).
+					Run(func(args mock.Arguments) {
+						packagePtr := args.Get(0).(*models.Package)
+						packagePtr.Tags = tags
+					}).Once()
+				mockOrmQuery.On("Association", "Tags").Return(mockOrmAssociation).Once()
+				mockOrmAssociation.On("Replace", mock.MatchedBy(func(tags []*models.Tag) bool {
+					return len(tags) == 1 && tags[0].Name == "goravel"
+				})).Return(nil).Once()
+			},
+			expectedResponse: &protopackage.CreatePackageResponse{
+				Status: utilsresponse.NewOkStatus(),
+				Package: &protopackage.Package{
+					Id:     "1",
+					UserId: fmt.Sprint(userID),
+					Name:   name,
+					Link:   url,
+					Tags: []*protopackage.Tag{
+						tags[0].ToProto(),
+					},
+				},
+			},
+		},
+		{
+			name: "Sad path - Tags association error",
+			request: &protopackage.CreatePackageRequest{
+				UserId: fmt.Sprint(userID),
+				Name:   name,
+				Url:    url,
+				Tags:   []string{"goravel"},
+			},
+			setup: func() {
+				beforeEach()
+				mockOrmQuery.On("Create", mock.MatchedBy(func(pkg *models.Package) bool {
+					if pkg.ID == 0 {
+						return false
+					}
+					pkg.ID = 1
+					return pkg.Name == name && pkg.UserID == userID && pkg.Link == url
+				})).Return(nil).Once()
+				mockOrm.On("Query").Return(mockOrmQuery).Once()
+				mockOrmQuery.On("Where", "name = ?", "goravel").Return(mockOrmQuery).Once()
+				mockOrmQuery.On("FirstOrFail", mock.AnythingOfType("*models.Tag")).
+					Return(nil).
+					Run(func(args mock.Arguments) {
+						tagPtr := args.Get(0).(*models.Tag)
+						*tagPtr = models.Tag{UUIDModel: models.UUIDModel{ID: 1}, Name: "goravel", UserID: userID}
+					}).Once()
+				mockOrmQuery.On("Create", mock.MatchedBy(func(tag *models.Tag) bool {
+					return tag.ID > 0 && tag.Name == "goravel" && tag.UserID == userID
+				})).Return(nil).Once()
+
+				mockOrm.On("Query").Return(mockOrmQuery).Once()
+				mockOrmQuery.On("Model", mock.AnythingOfType("*models.Package")).Return(mockOrmQuery).Once()
+				mockOrmQuery.On("Association", "Tags").Return(mockOrmAssociation).Once()
+				mockOrmAssociation.On("Replace", mock.MatchedBy(func(tags []*models.Tag) bool {
+					return len(tags) == 1 && tags[0].Name == "goravel"
+				})).Return(errors.New("error")).Once()
+			},
+			expectedErr: utilserrors.New(http.StatusInternalServerError, "error"),
+		},
+		{
+			name: "Sad path - Find tag error",
+			request: &protopackage.CreatePackageRequest{
+				UserId: fmt.Sprint(userID),
+				Name:   name,
+				Url:    url,
+				Tags:   []string{"goravel"},
+			},
+			setup: func() {
+				beforeEach()
+				mockOrmQuery.On("Create", mock.MatchedBy(func(pkg *models.Package) bool {
+					if pkg.ID == 0 {
+						return false
+					}
+					pkg.ID = 1
+					return pkg.Name == name && pkg.UserID == userID && pkg.Link == url
+				})).Return(nil).Once()
+				mockOrm.On("Query").Return(mockOrmQuery).Once()
+				mockOrmQuery.On("Where", "name = ?", "goravel").Return(mockOrmQuery).Once()
+				mockOrmQuery.On("FirstOrFail", mock.AnythingOfType("*models.Tag")).
+					Return(errors.New("error")).Once()
+			},
+			expectedErr: utilserrors.New(http.StatusInternalServerError, "error"),
+		},
+		{
+			name: "Happy path - Tags does not exist",
+			request: &protopackage.CreatePackageRequest{
+				UserId: fmt.Sprint(userID),
+				Name:   name,
+				Url:    url,
+				Tags:   []string{"goravel"},
+			},
+			setup: func() {
+				beforeEach()
+				mockOrmQuery.On("Create", mock.MatchedBy(func(pkg *models.Package) bool {
+					if pkg.ID == 0 {
+						return false
+					}
+					pkg.ID = 1
+					return pkg.Name == name && pkg.UserID == userID && pkg.Link == url
+				})).Return(nil).Once()
+				mockOrm.On("Query").Return(mockOrmQuery).Twice()
+				mockOrmQuery.On("Where", "name = ?", "goravel").Return(mockOrmQuery).Once()
+				mockOrmQuery.On("FirstOrFail", mock.AnythingOfType("*models.Tag")).
+					Return(orm.ErrRecordNotFound).Once()
+				mockOrmQuery.On("Create", mock.MatchedBy(func(tag *models.Tag) bool {
+					return tag.ID > 0 && tag.Name == "goravel" && tag.UserID == userID
+				})).Return(nil).
+					Run(func(args mock.Arguments) {
+						tagPtr := args.Get(0).(*models.Tag)
+						*tagPtr = models.Tag{UUIDModel: models.UUIDModel{ID: 1}, Name: "goravel", UserID: userID}
+					}).Once()
+
+				mockOrm.On("Query").Return(mockOrmQuery).Once()
+				mockOrmQuery.On("Model", mock.AnythingOfType("*models.Package")).Return(mockOrmQuery).
+					Run(func(args mock.Arguments) {
+						packagePtr := args.Get(0).(*models.Package)
+						packagePtr.Tags = tags
+					}).Once()
+				mockOrmQuery.On("Association", "Tags").Return(mockOrmAssociation).Once()
+				mockOrmAssociation.On("Replace", mock.MatchedBy(func(tags []*models.Tag) bool {
+					return len(tags) == 1 && tags[0].Name == "goravel"
+				})).Return(nil).Once()
+			},
+			expectedResponse: &protopackage.CreatePackageResponse{
+				Status: utilsresponse.NewOkStatus(),
+				Package: &protopackage.Package{
+					Id:     "1",
+					UserId: fmt.Sprint(userID),
+					Name:   name,
+					Link:   url,
+					Tags: []*protopackage.Tag{
+						tags[0].ToProto(),
+					},
+				},
+			},
+		},
+		{
+			name: "Sad path - Create Tag error",
+			request: &protopackage.CreatePackageRequest{
+				UserId: fmt.Sprint(userID),
+				Name:   name,
+				Url:    url,
+				Tags:   []string{"goravel"},
+			},
+			setup: func() {
+				beforeEach()
+				mockOrmQuery.On("Create", mock.MatchedBy(func(pkg *models.Package) bool {
+					if pkg.ID == 0 {
+						return false
+					}
+					pkg.ID = 1
+					return pkg.Name == name && pkg.UserID == userID && pkg.Link == url
+				})).Return(nil).Once()
+				mockOrm.On("Query").Return(mockOrmQuery).Twice()
+				mockOrmQuery.On("Where", "name = ?", "goravel").Return(mockOrmQuery).Once()
+				mockOrmQuery.On("FirstOrFail", mock.AnythingOfType("*models.Tag")).
+					Return(orm.ErrRecordNotFound).Once()
+				mockOrmQuery.On("Create", mock.MatchedBy(func(tag *models.Tag) bool {
+					return tag.ID > 0 && tag.Name == "goravel" && tag.UserID == userID
+				})).Return(errors.New("error")).Once()
+			},
+			expectedErr: utilserrors.New(http.StatusInternalServerError, "error"),
+		},
+		{
+			name: "Sad path - Request validation error",
+			request: &protopackage.CreatePackageRequest{
+				UserId: fmt.Sprint(userID),
+				Name:   "",
+				Url:    url,
+				Tags:   []string{"goravel"},
+			},
+			setup: func() {
+				beforeEach()
+				mockLang.On("Get", "required.name").Return("Name is required").Once()
+			},
+			expectedErr: utilserrors.NewBadRequest("Name is required"),
+		},
+	}
+
+	for _, test := range tests {
+		s.Run(test.name, func() {
+			test.setup()
+			response, err := s.packageController.CreatePackage(s.ctx, test.request)
+			s.Equal(test.expectedResponse, response)
+			s.Equal(test.expectedErr, err)
+
+			s.mockLang.AssertExpectations(s.T())
+			s.mockPackageService.AssertExpectations(s.T())
+			s.mockTagService.AssertExpectations(s.T())
+		})
 	}
 }
 

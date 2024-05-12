@@ -35,7 +35,7 @@ func (r *PackageController) CreatePackage(ctx context.Context, req *protopackage
 		return nil, err
 	}
 
-	pkg := &models.Package{
+	pkg := models.Package{
 		UserID:        cast.ToUint64(req.GetUserId()),
 		Name:          req.GetName(),
 		Summary:       req.GetSummary(),
@@ -44,13 +44,13 @@ func (r *PackageController) CreatePackage(ctx context.Context, req *protopackage
 		Cover:         req.GetCover(),
 		Version:       req.GetVersion(),
 		IsPublic:      req.GetIsPublic(),
-		LastUpdatedAt: carbon.DateTime{Carbon: carbon.Now()},
+		LastUpdatedAt: carbon.DateTime{Carbon: carbon.ParseByFormat(req.GetLastUpdatedAt(), "2020-01-01 00:00:00")},
 	}
 
 	pkg.ID = pkg.GetID()
 
 	if err := facades.Orm().Query().Create(&pkg); err != nil {
-		return nil, err
+		return nil, utilserrors.NewInternalServerError(err)
 	}
 
 	// tags
@@ -58,7 +58,7 @@ func (r *PackageController) CreatePackage(ctx context.Context, req *protopackage
 	var tagModels []*models.Tag
 	if len(tags) > 0 {
 		for _, tag := range tags {
-			var tagModel *models.Tag
+			var tagModel models.Tag
 
 			if err := facades.Orm().Query().Where("name = ?", tag).FirstOrFail(&tagModel); err != nil {
 				if errors.Is(err, orm.ErrRecordNotFound) {
@@ -67,20 +67,20 @@ func (r *PackageController) CreatePackage(ctx context.Context, req *protopackage
 					tagModel.IsShow = 1
 					tagModel.ID = tagModel.GetID()
 					if err := facades.Orm().Query().Create(&tagModel); err != nil {
-						return nil, err
+						return nil, utilserrors.NewInternalServerError(err)
 					}
 				} else {
-					return nil, err
+					return nil, utilserrors.NewInternalServerError(err)
 				}
 			}
 
-			tagModels = append(tagModels, tagModel)
+			tagModels = append(tagModels, &tagModel)
 		}
 	}
 
 	if len(tagModels) > 0 {
 		if err := facades.Orm().Query().Model(&pkg).Association("Tags").Replace(tagModels); err != nil {
-			return nil, err
+			return nil, utilserrors.NewInternalServerError(err)
 		}
 	}
 
