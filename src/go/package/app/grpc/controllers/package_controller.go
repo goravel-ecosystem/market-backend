@@ -2,9 +2,7 @@ package controllers
 
 import (
 	"context"
-	"errors"
 
-	"github.com/goravel/framework/database/orm"
 	"github.com/goravel/framework/facades"
 	"github.com/goravel/framework/support/carbon"
 	"github.com/spf13/cast"
@@ -53,33 +51,42 @@ func (r *PackageController) CreatePackage(ctx context.Context, req *protopackage
 		return nil, utilserrors.NewInternalServerError(err)
 	}
 
-	// tags
+	// Tags
 	tags := req.GetTags()
-	var tagModels []*models.Tag
 	if len(tags) > 0 {
-		for _, tag := range tags {
-			var tagModel models.Tag
-
-			if err := facades.Orm().Query().Where("name = ?", tag).FirstOrFail(&tagModel); err != nil {
-				if errors.Is(err, orm.ErrRecordNotFound) {
-					tagModel.Name = tag
-					tagModel.UserID = pkg.UserID
-					tagModel.IsShow = 1
-					tagModel.ID = tagModel.GetID()
-					if err := facades.Orm().Query().Create(&tagModel); err != nil {
-						return nil, utilserrors.NewInternalServerError(err)
-					}
-				} else {
-					return nil, utilserrors.NewInternalServerError(err)
-				}
-			}
-
-			tagModels = append(tagModels, &tagModel)
+		tagsAny := make([]any, len(tags))
+		for i, tag := range tags {
+			tagsAny[i] = tag
 		}
-	}
+		existTags := make([]*models.Tag, 0, len(tags))
+		if err := facades.Orm().Query().WhereIn("name", tagsAny).Find(&existTags); err != nil {
+			return nil, utilserrors.NewInternalServerError(err)
+		}
+		existTagMap := make(map[string]bool, len(existTags))
+		for _, tag := range existTags {
+			existTagMap[tag.Name] = true
+		}
 
-	if len(tagModels) > 0 {
-		if err := facades.Orm().Query().Model(&pkg).Association("Tags").Replace(tagModels); err != nil {
+		newTags := make([]*models.Tag, 0, len(tags))
+		for _, tag := range tags {
+			if !existTagMap[tag] {
+				newTag := models.Tag{
+					Name:   tag,
+					UserID: pkg.UserID,
+				}
+				newTag.ID = newTag.GetID()
+				newTags = append(newTags, &newTag)
+			}
+		}
+
+		if len(newTags) > 0 {
+			if err := facades.Orm().Query().Create(newTags); err != nil {
+				return nil, utilserrors.NewInternalServerError(err)
+			}
+			existTags = append(existTags, newTags...)
+		}
+
+		if err := facades.Orm().Query().Model(&pkg).Association("Tags").Replace(existTags); err != nil {
 			return nil, utilserrors.NewInternalServerError(err)
 		}
 	}
