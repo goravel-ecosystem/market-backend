@@ -44,7 +44,7 @@ func (r *PackageController) CreatePackage(ctx context.Context, req *protopackage
 		Cover:         req.GetCover(),
 		Version:       req.GetVersion(),
 		IsPublic:      req.GetIsPublic(),
-		LastUpdatedAt: carbon.DateTime{Carbon: carbon.ParseByFormat(req.GetLastUpdatedAt(), "2020-01-01 00:00:00")},
+		LastUpdatedAt: carbon.DateTime{Carbon: carbon.Parse(req.GetLastUpdatedAt())},
 	}
 
 	pkg.ID = pkg.GetID()
