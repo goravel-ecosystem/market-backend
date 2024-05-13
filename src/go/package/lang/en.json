@@ -3,7 +3,8 @@
     "user_id": "UserID is required",
     "package_id": "PackageID is required",
     "name": "Name is required",
-    "url": "URL is required"
+    "url": "URL is required",
+    "id": "ID is required"
   },
   "not_exist": {
     "package": "Package not found"
@@ -14,5 +15,8 @@
     "url": "URL must be less than :max",
     "tags": "You can only add :max tags",
     "description": "Description must be less than :max"
+  },
+  "forbidden": {
+    "update_package": "You can't update this package"
   }
 }

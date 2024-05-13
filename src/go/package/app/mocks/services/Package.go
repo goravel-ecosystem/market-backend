@@ -6,6 +6,8 @@ import (
 	base "market.goravel.dev/proto/base"
 	_package "market.goravel.dev/proto/package"
 
+	context "context"
+
 	mock "github.com/stretchr/testify/mock"
 
 	models "market.goravel.dev/package/app/models"
@@ -99,6 +101,32 @@ func (_m *Package) GetPackages(query *_package.PackagesQuery, pagination *base.P
 	}
 
 	return r0, r1, r2
+}
+
+// UpdatePackage provides a mock function with given fields: ctx, req
+func (_m *Package) UpdatePackage(ctx context.Context, req *_package.UpdatePackageRequest) (*models.Package, error) {
+	ret := _m.Called(ctx, req)
+
+	var r0 *models.Package
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, *_package.UpdatePackageRequest) (*models.Package, error)); ok {
+		return rf(ctx, req)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, *_package.UpdatePackageRequest) *models.Package); ok {
+		r0 = rf(ctx, req)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*models.Package)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, *_package.UpdatePackageRequest) error); ok {
+		r1 = rf(ctx, req)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // NewPackage creates a new instance of Package. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.

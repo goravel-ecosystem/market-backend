@@ -19,6 +19,7 @@ type Package interface {
 	CreatePackage(req *protopackage.CreatePackageRequest) (*models.Package, error)
 	GetPackages(query *protopackage.PackagesQuery, pagination *protobase.Pagination) ([]*models.Package, int64, error)
 	GetPackageByID(id string) (*models.Package, error)
+	UpdatePackage(ctx context.Context, req *protopackage.UpdatePackageRequest) (*models.Package, error)
 }
 
 type PackageImpl struct {
@@ -168,6 +169,44 @@ func (r *PackageImpl) GetPackageByID(id string) (pkg *models.Package, err error)
 		user, err := r.userService.GetUser(context.Background(), pkg.UserID)
 		pkg.User = user
 		if err != nil {
+			return nil, err
+		}
+	}
+
+	return pkg, nil
+}
+
+func (r *PackageImpl) UpdatePackage(ctx context.Context, req *protopackage.UpdatePackageRequest) (*models.Package, error) {
+	pkg, err := r.packageModel.GetPackageByID(req.GetId(), []string{})
+	if err != nil {
+		return nil, err
+	}
+
+	if pkg.ID == 0 {
+		return nil, errors.NewNotFound(facades.Lang(ctx).Get("not_exist.package"))
+	}
+
+	if pkg.UserID != cast.ToUint64(req.GetUserId()) {
+		return nil, errors.NewUnauthorized(facades.Lang(ctx).Get("forbidden.update_package"))
+	}
+
+	pkg.Name = req.GetName()
+	pkg.Summary = req.GetSummary()
+	pkg.Description = req.GetDescription()
+	pkg.Link = req.GetUrl()
+	pkg.Cover = req.GetCover()
+	pkg.Version = req.GetVersion()
+	pkg.IsPublic = req.GetIsPublic()
+	pkg.LastUpdatedAt = carbon.DateTime{Carbon: carbon.Parse(req.GetLastUpdatedAt())}
+
+	if err := r.packageModel.UpdatePackage(pkg); err != nil {
+		return nil, err
+	}
+
+	// Tags
+	tags := req.GetTags()
+	if len(tags) > 0 {
+		if err := r.packageModel.AttachTags(pkg, tags); err != nil {
 			return nil, err
 		}
 	}

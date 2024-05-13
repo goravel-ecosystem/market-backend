@@ -29,6 +29,168 @@ func (s *PackageSuite) SetupTest() {
 	s.pkg = NewPackage()
 }
 
+func (s *PackageSuite) TestAttachTags() {
+	var (
+		tags   = []string{"goravel"}
+		name   = "goravel"
+		url    = "https://goravel.dev"
+		userID = uint64(1)
+
+		pkg = Package{
+			UUIDModel: UUIDModel{
+				ID: 1,
+			},
+			Name:   name,
+			UserID: userID,
+			Link:   url,
+		}
+
+		tagModels = []*Tag{
+			{
+				UUIDModel: UUIDModel{
+					ID: 1,
+				},
+				Name:   "goravel",
+				UserID: userID,
+			},
+		}
+		mockOrm            *mocksorm.Orm
+		mockOrmQuery       *mocksorm.Query
+		mockOrmAssociation *mocksorm.Association
+	)
+
+	beforeSetup := func() {
+		mockFactory := testingmock.Factory()
+		mockOrm = mockFactory.Orm()
+		mockOrmQuery = mockFactory.OrmQuery()
+		mockFactory.Log()
+		mockOrmAssociation = mockFactory.OrmAssociation()
+		mockOrm.On("Query").Return(mockOrmQuery).Once()
+	}
+
+	tests := []struct {
+		name        string
+		setup       func()
+		expectedErr error
+	}{
+		{
+			name: "Happy path - Create package with tags",
+			setup: func() {
+				beforeSetup()
+				mockOrm.On("Query").Return(mockOrmQuery).Once()
+				mockOrmQuery.On("WhereIn", "name", []any{"goravel"}).Return(mockOrmQuery).Once()
+				mockOrmQuery.On("Find", mock.AnythingOfType("*[]*models.Tag")).
+					Return(nil).
+					Run(func(args mock.Arguments) {
+						tagPtr := args.Get(0).(*[]*Tag)
+						*tagPtr = []*Tag{{UUIDModel: UUIDModel{ID: 1}, Name: "goravel", UserID: userID}}
+					}).Once()
+
+				mockOrmQuery.On("Model", mock.AnythingOfType("*models.Package")).Return(mockOrmQuery).
+					Run(func(args mock.Arguments) {
+						packagePtr := args.Get(0).(*Package)
+						packagePtr.Tags = tagModels
+					}).Once()
+				mockOrmQuery.On("Association", "Tags").Return(mockOrmAssociation).Once()
+				mockOrmAssociation.On("Replace", mock.MatchedBy(func(tags []*Tag) bool {
+					return len(tags) == 1 && tags[0].Name == "goravel"
+				})).Return(nil).Once()
+			},
+		},
+		{
+			name: "Sad path - Tags association error",
+			setup: func() {
+				beforeSetup()
+				mockOrm.On("Query").Return(mockOrmQuery).Once()
+				mockOrmQuery.On("WhereIn", "name", []any{"goravel"}).Return(mockOrmQuery).Once()
+				mockOrmQuery.On("Find", mock.AnythingOfType("*[]*models.Tag")).
+					Return(nil).
+					Run(func(args mock.Arguments) {
+						tagPtr := args.Get(0).(*[]*Tag)
+						*tagPtr = []*Tag{{UUIDModel: UUIDModel{ID: 1}, Name: "goravel", UserID: userID}}
+					}).Once()
+
+				mockOrmQuery.On("Model", mock.AnythingOfType("*models.Package")).Return(mockOrmQuery).
+					Run(func(args mock.Arguments) {
+						packagePtr := args.Get(0).(*Package)
+						packagePtr.Tags = tagModels
+					}).Once()
+				mockOrmQuery.On("Association", "Tags").Return(mockOrmAssociation).Once()
+				mockOrmAssociation.On("Replace", mock.MatchedBy(func(tags []*Tag) bool {
+					return len(tags) == 1 && tags[0].Name == "goravel"
+				})).Return(errors.New("error")).Once()
+			},
+			expectedErr: utilserrors.New(http.StatusInternalServerError, "error"),
+		},
+		{
+			name: "Sad path - Find tag error",
+			setup: func() {
+				beforeSetup()
+				mockOrmQuery.On("WhereIn", "name", []any{"goravel"}).Return(mockOrmQuery).Once()
+				mockOrmQuery.On("Find", mock.AnythingOfType("*[]*models.Tag")).
+					Return(errors.New("error")).Once()
+			},
+			expectedErr: utilserrors.New(http.StatusInternalServerError, "error"),
+		},
+		{
+			name: "Happy path - Tags do not exist",
+			setup: func() {
+				beforeSetup()
+				mockOrm.On("Query").Return(mockOrmQuery).Twice()
+				mockOrmQuery.On("WhereIn", "name", []any{"goravel"}).Return(mockOrmQuery).Once()
+				mockOrmQuery.On("Find", mock.AnythingOfType("*[]*models.Tag")).
+					Return(nil).Once()
+
+				mockOrmQuery.On("Create", mock.MatchedBy(func(tags []*Tag) bool {
+					return len(tags) == 1 && tags[0].Name == "goravel" && tags[0].UserID == userID && tags[0].IsShow == 1
+				})).Return(nil).
+					Run(func(args mock.Arguments) {
+						tagPtr := args.Get(0).([]*Tag)
+						tagPtr[0] = &Tag{UUIDModel: UUIDModel{ID: 1}, Name: "goravel", UserID: userID}
+					}).Once()
+
+				mockOrmQuery.On("Model", mock.AnythingOfType("*models.Package")).Return(mockOrmQuery).
+					Run(func(args mock.Arguments) {
+						packagePtr := args.Get(0).(*Package)
+						packagePtr.Tags = tagModels
+					}).Once()
+				mockOrmQuery.On("Association", "Tags").Return(mockOrmAssociation).Once()
+				mockOrmAssociation.On("Replace", mock.MatchedBy(func(tags []*Tag) bool {
+					return len(tags) == 1 && tags[0].Name == "goravel"
+				})).Return(nil).Once()
+			},
+		},
+		{
+			name: "Sad path - Create Tag error",
+			setup: func() {
+				beforeSetup()
+				mockOrm.On("Query").Return(mockOrmQuery).Once()
+				mockOrmQuery.On("WhereIn", "name", []any{"goravel"}).Return(mockOrmQuery).Once()
+				mockOrmQuery.On("Find", mock.AnythingOfType("*[]*models.Tag")).
+					Return(nil).Once()
+
+				mockOrmQuery.On("Create", mock.MatchedBy(func(tags []*Tag) bool {
+					return len(tags) == 1 && tags[0].Name == "goravel" && tags[0].UserID == userID && tags[0].IsShow == 1
+				})).Return(errors.New("error")).Once()
+			},
+			expectedErr: utilserrors.New(http.StatusInternalServerError, "error"),
+		},
+	}
+
+	for _, test := range tests {
+		s.Run(test.name, func() {
+			beforeSetup()
+			test.setup()
+			err := s.pkg.AttachTags(&pkg, tags)
+			s.Equal(test.expectedErr, err)
+
+			mockOrm.AssertExpectations(s.T())
+			mockOrmQuery.AssertExpectations(s.T())
+			mockOrmAssociation.AssertExpectations(s.T())
+		})
+	}
+}
+
 func (s *PackageSuite) TestGetPackageByID() {
 	var (
 		id     = "1"
@@ -148,4 +310,72 @@ func (s *PackageSuite) TestToProto() {
 		UpdatedAt:     updatedAt.ToString(),
 		Tags:          []*protopackage.Tag{},
 	}, pack.ToProto())
+}
+
+func (s *PackageSuite) TestUpdatePackage() {
+	var (
+		name   = "goravel"
+		url    = "https://goravel.dev"
+		userID = uint64(1)
+
+		pkg = Package{
+			UUIDModel: UUIDModel{
+				ID: 1,
+			},
+			Name:   name,
+			UserID: userID,
+			Link:   url,
+		}
+
+		mockOrm      *mocksorm.Orm
+		mockOrmQuery *mocksorm.Query
+	)
+
+	beforeSetup := func() {
+		mockFactory := testingmock.Factory()
+		mockOrm = mockFactory.Orm()
+		mockOrmQuery = mockFactory.OrmQuery()
+		mockFactory.Log()
+		mockOrm.On("Query").Return(mockOrmQuery).Once()
+	}
+
+	tests := []struct {
+		name        string
+		setup       func()
+		expectedErr error
+	}{
+		{
+			name: "Happy path",
+			setup: func() {
+				beforeSetup()
+				mockOrmQuery.On("Save", mock.MatchedBy(func(pkg *Package) bool {
+					return pkg.Name == name && pkg.Link == url && pkg.UserID == userID
+				})).Return(nil).Once()
+			},
+			expectedErr: nil,
+		},
+		{
+			name: "Sad path - save package error",
+			setup: func() {
+				beforeSetup()
+				mockOrmQuery.On("Save", mock.MatchedBy(func(pkg *Package) bool {
+					return pkg.Name == name && pkg.Link == url && pkg.UserID == userID
+				})).Return(errors.New("error")).Once()
+			},
+			expectedErr: utilserrors.New(http.StatusInternalServerError, "error"),
+		},
+	}
+
+	for _, test := range tests {
+		s.Run(test.name, func() {
+			beforeSetup()
+			test.setup()
+			err := s.pkg.UpdatePackage(&pkg)
+
+			s.Equal(test.expectedErr, err)
+
+			mockOrm.AssertExpectations(s.T())
+			mockOrmQuery.AssertExpectations(s.T())
+		})
+	}
 }

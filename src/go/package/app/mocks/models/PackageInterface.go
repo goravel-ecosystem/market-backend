@@ -12,6 +12,20 @@ type PackageInterface struct {
 	mock.Mock
 }
 
+// AttachTags provides a mock function with given fields: pkg, tags
+func (_m *PackageInterface) AttachTags(pkg *models.Package, tags []string) error {
+	ret := _m.Called(pkg, tags)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(*models.Package, []string) error); ok {
+		r0 = rf(pkg, tags)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // GetPackageByID provides a mock function with given fields: id, fields
 func (_m *PackageInterface) GetPackageByID(id string, fields []string) (*models.Package, error) {
 	ret := _m.Called(id, fields)
@@ -36,6 +50,20 @@ func (_m *PackageInterface) GetPackageByID(id string, fields []string) (*models.
 	}
 
 	return r0, r1
+}
+
+// UpdatePackage provides a mock function with given fields: pkg
+func (_m *PackageInterface) UpdatePackage(pkg *models.Package) error {
+	ret := _m.Called(pkg)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(*models.Package) error); ok {
+		r0 = rf(pkg)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
 }
 
 // NewPackageInterface creates a new instance of PackageInterface. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.

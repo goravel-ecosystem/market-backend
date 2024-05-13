@@ -13,7 +13,9 @@ import (
 )
 
 type PackageInterface interface {
+	AttachTags(pkg *Package, tags []string) error
 	GetPackageByID(id string, fields []string) (*Package, error)
+	UpdatePackage(pkg *Package) error
 }
 
 type Package struct {
@@ -38,11 +40,59 @@ func NewPackage() *Package {
 	return &Package{}
 }
 
+func (r *Package) AttachTags(pkg *Package, tags []string) error {
+	tagsAny := make([]any, len(tags))
+	for i, tag := range tags {
+		tagsAny[i] = tag
+	}
+	existTags := make([]*Tag, 0, len(tags))
+	if err := facades.Orm().Query().WhereIn("name", tagsAny).Find(&existTags); err != nil {
+		return errors.NewInternalServerError(err)
+	}
+	existTagMap := make(map[string]bool, len(existTags))
+	for _, tag := range existTags {
+		existTagMap[tag.Name] = true
+	}
+
+	newTags := make([]*Tag, 0, len(tags))
+	for _, tag := range tags {
+		if !existTagMap[tag] {
+			newTag := Tag{
+				Name:   tag,
+				UserID: pkg.UserID,
+				IsShow: 1,
+			}
+			newTag.ID = newTag.GetID()
+			newTags = append(newTags, &newTag)
+		}
+	}
+
+	if len(newTags) > 0 {
+		if err := facades.Orm().Query().Create(newTags); err != nil {
+			return errors.NewInternalServerError(err)
+		}
+		existTags = append(existTags, newTags...)
+	}
+
+	if err := facades.Orm().Query().Model(pkg).Association("Tags").Replace(existTags); err != nil {
+		return errors.NewInternalServerError(err)
+	}
+
+	return nil
+}
+
 func (r *Package) GetPackageByID(id string, fields []string) (*Package, error) {
 	var packageModel Package
-	if err := facades.Orm().Query().Where("id", id).With("Tags", func(query contractsorm.Query) contractsorm.Query {
+
+	query := facades.Orm().Query().Where("id", id).With("Tags", func(query contractsorm.Query) contractsorm.Query {
 		return query.Where("is_show = ?", "1").Select([]string{"id", "name"})
-	}).Select(fields).First(&packageModel); err != nil {
+	})
+
+	if len(fields) > 0 {
+		query = query.Select(fields)
+	}
+
+	if err := query.First(&packageModel); err != nil {
 		return nil, errors.NewInternalServerError(err)
 	}
 
@@ -77,4 +127,12 @@ func (r *Package) ToProto() *protopackage.Package {
 		IsPublic:      isPublic,
 		Cover:         r.Cover,
 	}
+}
+
+func (r *Package) UpdatePackage(pkg *Package) error {
+	if err := facades.Orm().Query().Save(pkg); err != nil {
+		return errors.NewInternalServerError(err)
+	}
+
+	return nil
 }

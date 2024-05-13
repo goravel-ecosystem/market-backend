@@ -41,6 +41,10 @@ func NewBadRequest(message string) error {
 	return New(http.StatusBadRequest, message)
 }
 
+func NewUnauthorized(message string) ErrorWithCode {
+	return New(http.StatusUnauthorized, message)
+}
+
 func NewNotFound(message string) ErrorWithCode {
 	return New(http.StatusNotFound, message)
 }

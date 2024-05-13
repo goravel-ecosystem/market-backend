@@ -520,3 +520,93 @@ func (s *PackageControllerSuite) TestGetTags() {
 		})
 	}
 }
+
+func (s *PackageControllerSuite) TestUpdatePackage() {
+	var (
+		packageID = "1"
+		userID    = uint64(1)
+		name      = "goravel"
+		url       = "https://goravel.dev"
+		tags      = []string{"goravel"}
+	)
+
+	tests := []struct {
+		name             string
+		request          *protopackage.UpdatePackageRequest
+		setup            func()
+		expectedResponse *protopackage.UpdatePackageResponse
+		expectedErr      error
+	}{
+		{
+			name: "Happy path",
+			request: &protopackage.UpdatePackageRequest{
+				Id:     packageID,
+				Name:   name,
+				Url:    url,
+				Tags:   tags,
+				UserId: fmt.Sprint(userID),
+			},
+			setup: func() {
+				s.mockPackageService.On("UpdatePackage", s.ctx, mock.MatchedBy(func(req *protopackage.UpdatePackageRequest) bool {
+					return req.GetId() == packageID && req.GetName() == name && req.GetUrl() == url && req.GetUserId() == fmt.Sprint(userID)
+				})).Return(&models.Package{
+					UUIDModel: models.UUIDModel{
+						ID: 1,
+					},
+					UserID: userID,
+					Name:   name,
+				}, nil).Once()
+			},
+			expectedResponse: &protopackage.UpdatePackageResponse{
+				Status: utilsresponse.NewOkStatus(),
+				Package: &protopackage.Package{
+					Id:     packageID,
+					UserId: fmt.Sprint(userID),
+					Name:   name,
+					Tags:   []*protopackage.Tag{},
+				},
+			},
+		},
+		{
+			name: "Sad path - UpdatePackage returns error",
+			request: &protopackage.UpdatePackageRequest{
+				Id:     packageID,
+				Name:   name,
+				Url:    url,
+				Tags:   tags,
+				UserId: fmt.Sprint(userID),
+			},
+			setup: func() {
+				s.mockPackageService.On("UpdatePackage", s.ctx, mock.MatchedBy(func(req *protopackage.UpdatePackageRequest) bool {
+					return req.GetId() == packageID && req.GetName() == name && req.GetUrl() == url && req.GetUserId() == fmt.Sprint(userID)
+				})).Return(nil, errors.New("error")).Once()
+			},
+			expectedErr: errors.New("error"),
+		},
+		{
+			name: "Sad path - Request validation error",
+			request: &protopackage.UpdatePackageRequest{
+				Id:     packageID,
+				Name:   "",
+				Url:    url,
+				UserId: fmt.Sprint(userID),
+			},
+			setup: func() {
+				s.mockLang.On("Get", "required.name").Return("Name is required").Once()
+			},
+			expectedErr: utilserrors.NewBadRequest("Name is required"),
+		},
+	}
+
+	for _, test := range tests {
+		s.Run(test.name, func() {
+			test.setup()
+			response, err := s.packageController.UpdatePackage(s.ctx, test.request)
+			s.Equal(test.expectedResponse, response)
+			s.Equal(test.expectedErr, err)
+
+			s.mockLang.AssertExpectations(s.T())
+			s.mockPackageService.AssertExpectations(s.T())
+		})
+	}
+}

@@ -8,6 +8,7 @@ import (
 
 	"github.com/goravel/framework/contracts/http"
 	mocksorm "github.com/goravel/framework/mocks/database/orm"
+	mockstranslation "github.com/goravel/framework/mocks/translation"
 	"github.com/goravel/framework/support/carbon"
 	testingmock "github.com/goravel/framework/testing/mock"
 	"github.com/stretchr/testify/mock"
@@ -28,6 +29,7 @@ type PackageTestSuite struct {
 	packageImpl          *PackageImpl
 	mockPackageInterface *mocks.PackageInterface
 	mockUserService      *mocksservice.User
+	mockLang             *mockstranslation.Translator
 }
 
 func TestPackageTestSuite(t *testing.T) {
@@ -38,6 +40,8 @@ func (s *PackageTestSuite) SetupTest() {
 	s.ctx = context.Background()
 	s.mockUserService = &mocksservice.User{}
 	s.mockPackageInterface = &mocks.PackageInterface{}
+	mockFactory := testingmock.Factory()
+	s.mockLang = mockFactory.Lang(s.ctx)
 	s.packageImpl = &PackageImpl{
 		packageModel: s.mockPackageInterface,
 		userService:  s.mockUserService,
@@ -559,6 +563,162 @@ func (s *PackageTestSuite) TestGetPackages() {
 
 			mockOrm.AssertExpectations(s.T())
 			mockOrmQuery.AssertExpectations(s.T())
+		})
+	}
+}
+
+func (s *PackageTestSuite) TestUpdatePackage() {
+	var (
+		packageID     = "1"
+		userID        = uint64(1)
+		name          = "goravel/gin"
+		url           = "https://github.com/goravel/gin"
+		lastUpdatedAt = carbon.Now().String()
+		tags          = []string{"goravel"}
+	)
+
+	tests := []struct {
+		name          string
+		request       *protopackage.UpdatePackageRequest
+		setup         func()
+		expectPackage *models.Package
+		expectedErr   error
+	}{
+		{
+			name: "Happy path - UpdatePackage with ID",
+			request: &protopackage.UpdatePackageRequest{
+				Id:            packageID,
+				Name:          name,
+				Url:           url,
+				UserId:        fmt.Sprint(userID),
+				LastUpdatedAt: lastUpdatedAt,
+			},
+			setup: func() {
+				s.mockPackageInterface.On("GetPackageByID", packageID, []string{}).Return(&models.Package{UUIDModel: models.UUIDModel{ID: 1}, Name: "goravel/gin", UserID: userID}, nil).Once()
+				s.mockPackageInterface.On("UpdatePackage", mock.MatchedBy(func(pkg *models.Package) bool {
+					return pkg.Name == name && pkg.Link == url
+				})).Return(nil).Once()
+			},
+			expectPackage: &models.Package{UUIDModel: models.UUIDModel{ID: 1}, Name: name, UserID: userID, Link: url, LastUpdatedAt: carbon.DateTime{Carbon: carbon.Parse(lastUpdatedAt)}},
+		},
+		{
+			name: "Sad path - GetPackageByID returns error",
+			request: &protopackage.UpdatePackageRequest{
+				Id:            packageID,
+				Name:          name,
+				Url:           url,
+				UserId:        fmt.Sprint(userID),
+				LastUpdatedAt: lastUpdatedAt,
+			},
+			setup: func() {
+				s.mockPackageInterface.On("GetPackageByID", packageID, []string{}).Return(nil, errors.New("error")).Once()
+			},
+			expectedErr: errors.New("error"),
+		},
+		{
+			name: "Sad path - Package does not exist",
+			request: &protopackage.UpdatePackageRequest{
+				Id:            packageID,
+				Name:          name,
+				Url:           url,
+				UserId:        fmt.Sprint(userID),
+				LastUpdatedAt: lastUpdatedAt,
+			},
+			setup: func() {
+				s.mockPackageInterface.On("GetPackageByID", packageID, []string{}).Return(&models.Package{}, nil).Once()
+				s.mockLang.On("Get", "not_exist.package").Return("package not exist").Once()
+			},
+			expectedErr: utilserrors.New(http.StatusNotFound, "package not exist"),
+		},
+		{
+			name: "Sad path - User isn't owner of package",
+			request: &protopackage.UpdatePackageRequest{
+				Id:            packageID,
+				Name:          name,
+				Url:           url,
+				UserId:        fmt.Sprint(userID),
+				LastUpdatedAt: lastUpdatedAt,
+			},
+			setup: func() {
+				s.mockPackageInterface.On("GetPackageByID", packageID, []string{}).Return(&models.Package{UUIDModel: models.UUIDModel{ID: 1}, Name: "goravel/gin", UserID: 2}, nil).Once()
+				s.mockLang.On("Get", "forbidden.update_package").Return("forbidden.update_package").Once()
+			},
+			expectedErr: utilserrors.New(http.StatusUnauthorized, "forbidden.update_package"),
+		},
+		{
+			name: "Happy path - UpdatePackage with tags",
+			request: &protopackage.UpdatePackageRequest{
+				Id:            packageID,
+				Name:          name,
+				Url:           url,
+				UserId:        fmt.Sprint(userID),
+				LastUpdatedAt: lastUpdatedAt,
+				Tags:          tags,
+			},
+			setup: func() {
+				s.mockPackageInterface.On("GetPackageByID", packageID, []string{}).Return(&models.Package{UUIDModel: models.UUIDModel{ID: 1}, Name: "goravel/gin", UserID: userID}, nil).Once()
+				s.mockPackageInterface.On("UpdatePackage", mock.MatchedBy(func(pkg *models.Package) bool {
+					return pkg.Name == name && pkg.Link == url
+				})).Return(nil).Once()
+				s.mockPackageInterface.On("AttachTags", mock.MatchedBy(func(pkg *models.Package) bool {
+					return pkg.Name == name && pkg.Link == url
+				}), tags).Return(nil).Once()
+			},
+			expectPackage: &models.Package{UUIDModel: models.UUIDModel{ID: 1}, Name: name, UserID: userID, Link: url, LastUpdatedAt: carbon.DateTime{Carbon: carbon.Parse(lastUpdatedAt)}},
+		},
+		{
+			name: "Sad path - UpdatePackage returns error",
+			request: &protopackage.UpdatePackageRequest{
+				Id:            packageID,
+				Name:          name,
+				Url:           url,
+				UserId:        fmt.Sprint(userID),
+				LastUpdatedAt: lastUpdatedAt,
+				Tags:          tags,
+			},
+			setup: func() {
+				s.mockPackageInterface.On("GetPackageByID", packageID, []string{}).Return(&models.Package{UUIDModel: models.UUIDModel{ID: 1}, Name: "goravel/gin", UserID: userID}, nil).Once()
+				s.mockPackageInterface.On("UpdatePackage", mock.MatchedBy(func(pkg *models.Package) bool {
+					return pkg.Name == name && pkg.Link == url
+				})).Return(errors.New("error")).Once()
+			},
+			expectedErr: errors.New("error"),
+		},
+		{
+			name: "Sad path - AttachTags returns error",
+			request: &protopackage.UpdatePackageRequest{
+				Id:            packageID,
+				Name:          name,
+				Url:           url,
+				UserId:        fmt.Sprint(userID),
+				LastUpdatedAt: lastUpdatedAt,
+				Tags:          tags,
+			},
+			setup: func() {
+				s.mockPackageInterface.On("GetPackageByID", packageID, []string{}).Return(&models.Package{UUIDModel: models.UUIDModel{ID: 1}, Name: "goravel/gin", UserID: userID}, nil).Once()
+				s.mockPackageInterface.On("UpdatePackage", mock.MatchedBy(func(pkg *models.Package) bool {
+					return pkg.Name == name && pkg.Link == url
+				})).Return(nil).Once()
+				s.mockPackageInterface.On("AttachTags", mock.MatchedBy(func(pkg *models.Package) bool {
+					return pkg.Name == name && pkg.Link == url
+				}), tags).Return(errors.New("error")).Once()
+			},
+			expectedErr: errors.New("error"),
+		},
+	}
+
+	for _, test := range tests {
+		s.Run(test.name, func() {
+			test.setup()
+
+			pkg, err := s.packageImpl.UpdatePackage(s.ctx, test.request)
+			if test.expectedErr != nil {
+				s.Nil(pkg)
+				s.Equal(test.expectedErr, err)
+			} else {
+				s.Nil(err)
+				s.Equal(test.expectPackage, pkg)
+			}
 		})
 	}
 }
