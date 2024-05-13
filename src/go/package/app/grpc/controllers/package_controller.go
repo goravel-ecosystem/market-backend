@@ -25,6 +25,22 @@ func NewPackageController() *PackageController {
 	}
 }
 
+func (r *PackageController) CreatePackage(ctx context.Context, req *protopackage.CreatePackageRequest) (*protopackage.CreatePackageResponse, error) {
+	if err := validateCreatePackageRequest(ctx, req); err != nil {
+		return nil, err
+	}
+
+	pkg, err := r.packageService.CreatePackage(req)
+	if err != nil {
+		return nil, err
+	}
+
+	return &protopackage.CreatePackageResponse{
+		Status:  utilsresponse.NewOkStatus(),
+		Package: pkg.ToProto(),
+	}, nil
+}
+
 func (r *PackageController) GetPackage(ctx context.Context, req *protopackage.GetPackageRequest) (*protopackage.GetPackageResponse, error) {
 	packageID := req.GetId()
 	if packageID == "" {

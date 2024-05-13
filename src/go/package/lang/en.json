@@ -1,9 +1,18 @@
 {
   "required": {
     "user_id": "UserID is required",
-    "package_id": "PackageID is required"
+    "package_id": "PackageID is required",
+    "name": "Name is required",
+    "url": "URL is required"
   },
   "not_exist": {
     "package": "Package not found"
+  },
+  "max": {
+    "name": "Name must be less than :max",
+    "summary": "Summary must be less than :max",
+    "url": "URL must be less than :max",
+    "tags": "You can only add :max tags",
+    "description": "Description must be less than :max"
   }
 }

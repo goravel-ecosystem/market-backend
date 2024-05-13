@@ -2,7 +2,6 @@ package models
 
 import (
 	"github.com/goravel/framework/database/orm"
-	"github.com/goravel/framework/support/carbon"
 	"github.com/spf13/cast"
 
 	protopackage "market.goravel.dev/proto/package"
@@ -27,11 +26,8 @@ func (r *Tag) ToProto() *protopackage.Tag {
 	}
 
 	return &protopackage.Tag{
-		Id:        cast.ToString(r.ID),
-		UserId:    userID,
-		Name:      r.Name,
-		CreatedAt: r.CreatedAt.ToString(),
-		UpdatedAt: r.UpdatedAt.ToString(),
-		DeletedAt: carbon.FromStdTime(r.DeletedAt.Time).ToString(),
+		Id:     cast.ToString(r.ID),
+		UserId: userID,
+		Name:   r.Name,
 	}
 }

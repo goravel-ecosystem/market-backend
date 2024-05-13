@@ -8,6 +8,7 @@ import (
 
 	mockstranslation "github.com/goravel/framework/mocks/translation"
 	testingmock "github.com/goravel/framework/testing/mock"
+	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 
 	mocksservice "market.goravel.dev/package/app/mocks/services"
@@ -41,6 +42,87 @@ func (s *PackageControllerSuite) SetupTest() {
 	s.packageController = &PackageController{
 		packageService: s.mockPackageService,
 		tagService:     s.mockTagService,
+	}
+}
+
+func (s *PackageControllerSuite) TestCreatePackage() {
+	var (
+		name   = "goravel"
+		url    = "https://goravel.dev"
+		userID = uint64(1)
+
+		pkg = models.Package{
+			UUIDModel: models.UUIDModel{
+				ID: 1,
+			},
+			Name:   name,
+			UserID: userID,
+			Link:   url,
+		}
+	)
+
+	tests := []struct {
+		name             string
+		request          *protopackage.CreatePackageRequest
+		setup            func()
+		expectedResponse *protopackage.CreatePackageResponse
+		expectedErr      error
+	}{
+		{
+			name: "Happy path",
+			request: &protopackage.CreatePackageRequest{
+				UserId: fmt.Sprint(userID),
+				Name:   name,
+				Url:    url,
+			},
+			setup: func() {
+				s.mockPackageService.On("CreatePackage", mock.MatchedBy(func(req *protopackage.CreatePackageRequest) bool {
+					return req.GetUserId() == fmt.Sprint(userID) && req.GetName() == name && req.GetUrl() == url
+				})).Return(&pkg, nil).Once()
+			},
+			expectedResponse: &protopackage.CreatePackageResponse{
+				Status:  utilsresponse.NewOkStatus(),
+				Package: pkg.ToProto(),
+			},
+		},
+		{
+			name: "Sad path - CreatePackage returns error",
+			request: &protopackage.CreatePackageRequest{
+				UserId: fmt.Sprint(userID),
+				Name:   name,
+				Url:    url,
+			},
+			setup: func() {
+				s.mockPackageService.On("CreatePackage", mock.MatchedBy(func(req *protopackage.CreatePackageRequest) bool {
+					return req.GetUserId() == fmt.Sprint(userID) && req.GetName() == name && req.GetUrl() == url
+				})).Return(nil, errors.New("error")).Once()
+			},
+			expectedErr: errors.New("error"),
+		},
+		{
+			name: "Sad path - Request validation error",
+			request: &protopackage.CreatePackageRequest{
+				UserId: fmt.Sprint(userID),
+				Name:   "",
+				Url:    url,
+				Tags:   []string{"goravel"},
+			},
+			setup: func() {
+				s.mockLang.On("Get", "required.name").Return("Name is required").Once()
+			},
+			expectedErr: utilserrors.NewBadRequest("Name is required"),
+		},
+	}
+
+	for _, test := range tests {
+		s.Run(test.name, func() {
+			test.setup()
+			response, err := s.packageController.CreatePackage(s.ctx, test.request)
+			s.Equal(test.expectedResponse, response)
+			s.Equal(test.expectedErr, err)
+
+			s.mockPackageService.AssertExpectations(s.T())
+		})
 	}
 }
 
