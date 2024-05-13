@@ -242,7 +242,7 @@ func (s *PackageTestSuite) TestCreatePackage() {
 			expectedErr: utilserrors.New(http.StatusInternalServerError, "error"),
 		},
 		{
-			name: "Happy path - Tags does not exist",
+			name: "Happy path - Tags do not exist",
 			request: &protopackage.CreatePackageRequest{
 				UserId:        fmt.Sprint(userID),
 				Name:          name,
