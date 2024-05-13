@@ -15,3 +15,6 @@ CREATE TABLE packages (
   updated_at timestamp NOT NULL,
   deleted_at timestamp DEFAULT NULL
 );
+
+COMMENT ON COLUMN packages.is_public IS '1: public, 2: private';
+COMMENT ON COLUMN packages.is_approved IS '1: approved, 2: not approved';
