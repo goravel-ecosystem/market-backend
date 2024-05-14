@@ -719,6 +719,9 @@ func (s *PackageTestSuite) TestUpdatePackage() {
 				s.Nil(err)
 				s.Equal(test.expectPackage, pkg)
 			}
+
+			s.mockPackageInterface.AssertExpectations(s.T())
+			s.mockLang.AssertExpectations(s.T())
 		})
 	}
 }
