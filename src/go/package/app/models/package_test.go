@@ -76,7 +76,6 @@ func (s *PackageSuite) TestAttachTags() {
 		{
 			name: "Happy path - Create package with tags",
 			setup: func() {
-				beforeSetup()
 				mockOrm.On("Query").Return(mockOrmQuery).Once()
 				mockOrmQuery.On("WhereIn", "name", []any{"goravel"}).Return(mockOrmQuery).Once()
 				mockOrmQuery.On("Find", mock.AnythingOfType("*[]*models.Tag")).
@@ -100,7 +99,6 @@ func (s *PackageSuite) TestAttachTags() {
 		{
 			name: "Sad path - Tags association error",
 			setup: func() {
-				beforeSetup()
 				mockOrm.On("Query").Return(mockOrmQuery).Once()
 				mockOrmQuery.On("WhereIn", "name", []any{"goravel"}).Return(mockOrmQuery).Once()
 				mockOrmQuery.On("Find", mock.AnythingOfType("*[]*models.Tag")).
@@ -125,7 +123,6 @@ func (s *PackageSuite) TestAttachTags() {
 		{
 			name: "Sad path - Find tag error",
 			setup: func() {
-				beforeSetup()
 				mockOrmQuery.On("WhereIn", "name", []any{"goravel"}).Return(mockOrmQuery).Once()
 				mockOrmQuery.On("Find", mock.AnythingOfType("*[]*models.Tag")).
 					Return(errors.New("error")).Once()
@@ -135,7 +132,6 @@ func (s *PackageSuite) TestAttachTags() {
 		{
 			name: "Happy path - Tags do not exist",
 			setup: func() {
-				beforeSetup()
 				mockOrm.On("Query").Return(mockOrmQuery).Twice()
 				mockOrmQuery.On("WhereIn", "name", []any{"goravel"}).Return(mockOrmQuery).Once()
 				mockOrmQuery.On("Find", mock.AnythingOfType("*[]*models.Tag")).
@@ -163,7 +159,6 @@ func (s *PackageSuite) TestAttachTags() {
 		{
 			name: "Sad path - Create Tag error",
 			setup: func() {
-				beforeSetup()
 				mockOrm.On("Query").Return(mockOrmQuery).Once()
 				mockOrmQuery.On("WhereIn", "name", []any{"goravel"}).Return(mockOrmQuery).Once()
 				mockOrmQuery.On("Find", mock.AnythingOfType("*[]*models.Tag")).
@@ -347,7 +342,6 @@ func (s *PackageSuite) TestUpdatePackage() {
 		{
 			name: "Happy path",
 			setup: func() {
-				beforeSetup()
 				mockOrmQuery.On("Save", mock.MatchedBy(func(pkg *Package) bool {
 					return pkg.Name == name && pkg.Link == url && pkg.UserID == userID
 				})).Return(nil).Once()
@@ -357,7 +351,6 @@ func (s *PackageSuite) TestUpdatePackage() {
 		{
 			name: "Sad path - save package error",
 			setup: func() {
-				beforeSetup()
 				mockOrmQuery.On("Save", mock.MatchedBy(func(pkg *Package) bool {
 					return pkg.Name == name && pkg.Link == url && pkg.UserID == userID
 				})).Return(errors.New("error")).Once()
