@@ -14,6 +14,7 @@ type UserInterface interface {
 	GetUserByID(id string, fields []string) (*User, error)
 	GetUsers(ids []string, fields []string) ([]*User, error)
 	Register(name, email, password string) (*User, error)
+	UpdateUser(user *User) error
 }
 
 type User struct {
@@ -41,7 +42,14 @@ func (r *User) GetUserByEmail(email string, fields []string) (*User, error) {
 
 func (r *User) GetUserByID(id string, fields []string) (*User, error) {
 	var user User
-	if err := facades.Orm().Query().Where("id", id).Select(fields).First(&user); err != nil {
+
+	query := facades.Orm().Query().Where("id", id)
+
+	if len(fields) > 0 {
+		query = query.Select(fields)
+	}
+
+	if err := query.First(&user); err != nil {
 		return nil, utilserrors.NewInternalServerError(err)
 	}
 
@@ -90,4 +98,12 @@ func (r *User) ToProto() *protouser.User {
 		Avatar:  r.Avatar,
 		Summary: r.Summary,
 	}
+}
+
+func (r *User) UpdateUser(user *User) error {
+	if err := facades.Orm().Query().Save(user); err != nil {
+		return utilserrors.NewInternalServerError(err)
+	}
+
+	return nil
 }

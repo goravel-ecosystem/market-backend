@@ -171,3 +171,19 @@ func (r *UserController) GetUsers(_ context.Context, req *protouser.GetUsersRequ
 		Users:  usersProto,
 	}, nil
 }
+
+func (r *UserController) UpdateUser(ctx context.Context, req *protouser.UpdateUserRequest) (*protouser.UpdateUserResponse, error) {
+	if err := validateUpdateUserRequest(ctx, req); err != nil {
+		return nil, err
+	}
+
+	user, err := r.userService.UpdateUser(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	return &protouser.UpdateUserResponse{
+		Status: utilsresponse.NewOkStatus(),
+		User:   user.ToProto(),
+	}, nil
+}

@@ -4,6 +4,7 @@ import (
 	"context"
 	"regexp"
 
+	"github.com/goravel/framework/contracts/translation"
 	"github.com/goravel/framework/facades"
 
 	protouser "market.goravel.dev/proto/user"
@@ -60,4 +61,45 @@ func validateEmailValid(ctx context.Context, email string) error {
 
 func validateGetEmailRegisterCodeRequest(ctx context.Context, req *protouser.GetEmailRegisterCodeRequest) error {
 	return validateEmailValid(ctx, req.GetEmail())
+}
+
+func validateUpdateUserRequest(ctx context.Context, req *protouser.UpdateUserRequest) error {
+	name := req.GetName()
+	summery := req.GetSummary()
+	password := req.GetPassword()
+
+	if name == "" {
+		return utilserrors.NewBadRequest(facades.Lang(ctx).Get("required.name"))
+	}
+	if len(name) > 100 {
+		return utilserrors.NewBadRequest(facades.Lang(ctx).Get("max.name", translation.Option{
+			Replace: map[string]string{
+				"max": "100",
+			},
+		}))
+	}
+
+	if len(summery) > 200 {
+		return utilserrors.NewBadRequest(facades.Lang(ctx).Get("max.summary", translation.Option{
+			Replace: map[string]string{
+				"max": "200",
+			},
+		}))
+	}
+
+	if password != "" {
+		if len(password) < 6 {
+			return utilserrors.NewBadRequest(facades.Lang(ctx).Get("invalid.password.min"))
+		}
+
+		if len(password) > 50 {
+			return utilserrors.NewBadRequest(facades.Lang(ctx).Get("max.password", translation.Option{
+				Replace: map[string]string{
+					"max": "100",
+				},
+			}))
+		}
+	}
+
+	return nil
 }
