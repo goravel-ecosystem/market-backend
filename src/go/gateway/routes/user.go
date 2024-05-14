@@ -16,4 +16,5 @@ func Users() {
 	facades.Route().Post("/users/email/register", gateway.Post)
 	facades.Route().Middleware(httpmiddleware.Throttle("VerifyCode")).Get("/users/email/register/code", gateway.Get)
 	facades.Route().Middleware(middleware.Jwt(userService)).Get("/users/self", gateway.Get)
+	facades.Route().Middleware(middleware.Jwt(userService)).Put("/users/{id}", gateway.Put)
 }

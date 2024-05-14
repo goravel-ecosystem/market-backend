@@ -78,6 +78,21 @@ message GetUsersResponse {
   repeated User users = 2;
 }
 
+message UpdateUserRequest {
+  // Auto-injected by the API Gateway.
+  string user_id = 1;
+  string id = 2;
+  string name = 3;
+  string password = 4;
+  string avatar = 5;
+  string summary = 6;
+}
+
+message UpdateUserResponse {
+  base.Status status = 1;
+  User user = 2;
+}
+
 service UserService {
   /*
    * Get email register code
@@ -114,4 +129,11 @@ service UserService {
   rpc GetUserByToken (GetUserByTokenRequest) returns (GetUserByTokenResponse){}
 
   rpc GetUsers(GetUsersRequest) returns (GetUsersResponse) {}
+
+  rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse) {
+    option (google.api.http) = {
+      put: "/users/{id}"
+      body: "*"
+    };
+  }
 }
