@@ -129,3 +129,19 @@ func (r *PackageController) GetTags(_ context.Context, req *protopackage.GetTags
 		Total:  total,
 	}, nil
 }
+
+func (r *PackageController) UpdatePackage(ctx context.Context, req *protopackage.UpdatePackageRequest) (*protopackage.UpdatePackageResponse, error) {
+	if err := validateUpdatePackageRequest(ctx, req); err != nil {
+		return nil, err
+	}
+
+	pkg, err := r.packageService.UpdatePackage(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	return &protopackage.UpdatePackageResponse{
+		Status:  utilsresponse.NewOkStatus(),
+		Package: pkg.ToProto(),
+	}, nil
+}

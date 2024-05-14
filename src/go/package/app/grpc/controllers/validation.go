@@ -17,6 +17,10 @@ func validateCreatePackageRequest(ctx context.Context, req *protopackage.CreateP
 	summery := req.GetSummary()
 	description := req.GetDescription()
 	userID := req.GetUserId()
+	return validatePackageRequest(ctx, name, url, tags, summery, description, userID)
+}
+
+func validatePackageRequest(ctx context.Context, name, url string, tags []string, summary, description, userID string) error {
 	translate := facades.Lang(ctx)
 	if userID == "" {
 		return utilserrors.NewBadRequest(translate.Get("required.user_id"))
@@ -25,7 +29,7 @@ func validateCreatePackageRequest(ctx context.Context, req *protopackage.CreateP
 		return utilserrors.NewBadRequest(translate.Get("required.name"))
 	}
 	if len(name) > 100 {
-		return utilserrors.NewBadRequest(facades.Lang(ctx).Get("max.name", translation.Option{
+		return utilserrors.NewBadRequest(translate.Get("max.name", translation.Option{
 			Replace: map[string]string{
 				"max": "100",
 			},
@@ -33,10 +37,10 @@ func validateCreatePackageRequest(ctx context.Context, req *protopackage.CreateP
 	}
 
 	if url == "" {
-		return utilserrors.NewBadRequest(facades.Lang(ctx).Get("required.url"))
+		return utilserrors.NewBadRequest(translate.Get("required.url"))
 	}
 	if len(url) > 100 {
-		return utilserrors.NewBadRequest(facades.Lang(ctx).Get("max.url", translation.Option{
+		return utilserrors.NewBadRequest(translate.Get("max.url", translation.Option{
 			Replace: map[string]string{
 				"max": "100",
 			},
@@ -44,15 +48,15 @@ func validateCreatePackageRequest(ctx context.Context, req *protopackage.CreateP
 	}
 
 	if len(tags) > 10 {
-		return utilserrors.NewBadRequest(facades.Lang(ctx).Get("max.tags", translation.Option{
+		return utilserrors.NewBadRequest(translate.Get("max.tags", translation.Option{
 			Replace: map[string]string{
 				"max": "10",
 			},
 		}))
 	}
 
-	if len(summery) > 200 {
-		return utilserrors.NewBadRequest(facades.Lang(ctx).Get("max.summary", translation.Option{
+	if len(summary) > 200 {
+		return utilserrors.NewBadRequest(translate.Get("max.summary", translation.Option{
 			Replace: map[string]string{
 				"max": "200",
 			},
@@ -60,7 +64,7 @@ func validateCreatePackageRequest(ctx context.Context, req *protopackage.CreateP
 	}
 
 	if len(description) > 10000 {
-		return utilserrors.NewBadRequest(facades.Lang(ctx).Get("max.description", translation.Option{
+		return utilserrors.NewBadRequest(translate.Get("max.description", translation.Option{
 			Replace: map[string]string{
 				"max": "10000",
 			},
@@ -68,4 +72,19 @@ func validateCreatePackageRequest(ctx context.Context, req *protopackage.CreateP
 	}
 
 	return nil
+}
+
+func validateUpdatePackageRequest(ctx context.Context, req *protopackage.UpdatePackageRequest) error {
+	name := req.GetName()
+	url := req.GetUrl()
+	tags := req.GetTags()
+	summery := req.GetSummary()
+	description := req.GetDescription()
+	userID := req.GetUserId()
+	id := req.GetId()
+	if id == "" {
+		return utilserrors.NewBadRequest(facades.Lang(ctx).Get("required.id"))
+	}
+
+	return validatePackageRequest(ctx, name, url, tags, summery, description, userID)
 }

@@ -3,7 +3,8 @@
     "package_id": "PackageID 不能为空",
     "user_id": "UserID 不能为空",
     "name": "名称不能为空",
-    "url": "URL 不能为空"
+    "url": "URL 不能为空",
+    "id": "ID 不能为空"
   },
   "not_exist": {
     "package": "包不存在"
@@ -14,5 +15,8 @@
     "url": "URL 长度必须小于 :max",
     "tags": "最多添加 :max 个标签",
     "description": "描述长度必须小于 :max"
+  },
+  "forbidden": {
+    "update_package": "无权更新该包"
   }
 }
