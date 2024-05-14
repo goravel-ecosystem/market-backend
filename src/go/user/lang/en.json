@@ -17,7 +17,14 @@
     "email": "Email is invalid",
     "password": {
       "error": "Password is wrong",
-      "min": "Password must be at least 6 characters"
+      "min": "Password must be at least 6 characters",
+      "max": "Password must be at most :max characters"
+    },
+    "summery": {
+      "max": "Summery must be at most :max characters"
+    },
+    "name": {
+      "max": "Name must be at most :max characters"
     }
   },
   "exist": {

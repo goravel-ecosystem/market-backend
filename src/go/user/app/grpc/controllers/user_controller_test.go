@@ -10,6 +10,7 @@ import (
 	mockshash "github.com/goravel/framework/mocks/hash"
 	mockstranslation "github.com/goravel/framework/mocks/translation"
 	testingmock "github.com/goravel/framework/testing/mock"
+	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 
 	protouser "market.goravel.dev/proto/user"
@@ -620,6 +621,86 @@ func (s *UserControllerSuite) TestGetUsers() {
 			s.Equal(test.expectedResponse, response)
 			s.Equal(test.expectedErr, err)
 
+			s.mockUserService.AssertExpectations(s.T())
+		})
+	}
+}
+
+func (s *UserControllerSuite) TestUpdateUser() {
+	var (
+		id     = "1"
+		userID = "1"
+		name   = "krishan"
+	)
+
+	tests := []struct {
+		name             string
+		request          *protouser.UpdateUserRequest
+		setup            func()
+		expectedResponse *protouser.UpdateUserResponse
+		expectedErr      error
+	}{
+		{
+			name: "Happy path",
+			request: &protouser.UpdateUserRequest{
+				Id:     id,
+				UserId: userID,
+				Name:   name,
+			},
+			setup: func() {
+				s.mockUserService.On("UpdateUser", s.ctx, mock.MatchedBy(func(req *protouser.UpdateUserRequest) bool {
+					return req.GetId() == id && req.GetUserId() == userID && req.GetName() == name
+				})).Return(&models.User{
+					UUIDModel: models.UUIDModel{
+						ID: 1,
+					},
+					Name: name,
+				}, nil).Once()
+			},
+			expectedResponse: &protouser.UpdateUserResponse{
+				Status: utilsresponse.NewOkStatus(),
+				User: &protouser.User{
+					Id:   id,
+					Name: name,
+				},
+			},
+		},
+		{
+			name: "Sad path - UpdateUser returns error",
+			request: &protouser.UpdateUserRequest{
+				Id:     id,
+				UserId: userID,
+				Name:   name,
+			},
+			setup: func() {
+				s.mockUserService.On("UpdateUser", s.ctx, mock.MatchedBy(func(req *protouser.UpdateUserRequest) bool {
+					return req.GetId() == id && req.GetUserId() == userID && req.GetName() == name
+				})).Return(nil, errors.New("error")).Once()
+			},
+			expectedErr: errors.New("error"),
+		},
+		{
+			name: "Sad path - Request validation error",
+			request: &protouser.UpdateUserRequest{
+				Id:     id,
+				UserId: userID,
+				Name:   "",
+			},
+			setup: func() {
+				s.mockLang.On("Get", "required.name").Return("name is required").Once()
+			},
+			expectedErr: utilserrors.NewBadRequest("name is required"),
+		},
+	}
+
+	for _, test := range tests {
+		s.Run(test.name, func() {
+			test.setup()
+			response, err := s.userController.UpdateUser(s.ctx, test.request)
+			s.Equal(test.expectedResponse, response)
+			s.Equal(test.expectedErr, err)
+
+			s.mockLang.AssertExpectations(s.T())
 			s.mockUserService.AssertExpectations(s.T())
 		})
 	}

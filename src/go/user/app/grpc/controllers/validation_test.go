@@ -4,9 +4,11 @@ import (
 	"context"
 	"testing"
 
-	"github.com/gookit/goutil/testutil/assert"
 	mockstranslation "github.com/goravel/framework/mocks/translation"
+	"github.com/goravel/framework/support/str"
 	testingmock "github.com/goravel/framework/testing/mock"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 
 	protouser "market.goravel.dev/proto/user"
 	utilserrors "market.goravel.dev/utils/errors"
@@ -242,6 +244,140 @@ func TestValidateEmailValid(t *testing.T) {
 			beforeEach()
 			test.setup()
 			assert.Equal(t, test.expectErr, validateEmailValid(ctx, test.email))
+
+			mockLang.AssertExpectations(t)
+		})
+	}
+}
+
+func TestValidateUpdateUserRequest(t *testing.T) {
+	var (
+		ctx      = context.Background()
+		id       = "1"
+		userID   = "1"
+		name     = "krishan"
+		summary  = "I am a developer"
+		password = "password"
+
+		mockLang *mockstranslation.Translator
+	)
+
+	beforeEach := func() {
+		mockFactory := testingmock.Factory()
+		mockLang = mockFactory.Lang(ctx)
+	}
+
+	tests := []struct {
+		name      string
+		request   *protouser.UpdateUserRequest
+		setup     func()
+		expectErr error
+	}{
+		{
+			name: "Happy path",
+			request: &protouser.UpdateUserRequest{
+				Id:       id,
+				UserId:   userID,
+				Name:     name,
+				Summary:  summary,
+				Password: password,
+			},
+			setup: func() {},
+		},
+		{
+			name: "Empty id",
+			request: &protouser.UpdateUserRequest{
+				Id:     "",
+				UserId: userID,
+				Name:   name,
+			},
+			setup: func() {
+				mockLang.On("Get", "required.id").Return("id is required")
+			},
+			expectErr: utilserrors.NewBadRequest("id is required"),
+		},
+		{
+			name: "Empty user id",
+			request: &protouser.UpdateUserRequest{
+				Id:     id,
+				UserId: "",
+				Name:   name,
+			},
+			setup: func() {
+				mockLang.On("Get", "required.user_id").Return("user id is required")
+			},
+			expectErr: utilserrors.NewBadRequest("user id is required"),
+		},
+		{
+			name: "Empty name",
+			request: &protouser.UpdateUserRequest{
+				Id:     id,
+				UserId: userID,
+				Name:   "",
+			},
+			setup: func() {
+				mockLang.On("Get", "required.name").Return("name is required").Once()
+			},
+			expectErr: utilserrors.NewBadRequest("name is required"),
+		},
+		{
+			name: "Name is too long",
+			request: &protouser.UpdateUserRequest{
+				Id:     id,
+				UserId: userID,
+				Name:   str.Of("Krishan").Repeat(20).String(),
+			},
+			setup: func() {
+				mockLang.On("Get", "invalid.name.max", mock.Anything).Return("name must be less than 50").Once()
+			},
+			expectErr: utilserrors.NewBadRequest("name must be less than 50"),
+		},
+		{
+			name: "Summary is too long",
+			request: &protouser.UpdateUserRequest{
+				Id:      id,
+				UserId:  userID,
+				Name:    name,
+				Summary: str.Of(summary).Repeat(20).String(),
+			},
+			setup: func() {
+				mockLang.On("Get", "invalid.summery.max", mock.Anything).Return("summary must be less than 200").Once()
+			},
+			expectErr: utilserrors.NewBadRequest("summary must be less than 200"),
+		},
+		{
+			name: "Password is too short",
+			request: &protouser.UpdateUserRequest{
+				Id:       id,
+				UserId:   userID,
+				Name:     name,
+				Password: "123",
+			},
+			setup: func() {
+				mockLang.On("Get", "invalid.password.min").Return("password must be more than 6 characters").Once()
+			},
+			expectErr: utilserrors.NewBadRequest("password must be more than 6 characters"),
+		},
+		{
+			name: "Password is too long",
+			request: &protouser.UpdateUserRequest{
+				Id:       id,
+				UserId:   userID,
+				Name:     name,
+				Password: str.Of("password").Repeat(20).String(),
+			},
+			setup: func() {
+				mockLang.On("Get", "invalid.password.max", mock.Anything).Return("password must be less than 50").Once()
+			},
+			expectErr: utilserrors.NewBadRequest("password must be less than 50"),
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			beforeEach()
+			test.setup()
+			assert.Equal(t, test.expectErr, validateUpdateUserRequest(ctx, test.request))
 
 			mockLang.AssertExpectations(t)
 		})

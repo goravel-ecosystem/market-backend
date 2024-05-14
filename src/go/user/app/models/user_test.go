@@ -341,3 +341,69 @@ func (s *UserSuite) TestToProto() {
 		Summary: summary,
 	}, user.ToProto())
 }
+
+func (s *UserSuite) TestUpdateUser() {
+	var (
+		name    = "krishan"
+		avatar  = "https://avatar.com/avatar.jpg"
+		summary = "I am a developer"
+
+		user = User{
+			UUIDModel: UUIDModel{
+				ID: 1,
+			},
+			Name:    name,
+			Avatar:  avatar,
+			Summary: summary,
+		}
+
+		mockOrm      *mocksorm.Orm
+		mockOrmQuery *mocksorm.Query
+	)
+
+	beforeSetup := func() {
+		mockFactory := testingmock.Factory()
+		mockOrm = mockFactory.Orm()
+		mockOrmQuery = mockFactory.OrmQuery()
+		mockFactory.Log()
+		mockOrm.On("Query").Return(mockOrmQuery).Once()
+	}
+
+	tests := []struct {
+		name        string
+		setup       func()
+		expectedErr error
+	}{
+		{
+			name: "Happy path",
+			setup: func() {
+				mockOrmQuery.On("Save", mock.MatchedBy(func(user *User) bool {
+					return user.Name == name && user.Avatar == avatar && user.Summary == summary
+				})).Return(nil).Once()
+			},
+			expectedErr: nil,
+		},
+		{
+			name: "Sad path - save package error",
+			setup: func() {
+				mockOrmQuery.On("Save", mock.MatchedBy(func(user *User) bool {
+					return user.Name == name && user.Avatar == avatar && user.Summary == summary
+				})).Return(errors.New("error")).Once()
+			},
+			expectedErr: utilserrors.New(http.StatusInternalServerError, "error"),
+		},
+	}
+
+	for _, test := range tests {
+		s.Run(test.name, func() {
+			beforeSetup()
+			test.setup()
+			err := s.user.UpdateUser(&user)
+
+			s.Equal(test.expectedErr, err)
+
+			mockOrm.AssertExpectations(s.T())
+			mockOrmQuery.AssertExpectations(s.T())
+		})
+	}
+}
