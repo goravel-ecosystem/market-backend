@@ -72,7 +72,7 @@ func validateUpdateUserRequest(ctx context.Context, req *protouser.UpdateUserReq
 		return utilserrors.NewBadRequest(facades.Lang(ctx).Get("required.name"))
 	}
 	if len(name) > 100 {
-		return utilserrors.NewBadRequest(facades.Lang(ctx).Get("max.name", translation.Option{
+		return utilserrors.NewBadRequest(facades.Lang(ctx).Get("invalid.name.max", translation.Option{
 			Replace: map[string]string{
 				"max": "100",
 			},
@@ -80,7 +80,7 @@ func validateUpdateUserRequest(ctx context.Context, req *protouser.UpdateUserReq
 	}
 
 	if len(summery) > 200 {
-		return utilserrors.NewBadRequest(facades.Lang(ctx).Get("max.summary", translation.Option{
+		return utilserrors.NewBadRequest(facades.Lang(ctx).Get("invalid.summery.max", translation.Option{
 			Replace: map[string]string{
 				"max": "200",
 			},
@@ -93,9 +93,9 @@ func validateUpdateUserRequest(ctx context.Context, req *protouser.UpdateUserReq
 		}
 
 		if len(password) > 50 {
-			return utilserrors.NewBadRequest(facades.Lang(ctx).Get("max.password", translation.Option{
+			return utilserrors.NewBadRequest(facades.Lang(ctx).Get("invalid.password.max", translation.Option{
 				Replace: map[string]string{
-					"max": "100",
+					"max": "50",
 				},
 			}))
 		}
