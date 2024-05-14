@@ -67,20 +67,29 @@ func validateUpdateUserRequest(ctx context.Context, req *protouser.UpdateUserReq
 	name := req.GetName()
 	summery := req.GetSummary()
 	password := req.GetPassword()
+	userID := req.GetUserId()
+	id := req.GetId()
 
-	if name == "" {
-		return utilserrors.NewBadRequest(facades.Lang(ctx).Get("required.name"))
+	translate := facades.Lang(ctx)
+	if id == "" {
+		return utilserrors.NewBadRequest(translate.Get("required.id"))
 	}
-	if len(name) > 100 {
-		return utilserrors.NewBadRequest(facades.Lang(ctx).Get("invalid.name.max", translation.Option{
+	if userID == "" {
+		return utilserrors.NewBadRequest(translate.Get("required.user_id"))
+	}
+	if name == "" {
+		return utilserrors.NewBadRequest(translate.Get("required.name"))
+	}
+	if len(name) > 50 {
+		return utilserrors.NewBadRequest(translate.Get("invalid.name.max", translation.Option{
 			Replace: map[string]string{
-				"max": "100",
+				"max": "50",
 			},
 		}))
 	}
 
 	if len(summery) > 200 {
-		return utilserrors.NewBadRequest(facades.Lang(ctx).Get("invalid.summery.max", translation.Option{
+		return utilserrors.NewBadRequest(translate.Get("invalid.summery.max", translation.Option{
 			Replace: map[string]string{
 				"max": "200",
 			},
@@ -89,11 +98,11 @@ func validateUpdateUserRequest(ctx context.Context, req *protouser.UpdateUserReq
 
 	if password != "" {
 		if len(password) < 6 {
-			return utilserrors.NewBadRequest(facades.Lang(ctx).Get("invalid.password.min"))
+			return utilserrors.NewBadRequest(translate.Get("invalid.password.min"))
 		}
 
 		if len(password) > 50 {
-			return utilserrors.NewBadRequest(facades.Lang(ctx).Get("invalid.password.max", translation.Option{
+			return utilserrors.NewBadRequest(translate.Get("invalid.password.max", translation.Option{
 				Replace: map[string]string{
 					"max": "50",
 				},
