@@ -56,9 +56,13 @@ func (r *UserImpl) Register(name, email, password string) (*models.User, error) 
 }
 
 func (r *UserImpl) UpdateUser(ctx context.Context, req *protouser.UpdateUserRequest) (*models.User, error) {
-	user, err := r.userModel.GetUserByID(req.GetUserId(), []string{})
+	user, err := r.userModel.GetUserByID(req.GetId(), []string{})
 	if err != nil {
 		return nil, err
+	}
+
+	if user.ID == 0 {
+		return nil, utilerrors.NewNotFound(facades.Lang(ctx).Get("not_exist.user"))
 	}
 
 	if user.ID != cast.ToUint64(req.GetUserId()) {
