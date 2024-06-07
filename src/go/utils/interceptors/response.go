@@ -20,7 +20,7 @@ func Response() grpc.UnaryServerInterceptor {
 			if errors.As(err, &errorWithCode) {
 				return &base.Response{
 					Status: &base.Status{
-						Code:  int32(errorWithCode.Code()),
+						Code:  errorWithCode.Code(),
 						Error: errorWithCode.Error(),
 					},
 				}, nil
