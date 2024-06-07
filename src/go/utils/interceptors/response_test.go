@@ -5,9 +5,9 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/gookit/goutil/testutil/assert"
 	"github.com/goravel/framework/contracts/http"
 	"github.com/goravel/framework/testing/mock"
+	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
 
 	"market.goravel.dev/proto/base"
