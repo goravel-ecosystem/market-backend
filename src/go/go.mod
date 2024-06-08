@@ -6,7 +6,7 @@ require (
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/goravel/framework v1.14.0
 	github.com/goravel/gateway v0.0.3-0.20240213024303-4d874cef4753
-	github.com/goravel/gin v1.2.0
+	github.com/goravel/gin v1.2.1
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.20.0
 	github.com/spf13/cast v1.6.0
 	github.com/stretchr/testify v1.9.0
