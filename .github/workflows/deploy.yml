@@ -34,10 +34,10 @@ jobs:
         echo "INPUT_USER_DB_DATABASE=${{ steps.load_config.outputs.staging__user__db__database }}" >> $GITHUB_ENV
         
         # package
-        echo "INPUT_USER_APP_KEY=${{ secrets.PACKAGE_APP_KEY }}" >> $GITHUB_ENV
-        echo "INPUT_USER_GRPC_HOST=${{ steps.load_config.outputs.staging__package__grpc__host }}" >> $GITHUB_ENV
-        echo "INPUT_USER_GRPC_PORT=${{ steps.load_config.outputs.staging__package__grpc__port }}" >> $GITHUB_ENV
-        echo "INPUT_USER_DB_DATABASE=${{ steps.load_config.outputs.staging__package__db__database }}" >> $GITHUB_ENV
+        echo "INPUT_PACKAGE_APP_KEY=${{ secrets.PACKAGE_APP_KEY }}" >> $GITHUB_ENV
+        echo "INPUT_PACKAGE_GRPC_HOST=${{ steps.load_config.outputs.staging__package__grpc__host }}" >> $GITHUB_ENV
+        echo "INPUT_PACKAGE_GRPC_PORT=${{ steps.load_config.outputs.staging__package__grpc__port }}" >> $GITHUB_ENV
+        echo "INPUT_PACKAGE_DB_DATABASE=${{ steps.load_config.outputs.staging__package__db__database }}" >> $GITHUB_ENV
 
         # DEFAULT VARIABLES, DONT MODIFY
         TAG=${{ inputs.tag }}
