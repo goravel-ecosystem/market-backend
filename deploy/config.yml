@@ -20,3 +20,5 @@ staging:
     grpc:
       host: package
       port: 4021
+    db:
+      database: package

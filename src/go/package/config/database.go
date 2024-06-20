@@ -8,7 +8,7 @@ func init() {
 	config := facades.Config()
 	config.Add("database", map[string]any{
 		// Default database connection name
-		"default": config.Env("DB_CONNECTION", "mysql"),
+		"default": config.Env("DB_CONNECTION", "postgres"),
 
 		// Database connections
 		"connections": map[string]any{
@@ -24,7 +24,7 @@ func init() {
 				"prefix":   "",
 				"singular": false, // Table name is singular
 			},
-			"postgresql": map[string]any{
+			"postgres": map[string]any{
 				"driver":   "postgresql",
 				"host":     config.Env("DB_HOST", "127.0.0.1"),
 				"port":     config.Env("DB_PORT", 5432),

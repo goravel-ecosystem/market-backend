@@ -9,7 +9,7 @@ COPY ./storage/ /www/storage/
 COPY ./resources/ /www/resources/
 COPY ./lang/ /www/lang/
 
-ENV APP_NAME=Gateway \
+ENV APP_NAME=user \
     APP_ENV=${APP_ENV}  \
     APP_KEY=${APP_KEY} \
     APP_DEBUG=${APP_DEBUG} \

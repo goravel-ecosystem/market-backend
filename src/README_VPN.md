@@ -22,80 +22,6 @@ brew install wireguard-tools
 
 Please check the [official document](https://www.wireguard.com/install/).
 
-## Configure WireGuard VPN Server
-
-We use Ubuntu 20 as the VPN server, you can use other OS as the VPN server, but the configuration may be different.
-
-If you only focus on the client configuration, you can skip this section and jump to [the next section](#configure-wireguard-vpn-client).
-
-```shell
-# Create a configuration folder
-sudo mkdir /etc/wireguard
-
-# Generate a private key and a public key
-wg genkey | sudo tee /etc/wireguard/privatekey | wg pubkey | sudo tee /etc/wireguard/publickey
-
-# Create a network configuration file
-sudo vim /etc/wireguard/wg0.conf
-```
-
-The content of `wg0.conf`, please remove the comments if you want to copy the content to your configuration file:
-
-```text
-[Interface]
-# The IP address of server, will be used by the client to connect to the server 
-Address = 10.0.0.1/24
-# The port of server, will be used by the client to connect to the server
-ListenPort = 51820
-# The private key of server, please replace SERVER_PRIVATE_KEY with the content of /etc/wireguard/privatekey
-PrivateKey = SERVER_PRIVATE_KEY
-SaveConfig = true
-```
-
-> If the firewall is enabled, please open the port `51820`. If you are using a cloud server, you need to modify the 
-> security group to open the port `UDP/51820`.
-
-Modify the permission of the private key and the configuration file:
-
-```shell
-sudo chmod 600 /etc/wireguard/{privatekey,wg0.conf}
-```
-
-Start the WireGuard service
-
-```shell
-sudo wg-quick up wg0
-```
-
-The console will print:
-
-```text
-[#] ip link add wg0 type wireguard
-[#] wg setconf wg0 /dev/fd/63
-[#] ip -4 address add 10.0.0.1/24 dev wg0
-[#] ip link set mtu 1420 up dev wg0
-```
-
-You can use `wg` command to check the status of the VPN server:
-
-```shell
-sudo wg show wg0
-```
-
-Configure the WireGuard service to start automatically:
-
-```shell
-sudo systemctl enable wg-quick@wg0
-```
-
-### Errors
-
-1. `/usr/bin/wg-quick: line 32: resolvconf: command not found`
-
-```shell
-sudo apt install openresolv
-```
-
 ## Configure WireGuard VPN Client
 
 It's very simple to configure the WireGuard VPN client, you only need to generate a private key and a public key, 
@@ -105,9 +31,6 @@ configuration file.
 The following is an example of MacOS, you can use the same way to configure the client on other OS.
 
 ```shell
-# Install WireGuard VPN as shown above:
-brew install wireguard-tools
-
 # Create a configuration folder
 sudo mkdir /usr/local/etc/wireguard
 
@@ -126,19 +49,19 @@ key, server IP, server port, and client IP. Please remove the comments if you wa
 ```text
 [Interface]
 # The private key of generated above, please replace CLIENT_PRIVATE_KEY with the content of /usr/local/etc/wireguard/privatekey
-PrivateKey = CLIENT_PRIVATE_KEY
+PrivateKey = {CLIENT_PRIVATE_KEY}
 # The port of client
 ListenPort = 51820
 # The IP address of client, will be used by the server to connect to the client
-Address = CLIENT_IP/32
+Address = {CLIENT_IP}/32
 DNS = 8.8.8.8
 MTU = 1420
 
 [Peer]
 # The public key of server
-PublicKey = SERVER_PUBLIC_KEY
+PublicKey = {SERVER_PUBLIC_KEY}
 # The IP address and port of server
-Endpoint = SERVER_IP:SERVER_PORT
+Endpoint = {SERVER_IP}:{SERVER_PORT}
 # The allowed IP address of server
 AllowedIPs = 10.0.0.1/24
 PersistentKeepalive = 25
@@ -183,7 +106,85 @@ If success, you will get the following output:
 Connection to 10.0.0.1 port 4000 [tcp/terabase] succeeded!
 ```
 
-## Add the client to the server
+## Configure WireGuard VPN Server(handle by the server administrator)
+
+We use Ubuntu 20 as the VPN server, you can use other OS as the VPN server, but the configuration may be different.
+
+```shell
+# Create a configuration folder
+sudo mkdir /etc/wireguard
+
+# Generate a private key and a public key
+wg genkey | sudo tee /etc/wireguard/privatekey | wg pubkey | sudo tee /etc/wireguard/publickey
+
+# Create a network configuration file
+sudo vim /etc/wireguard/wg0.conf
+```
+
+The content of `wg0.conf`, please remove the comments if you want to copy the content to your configuration file:
+
+```text
+[Interface]
+# The IP address of server, will be used by the client to connect to the server 
+Address = 10.0.0.1/24
+# The port of server, will be used by the client to connect to the server
+ListenPort = 51820
+# The private key of server, please replace SERVER_PRIVATE_KEY with the content of /etc/wireguard/privatekey
+PrivateKey = {SERVER_PRIVATE_KEY}
+SaveConfig = true
+```
+
+> If the firewall is enabled, please open the port `51820`. If you are using a cloud server, you need to modify the
+> security group to open the port `UDP/51820`.
+
+Modify the permission of the private key and the configuration file:
+
+```shell
+sudo chmod 600 /etc/wireguard/{privatekey,wg0.conf}
+```
+
+Start the WireGuard service
+
+```shell
+sudo wg-quick up wg0
+```
+
+The console will print:
+
+```text
+[#] ip link add wg0 type wireguard
+[#] wg setconf wg0 /dev/fd/63
+[#] ip -4 address add 10.0.0.1/24 dev wg0
+[#] ip link set mtu 1420 up dev wg0
+```
+
+You can use `wg` command to check the status of the VPN server:
+
+```shell
+sudo wg show wg0
+```
+
+Configure the WireGuard service to start automatically:
+
+```shell
+sudo systemctl enable wg-quick@wg0
+```
+
+If you want to stop the WireGuard service, you can use the following command:
+
+```shell
+sudo wg-quick down wg0
+```
+
+### Errors
+
+1. `/usr/bin/wg-quick: line 32: resolvconf: command not found`
+
+```shell
+sudo apt install openresolv
+```
+
+## Add the client to the server(handle by the server administrator)
 
 The following content is handled by the server administrator. If you only focus on the client configuration, you can 
 skip this section.
@@ -194,10 +195,10 @@ mkdir /etc/wireguard/clients/
 
 # Add the client public key to the server, please replace CLIENT_PUBLIC_KEY and CLIENT_NAME with your client public 
 # key and name
-echo CLIENT_PUBLIC_KEY > /etc/wireguard/clients/CLIENT_NAME
+echo CLIENT_PUBLIC_KEY > /etc/wireguard/clients/{CLIENT_NAME}
 
 # Add the client to wg0.conf, please replace CLIENT_NAME with your client name
-sudo wg set wg0 peer $(cat /etc/wireguard/clients/CLIENT_NAME) allowed-ips 10.0.0.0/24
+sudo wg set wg0 peer $(cat /etc/wireguard/clients/{CLIENT_NAME}) allowed-ips {CLIENT_IP}/32
 
 # Check the server and the clients status
 sudo wg
@@ -209,12 +210,12 @@ sudo wg-quick save wg0
 ### Remove the client from the server
 
 ```shell
-sudo wg set wg0 peer $(cat /etc/wireguard/clients/CLIENT_NAME) remove
+sudo wg set wg0 peer $(cat /etc/wireguard/clients/{CLIENT_NAME}) remove
 
 sudo wg-quick save wg0
 ```
 
-### How to check the wireguard logo
+### How to check the wireguard log
 
 ```shell
 # Check support debug, should print: debugfs on /sys/kernel/debug type debugfs (rw,relatime)
