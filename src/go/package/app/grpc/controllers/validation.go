@@ -5,6 +5,7 @@ import (
 
 	"github.com/goravel/framework/contracts/translation"
 	"github.com/goravel/framework/facades"
+	"github.com/goravel/framework/support/carbon"
 
 	protopackage "market.goravel.dev/proto/package"
 	utilserrors "market.goravel.dev/utils/errors"
@@ -17,10 +18,10 @@ func validateCreatePackageRequest(ctx context.Context, req *protopackage.CreateP
 	summery := req.GetSummary()
 	description := req.GetDescription()
 	userID := req.GetUserId()
-	return validatePackageRequest(ctx, name, url, tags, summery, description, userID)
+	return validatePackageRequest(ctx, name, url, tags, summery, description, userID, req.GetLastUpdatedAt())
 }
 
-func validatePackageRequest(ctx context.Context, name, url string, tags []string, summary, description, userID string) error {
+func validatePackageRequest(ctx context.Context, name, url string, tags []string, summary, description, userID, lastUpdatedAt string) error {
 	translate := facades.Lang(ctx)
 	if userID == "" {
 		return utilserrors.NewBadRequest(translate.Get("required.user_id"))
@@ -71,6 +72,13 @@ func validatePackageRequest(ctx context.Context, name, url string, tags []string
 		}))
 	}
 
+	if lastUpdatedAt == "" {
+		return utilserrors.NewBadRequest(translate.Get("required.last_updated_at"))
+	}
+	if carbon.Parse(lastUpdatedAt).IsZero() {
+		return utilserrors.NewBadRequest(translate.Get("invalid.last_updated_at"))
+	}
+
 	return nil
 }
 
@@ -86,5 +94,5 @@ func validateUpdatePackageRequest(ctx context.Context, req *protopackage.UpdateP
 		return utilserrors.NewBadRequest(facades.Lang(ctx).Get("required.id"))
 	}
 
-	return validatePackageRequest(ctx, name, url, tags, summery, description, userID)
+	return validatePackageRequest(ctx, name, url, tags, summery, description, userID, req.GetLastUpdatedAt())
 }
