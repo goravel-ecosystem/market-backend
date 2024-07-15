@@ -1,10 +1,10 @@
 staging:
   db:
     host: postgres
-    port: 5433
+    port: 5432
   redis:
     host: redis
-    port: 6380
+    port: 6379
   gateway:
     http:
       port: 4000
