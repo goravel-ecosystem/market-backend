@@ -10,6 +10,11 @@
   "postUpdateOptions": [
     "gomodTidy"
   ],
+  "regexManagers": [
+    {
+      "fileMatch": ["(^|/)src/.*/go\\.mod$"]
+    }
+  ],
   "packageRules": [
     {
       "description": "Automerge non-major updates",
