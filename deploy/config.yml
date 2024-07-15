@@ -1,7 +1,7 @@
 staging:
   db:
     host: postgres
-    port: 5432
+    port: 5433
   redis:
     host: redis
     port: 6380
@@ -20,3 +20,5 @@ staging:
     grpc:
       host: package
       port: 4021
+    db:
+      database: package

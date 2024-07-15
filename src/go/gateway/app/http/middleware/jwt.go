@@ -3,6 +3,7 @@ package middleware
 import (
 	"github.com/goravel/framework/contracts/http"
 	"github.com/goravel/framework/facades"
+	"github.com/goravel/gateway"
 
 	"market.goravel.dev/gateway/app/services"
 )
@@ -22,10 +23,9 @@ func Jwt(userService services.User) http.Middleware {
 			return
 		}
 
-		query := ctx.Request().Origin().URL.Query()
-		query.Add("user_id", user.GetId())
-		query.Add("user_name", user.GetName())
-		ctx.Request().Origin().URL.RawQuery = query.Encode()
+		gateway.Inject(ctx, "user_id", user.GetId())
+		gateway.Inject(ctx, "user_name", user.GetName())
+
 		ctx.Request().Next()
 	}
 }

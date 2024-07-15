@@ -3,7 +3,9 @@ name: Build
 on:
   create:
     tags:
-      - '*'
+      - '*-0.*'
+      - '*-1.*'
+
 jobs:
   build:
     strategy:
