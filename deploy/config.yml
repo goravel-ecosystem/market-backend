@@ -12,13 +12,13 @@ staging:
       port: 4001
   user:
     grpc:
-      host: user
+      host: goravel-market-user
       port: 4011
     db:
       database: user
   package:
     grpc:
-      host: package
+      host: goravel-market-package
       port: 4021
     db:
       database: package

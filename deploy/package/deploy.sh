@@ -14,7 +14,7 @@ docker run -dit \
   -e DB_PASSWORD=$INPUT_DB_PASSWORD \
   -e REDIS_HOST=$INPUT_REDIS_HOST \
   -e REDIS_PORT=$INPUT_REDIS_PORT \
-  --network goravel-market-$INPUT_APP_ENV \
-  --network-alias $INPUT_APP_NAME \
+  --network $INPUT_APP_ENV \
+  --network-alias goravel-market-$INPUT_APP_NAME \
   --name goravel-market-$INPUT_APP_ENV-$INPUT_APP_NAME \
   $INPUT_IMAGE
