@@ -72,10 +72,7 @@ func validatePackageRequest(ctx context.Context, name, url string, tags []string
 		}))
 	}
 
-	if lastUpdatedAt == "" {
-		return utilserrors.NewBadRequest(translate.Get("required.last_updated_at"))
-	}
-	if carbon.Parse(lastUpdatedAt).IsZero() {
+	if lastUpdatedAt != "" && carbon.Parse(lastUpdatedAt).IsZero() {
 		return utilserrors.NewBadRequest(translate.Get("invalid.last_updated_at"))
 	}
 

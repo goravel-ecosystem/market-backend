@@ -4,8 +4,7 @@
     "package_id": "PackageID is required",
     "name": "Name is required",
     "url": "URL is required",
-    "id": "ID is required",
-    "last_updated_at": "LastUpdatedAt is required"
+    "id": "ID is required"
   },
   "invalid": {
       "last_updated_at": "LastUpdatedAt is invalid"
