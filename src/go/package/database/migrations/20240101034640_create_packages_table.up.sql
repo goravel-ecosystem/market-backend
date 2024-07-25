@@ -10,7 +10,7 @@ CREATE TABLE packages (
   is_public int DEFAULT 2,
   is_approved int DEFAULT 2,
   view_count bigint DEFAULT 0,
-  last_updated_at timestamp NOT NULL,
+  last_updated_at timestamp DEFAULT NULL,
   created_at timestamp NOT NULL,
   updated_at timestamp NOT NULL,
   deleted_at timestamp DEFAULT NULL

@@ -63,7 +63,7 @@ PublicKey = {SERVER_PUBLIC_KEY}
 # The IP address and port of server
 Endpoint = {SERVER_IP}:{SERVER_PORT}
 # The allowed IP address of server
-AllowedIPs = 10.0.0.1/24
+AllowedIPs = 10.0.0.1/32
 PersistentKeepalive = 25
 ```
 
@@ -79,10 +79,10 @@ The console will print:
 [#] wireguard-go utun
 [+] Interface for wg0 is utun6
 [#] wg setconf utun6 /dev/fd/63
-[#] ifconfig utun6 inet 10.0.0.2/24 10.0.0.2 alias
+[#] ifconfig utun6 inet 10.0.0.2/21 10.0.0.2 alias
 [#] ifconfig utun6 mtu 1420
 [#] ifconfig utun6 up
-[#] route -q -n add -inet 10.0.0.0/24 -interface utun6
+[#] route -q -n add -inet 10.0.0.1/32 -interface utun6
 [#] networksetup -getdnsservers Wi-Fi
 [#] networksetup -getsearchdomains Wi-Fi
 [#] networksetup -getdnsservers Thunderbolt Bridge
@@ -126,7 +126,7 @@ The content of `wg0.conf`, please remove the comments if you want to copy the co
 ```text
 [Interface]
 # The IP address of server, will be used by the client to connect to the server 
-Address = 10.0.0.1/24
+Address = 10.0.0.1/32
 # The port of server, will be used by the client to connect to the server
 ListenPort = 51820
 # The private key of server, please replace SERVER_PRIVATE_KEY with the content of /etc/wireguard/privatekey
@@ -154,7 +154,7 @@ The console will print:
 ```text
 [#] ip link add wg0 type wireguard
 [#] wg setconf wg0 /dev/fd/63
-[#] ip -4 address add 10.0.0.1/24 dev wg0
+[#] ip -4 address add 10.0.0.1/32 dev wg0
 [#] ip link set mtu 1420 up dev wg0
 ```
 
@@ -195,7 +195,7 @@ mkdir /etc/wireguard/clients/
 
 # Add the client public key to the server, please replace CLIENT_PUBLIC_KEY and CLIENT_NAME with your client public 
 # key and name
-echo CLIENT_PUBLIC_KEY > /etc/wireguard/clients/{CLIENT_NAME}
+echo {CLIENT_PUBLIC_KEY} > /etc/wireguard/clients/{CLIENT_NAME}
 
 # Add the client to wg0.conf, please replace CLIENT_NAME with your client name
 sudo wg set wg0 peer $(cat /etc/wireguard/clients/{CLIENT_NAME}) allowed-ips {CLIENT_IP}/32
